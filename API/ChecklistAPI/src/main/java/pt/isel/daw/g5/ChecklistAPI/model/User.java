@@ -1,6 +1,19 @@
 package pt.isel.daw.g5.ChecklistAPI.model;
 
-public class User {
+import javax.persistence.Entity;
+import javax.persistence.Id;
 
-    public
+@Entity
+public class User {
+    @Id
+    private String userName;
+
+    private String password;
+
+    private User(){}
+
+    public User(String userName, String password) {
+        this.userName = userName;
+        this.password = password;
+    }
 }
