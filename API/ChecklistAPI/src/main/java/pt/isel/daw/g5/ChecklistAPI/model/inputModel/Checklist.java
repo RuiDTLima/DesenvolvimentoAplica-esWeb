@@ -1,4 +1,4 @@
-package pt.isel.daw.g5.ChecklistAPI.model;
+package pt.isel.daw.g5.ChecklistAPI.model.inputModel;
 
 import javax.persistence.*;
 import java.util.List;
@@ -11,10 +11,10 @@ public class Checklist {
     private String completionDate;
 
     @ManyToOne
-    private String userName;
+    private User userName;
 
     @ManyToOne
-    private int checklistTemplate;
+    private ChecklistTemplate checklistTemplate;
 
     @OneToMany
     private List<ChecklistItem> checklistItems;
@@ -43,19 +43,19 @@ public class Checklist {
         this.completionDate = completionDate;
     }
 
-    public String getUserName() {
+    public User getUserName() {
         return userName;
     }
 
-    public void setUserName(String userName) {
+    public void setUserName(User userName) {
         this.userName = userName;
     }
 
-    public int getChecklistTemplate() {
+    public ChecklistTemplate getChecklistTemplate() {
         return checklistTemplate;
     }
 
-    public void setChecklistTemplate(int checklistTemplate) {
+    public void setChecklistTemplate(ChecklistTemplate checklistTemplate) {
         this.checklistTemplate = checklistTemplate;
     }
 
@@ -70,10 +70,8 @@ public class Checklist {
     protected Checklist(){
     }
 
-    public Checklist(String name, String completionDate, String userName, int checklistTemplate) {
+    public Checklist(String name, String completionDate) {
         this.name = name;
         this.completionDate = completionDate;
-        this.userName = userName;
-        this.checklistTemplate = checklistTemplate;
     }
 }

@@ -34,4 +34,5 @@ dependencies {
 	testCompile('org.springframework.boot:spring-boot-starter-test')
 	compile 'org.springframework.data:spring-data-jpa'
 	compile 'org.springframework.data:spring-data-rest'
+	runtime('org.postgresql:postgresql')
 }

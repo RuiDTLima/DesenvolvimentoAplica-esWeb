@@ -1,14 +1,16 @@
-package pt.isel.daw.g5.ChecklistAPI.model;
+package pt.isel.daw.g5.ChecklistAPI.model.inputModel;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
+import javax.persistence.*;
 import java.util.List;
 
 @Entity
+@Table(name = "Users")
 public class User {
     @Id
+    @Column(name = "Username")
     private String userName;
+
+    @Column(name = "Password")
     private String password;
 
     @OneToMany
@@ -56,5 +58,10 @@ public class User {
     public User(String userName, String password) {
         this.userName = userName;
         this.password = password;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("User [username = %s, password = %s]", userName, password);
     }
 }

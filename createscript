@@ -16,17 +16,18 @@ create table Users (
 	Password text not null
 )
 
+create table ChecklistTemplate (
+	Id serial primary key,
+	Name text not null,
+	Username text references Users not null
+)
+
 create table Checklist (
 	Id serial primary key,
 	Name text not null,
 	CompletionDate date not null,
-	Username text references Users
-)
-
-create table ChecklistTemplate (
-	Id serial primary key,
-	Name text not null,
-	Username text references Users
+	Username text references Users not null, 
+	cheklisttemplate_id int references ChecklistTemplate
 )
 
 create table ChecklistItem (
@@ -34,12 +35,23 @@ create table ChecklistItem (
 	Name text not null,
 	Description text not null,
 	State text check (State = 'completed ' or State = 'uncompleted'),
-	Checklist int references Checklist
+	Checklist_id int references Checklist not null
 )
 
 create table ChecklistTemplateItem (
 	Id serial primary key,
 	Name text not null,
 	Description text not null,
-	Checklist int references ChecklistTemplate
+	ChecklistTemplate_id int references ChecklistTemplate not null
 )
+
+insert into Users(Username, Password)
+	values('Rui', 'rui'),
+		  ('Steven', 'steven'),
+		  ('Daniela', 'daniela')
+		
+insert into Checklist(Name, CompletionDate, Username)
+	values('Lista 1', '2018-03-23', 'Rui'),
+		  ('Lista 2', '2018-03-23', 'Steven'),
+		  ('Lista 3', '2018-03-23', 'Daniela')
+		

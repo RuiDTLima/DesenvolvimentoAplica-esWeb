@@ -1,4 +1,4 @@
-package pt.isel.daw.g5.ChecklistAPI.model;
+package pt.isel.daw.g5.ChecklistAPI.model.inputModel;
 
 import javax.persistence.*;
 
@@ -10,8 +10,8 @@ public class TemplateItem {
     private String name;
     private String description;
 
-    @ManyToOne
-    private int checklistTemplateId;
+    @ManyToOne()
+    private ChecklistTemplate checklistTemplate;
 
     public int getId() {
         return id;
@@ -37,21 +37,20 @@ public class TemplateItem {
         this.description = description;
     }
 
-    public int getChecklistTemplateId() {
-        return checklistTemplateId;
+    public ChecklistTemplate getChecklistTemplate() {
+        return checklistTemplate;
     }
 
-    public void setChecklistTemplateId(int checklistTemplateId) {
-        this.checklistTemplateId = checklistTemplateId;
+    public void setChecklistTemplate(ChecklistTemplate checklistTemplate) {
+        this.checklistTemplate = checklistTemplate;
     }
 
     protected TemplateItem(){
 
     }
 
-    public TemplateItem(String name, String description, int checklistTemplateId) {
+    public TemplateItem(String name, String description) {
         this.name = name;
         this.description = description;
-        this.checklistTemplateId = checklistTemplateId;
     }
 }

@@ -1,4 +1,4 @@
-package pt.isel.daw.g5.ChecklistAPI.model;
+package pt.isel.daw.g5.ChecklistAPI.model.inputModel;
 
 import javax.persistence.*;
 
@@ -11,9 +11,9 @@ public class ChecklistItem {
     private String state;
 
     @ManyToOne
-    private int ChecklistId;
+    private Checklist ChecklistId;
 
-    public int getId(){
+    public int getId() {
         return id;
     }
 
@@ -45,11 +45,11 @@ public class ChecklistItem {
         this.state = state;
     }
 
-    public int getChecklistId() {
+    public Checklist getChecklistId() {
         return ChecklistId;
     }
 
-    public void setChecklistId(int checklistId) {
+    public void setChecklistId(Checklist checklistId) {
         ChecklistId = checklistId;
     }
 
@@ -57,10 +57,9 @@ public class ChecklistItem {
 
     }
 
-    public ChecklistItem(String name, String description, String state, int checklistId) {
+    public ChecklistItem(String name, String description, String state) {
         this.name = name;
         this.description = description;
         this.state = state;
-        ChecklistId = checklistId;
     }
 }
