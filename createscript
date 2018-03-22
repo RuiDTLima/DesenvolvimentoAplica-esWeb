@@ -1,0 +1,45 @@
+-- Database: dawAPI
+
+-- DROP DATABASE "dawAPI";
+
+CREATE DATABASE "dawAPI"
+    WITH 
+    OWNER = postgres
+    ENCODING = 'UTF8'
+    LC_COLLATE = 'English_United States.1252'
+    LC_CTYPE = 'English_United States.1252'
+    TABLESPACE = pg_default
+    CONNECTION LIMIT = -1;
+	
+create table Users (
+	Username TEXT primary key,
+	Password text not null
+)
+
+create table Checklist (
+	Id serial primary key,
+	Name text not null,
+	CompletionDate date not null,
+	Username text references Users
+)
+
+create table ChecklistTemplate (
+	Id serial primary key,
+	Name text not null,
+	Username text references Users
+)
+
+create table ChecklistItem (
+	Id serial primary key,
+	Name text not null,
+	Description text not null,
+	State text check (State = 'completed ' or State = 'uncompleted'),
+	Checklist int references Checklist
+)
+
+create table ChecklistTemplateItem (
+	Id serial primary key,
+	Name text not null,
+	Description text not null,
+	Checklist int references ChecklistTemplate
+)
