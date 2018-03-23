@@ -1,8 +1,9 @@
-package pt.isel.daw.g5.ChecklistAPI.model;
+package pt.isel.daw.g5.ChecklistAPI.model.internalModel;
 
 public class Data {
     private String name;
     private String value;
+    private String prompt;
 
     public String getName() {
         return name;
@@ -20,8 +21,17 @@ public class Data {
         this.value = value;
     }
 
-    public Data(String name, String value) {
+    public String getPrompt() {
+        return prompt;
+    }
+
+    public void setPrompt(String prompt) {
+        this.prompt = prompt;
+    }
+
+    public Data(String name, String value, String prompt) {
         this.name = name;
         this.value = value;
+        this.prompt = prompt;
     }
 }

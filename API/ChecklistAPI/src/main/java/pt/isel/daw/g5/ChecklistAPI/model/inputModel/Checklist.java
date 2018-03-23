@@ -1,22 +1,30 @@
 package pt.isel.daw.g5.ChecklistAPI.model.inputModel;
 
+import org.springframework.lang.Nullable;
+
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
 public class Checklist {
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
+
     private String name;
-    private String completionDate;
+
+    @Column(name = "completiondate")
+    private LocalDateTime completionDate;
 
     @ManyToOne
-    private User userName;
+    private User username;
 
     @ManyToOne
+    @JoinColumn(name = "checklisttemplate_id")
     private ChecklistTemplate checklistTemplate;
 
-    @OneToMany
+    @OneToMany(mappedBy = "checklistitem")
     private List<ChecklistItem> checklistItems;
 
     public int getId() {
@@ -35,20 +43,20 @@ public class Checklist {
         this.name = name;
     }
 
-    public String getCompletionDate() {
+    public LocalDateTime getCompletionDate() {
         return completionDate;
     }
 
-    public void setCompletionDate(String completionDate) {
+    public void setCompletionDate(LocalDateTime completionDate) {
         this.completionDate = completionDate;
     }
 
-    public User getUserName() {
-        return userName;
+    public User getUsername() {
+        return username;
     }
 
-    public void setUserName(User userName) {
-        this.userName = userName;
+    public void setUsername(User username) {
+        this.username = username;
     }
 
     public ChecklistTemplate getChecklistTemplate() {
@@ -68,9 +76,10 @@ public class Checklist {
     }
 
     protected Checklist(){
+
     }
 
-    public Checklist(String name, String completionDate) {
+    public Checklist(String name, LocalDateTime completionDate) {
         this.name = name;
         this.completionDate = completionDate;
     }

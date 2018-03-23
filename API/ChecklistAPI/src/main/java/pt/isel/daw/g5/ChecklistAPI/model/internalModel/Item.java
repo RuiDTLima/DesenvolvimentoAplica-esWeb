@@ -1,6 +1,6 @@
-package pt.isel.daw.g5.ChecklistAPI.model;
+package pt.isel.daw.g5.ChecklistAPI.model.internalModel;
 
-public class Items {
+public class Item {
     private String href;
     private Data[] data;
     private Link[] links;
@@ -29,7 +29,7 @@ public class Items {
         this.links = links;
     }
 
-    public Items(String href, Data[] data, Link[] links) {
+    public Item(String href, Data[] data, Link[] links) {
         this.href = href;
         this.data = data;
         this.links = links;

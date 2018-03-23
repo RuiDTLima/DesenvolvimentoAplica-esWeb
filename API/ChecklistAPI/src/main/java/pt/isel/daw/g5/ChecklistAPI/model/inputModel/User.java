@@ -7,24 +7,24 @@ import java.util.List;
 @Table(name = "Users")
 public class User {
     @Id
-    @Column(name = "Username")
-    private String userName;
+    @Column(name = "username")
+    private String username;
 
-    @Column(name = "Password")
+    @Column(name = "password")
     private String password;
 
-    @OneToMany
+    @OneToMany(mappedBy = "checklist")
     private List<Checklist> checklists;
 
     @OneToMany
     private List<ChecklistTemplate> checklistTemplates;
 
-    public String getUserName() {
-        return userName;
+    public String getUsername() {
+        return username;
     }
 
-    public void setUserName(String userName) {
-        this.userName = userName;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public String getPassword() {
@@ -56,12 +56,12 @@ public class User {
     }
 
     public User(String userName, String password) {
-        this.userName = userName;
+        this.username = userName;
         this.password = password;
     }
 
     @Override
     public String toString() {
-        return String.format("User [username = %s, password = %s]", userName, password);
+        return String.format("User [username = %s, password = %s]", username, password);
     }
 }
