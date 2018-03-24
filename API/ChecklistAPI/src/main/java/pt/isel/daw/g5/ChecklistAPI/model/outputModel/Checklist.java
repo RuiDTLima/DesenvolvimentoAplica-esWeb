@@ -4,19 +4,15 @@ import com.fasterxml.jackson.annotation.JsonAlias;
 
 public class Checklist {
     private String name;
+
     @JsonAlias("completion_date")
     private String completionDate;
+
     @JsonAlias("checklist_id")
     private int checklistId;
+
     @JsonAlias("checklisttemplate_id")
     private int checklistTemplateId;
-
-    public Checklist(String name, String completionDate, int checklistId, int checklistTemplateId) {
-        this.name = name;
-        this.completionDate = completionDate;
-        this.checklistId = checklistId;
-        this.checklistTemplateId = checklistTemplateId;
-    }
 
     public String getName() {
         return name;
@@ -47,6 +43,13 @@ public class Checklist {
     }
 
     public void setChecklistTemplateId(int checklistTemplateId) {
+        this.checklistTemplateId = checklistTemplateId;
+    }
+
+    public Checklist(String name, String completionDate, int checklistId, int checklistTemplateId) {
+        this.name = name;
+        this.completionDate = completionDate;
+        this.checklistId = checklistId;
         this.checklistTemplateId = checklistTemplateId;
     }
 }

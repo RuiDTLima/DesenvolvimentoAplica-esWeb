@@ -4,7 +4,8 @@ import javax.persistence.*;
 
 @Entity
 public class ChecklistItem {
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private String name;
     private String description;

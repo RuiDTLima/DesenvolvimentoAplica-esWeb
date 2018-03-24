@@ -1,8 +1,6 @@
 package pt.isel.daw.g5.ChecklistAPI.model.internalModel;
 
 import org.springframework.data.domain.Page;
-
-import java.awt.print.Pageable;
 import java.util.stream.Stream;
 
 public class Link {
@@ -25,14 +23,9 @@ public class Link {
         this.href = href;
     }
 
-    private static <T> Link produceNext(Page<T> page, String link){
-        if(page.hasNext()) return new Link("next", link + "?page=" + (page.getNumber() + 2));
-        return null;
-    }
-
-    private static <T> Link producePrevious(Page<T> page, String link){
-        if(page.getNumber() > 0) return new Link("previous", link + "?page=" + (page.getNumber()));
-        return null;
+    public Link(String rel, String href) {
+        this.rel = rel;
+        this.href = href;
     }
 
     public static <T> Link[] produceLinks(Page<T> page, String href){
@@ -42,8 +35,13 @@ public class Link {
                 .toArray((size) -> new Link[size]);
     }
 
-    public Link(String rel, String href) {
-        this.rel = rel;
-        this.href = href;
+    private static <T> Link produceNext(Page<T> page, String link){
+        if(page.hasNext()) return new Link("next", link + "?page=" + (page.getNumber() + 2));
+        return null;
+    }
+
+    private static <T> Link producePrevious(Page<T> page, String link){
+        if(page.getNumber() > 0) return new Link("previous", link + "?page=" + (page.getNumber()));
+        return null;
     }
 }

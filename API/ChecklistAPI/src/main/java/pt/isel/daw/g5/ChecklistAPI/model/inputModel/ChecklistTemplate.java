@@ -5,7 +5,8 @@ import java.util.List;
 
 @Entity
 public class ChecklistTemplate {
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private String name;
 
@@ -59,7 +60,6 @@ public class ChecklistTemplate {
     }
 
     protected ChecklistTemplate(){
-
     }
 
     public ChecklistTemplate(String name) {

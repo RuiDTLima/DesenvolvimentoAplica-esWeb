@@ -4,17 +4,12 @@ import com.fasterxml.jackson.annotation.JsonAlias;
 
 public class ChecklistItem {
     private String name;
+
     @JsonAlias("checklistitem_id")
     private int checklistItemId;
+
     private String description;
     private String state;
-
-    public ChecklistItem(String name, int checklistItemId, String description, String state) {
-        this.name = name;
-        this.checklistItemId = checklistItemId;
-        this.description = description;
-        this.state = state;
-    }
 
     public String getName() {
         return name;
@@ -45,6 +40,13 @@ public class ChecklistItem {
     }
 
     public void setState(String state) {
+        this.state = state;
+    }
+
+    public ChecklistItem(String name, int checklistItemId, String description, String state) {
+        this.name = name;
+        this.checklistItemId = checklistItemId;
+        this.description = description;
         this.state = state;
     }
 }

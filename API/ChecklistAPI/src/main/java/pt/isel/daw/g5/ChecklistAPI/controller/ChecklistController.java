@@ -15,7 +15,7 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/checklists")
 public class ChecklistController {
-    private static final int PAGE_SIZE = 1;
+    private static final int PAGE_SIZE = 10;
 
     @Autowired
     ChecklistRepository checklistRepository;

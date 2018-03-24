@@ -1,18 +1,10 @@
 package pt.isel.daw.g5.ChecklistAPI.model.internalModel;
 
 public class Collection {
-
     private String version;
     private String href;
     private Item[] items;
     private Link[] links;
-
-    public Collection(String version, String href, Item[] items, Link[] links) {
-        this.version = version;
-        this.href = href;
-        this.items = items;
-        this.links = links;
-    }
 
     public String getVersion() {
         return version;
@@ -46,4 +38,10 @@ public class Collection {
         this.links = links;
     }
 
+    public Collection(String version, String href, Item[] items, Link[] links) {
+        this.version = version;
+        this.href = href;
+        this.items = items;
+        this.links = links;
+    }
 }

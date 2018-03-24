@@ -10,7 +10,7 @@ public class TemplateItem {
     private String name;
     private String description;
 
-    @ManyToOne()
+    @ManyToOne
     private ChecklistTemplate checklistTemplate;
 
     public int getId() {

@@ -10,14 +10,6 @@ public class Siren<T> {
     private Action[] actions;
     private Link[] links;
 
-    public Siren(String[] _class, T properties, Entity[] entities, Action[] actions, Link[] links) {
-        this._class = _class;
-        this.properties = properties;
-        this.entities = entities;
-        this.actions = actions;
-        this.links = links;
-    }
-
     public String[] get_class() {
         return _class;
     }
@@ -55,6 +47,14 @@ public class Siren<T> {
     }
 
     public void setLinks(Link[] links) {
+        this.links = links;
+    }
+
+    public Siren(String[] _class, T properties, Entity[] entities, Action[] actions, Link[] links) {
+        this._class = _class;
+        this.properties = properties;
+        this.entities = entities;
+        this.actions = actions;
         this.links = links;
     }
 }

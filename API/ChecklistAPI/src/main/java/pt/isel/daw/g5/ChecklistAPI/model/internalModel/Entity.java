@@ -9,13 +9,6 @@ public class Entity {
     private String href;
     private Link[] links;
 
-    public Entity(String[] _class, String[] rel, String href, Link[] links) {
-        this._class = _class;
-        this.rel = rel;
-        this.href = href;
-        this.links = links;
-    }
-
     public String[] get_class() {
         return _class;
     }
@@ -45,6 +38,13 @@ public class Entity {
     }
 
     public void setLinks(Link[] links) {
+        this.links = links;
+    }
+
+    public Entity(String[] _class, String[] rel, String href, Link[] links) {
+        this._class = _class;
+        this.rel = rel;
+        this.href = href;
         this.links = links;
     }
 }

@@ -4,15 +4,11 @@ import com.fasterxml.jackson.annotation.JsonAlias;
 
 public class TemplateItem {
     private String name;
+
     @JsonAlias("templateitem_id")
     private int templateItemId;
-    private String description;
 
-    public TemplateItem(String name, int templateItemId, String description) {
-        this.name = name;
-        this.templateItemId = templateItemId;
-        this.description = description;
-    }
+    private String description;
 
     public String getName() {
         return name;
@@ -35,6 +31,12 @@ public class TemplateItem {
     }
 
     public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public TemplateItem(String name, int templateItemId, String description) {
+        this.name = name;
+        this.templateItemId = templateItemId;
         this.description = description;
     }
 }

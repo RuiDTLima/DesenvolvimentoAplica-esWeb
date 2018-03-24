@@ -13,7 +13,7 @@ public class User {
     @Column(name = "password")
     private String password;
 
-    @OneToMany(mappedBy = "checklist")
+    @OneToMany
     private List<Checklist> checklists;
 
     @OneToMany
@@ -52,16 +52,10 @@ public class User {
     }
 
     protected User(){
-
     }
 
     public User(String userName, String password) {
         this.username = userName;
         this.password = password;
-    }
-
-    @Override
-    public String toString() {
-        return String.format("User [username = %s, password = %s]", username, password);
     }
 }

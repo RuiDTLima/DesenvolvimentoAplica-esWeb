@@ -1,0 +1,8 @@
+POST http://localhost:8080/checklists
+Content-Type: application/json
+
+
+{
+    "name":"Terceiro Teste",
+    "completionDate": "2018-03-17T20:00:00"
+}

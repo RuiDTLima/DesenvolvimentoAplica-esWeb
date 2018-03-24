@@ -1,7 +1,5 @@
 package pt.isel.daw.g5.ChecklistAPI.model.inputModel;
 
-import org.springframework.lang.Nullable;
-
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -18,13 +16,14 @@ public class Checklist {
     private LocalDateTime completionDate;
 
     @ManyToOne
+    @JoinColumn(name = "Username")
     private User username;
 
     @ManyToOne
-    @JoinColumn(name = "checklisttemplate_id")
+    @JoinColumn(name = "cheklisttemplate_id")
     private ChecklistTemplate checklistTemplate;
 
-    @OneToMany(mappedBy = "checklistitem")
+    @OneToMany
     private List<ChecklistItem> checklistItems;
 
     public int getId() {
@@ -76,7 +75,6 @@ public class Checklist {
     }
 
     protected Checklist(){
-
     }
 
     public Checklist(String name, LocalDateTime completionDate) {
