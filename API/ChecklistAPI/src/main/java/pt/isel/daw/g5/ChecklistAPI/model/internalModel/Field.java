@@ -4,6 +4,7 @@ public class Field {
     private String name;
     private String type;
     private String value;
+    private String title;
 
     public String getName() {
         return name;
@@ -29,9 +30,24 @@ public class Field {
         this.value = value;
     }
 
-    public Field(String name, String type, String value) {
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public Field(String name, String type, String value, String title) {
         this.name = name;
         this.type = type;
         this.value = value;
+        this.title = title;
+    }
+
+    public Field(String name, String type, String title){
+        this.name = name;
+        this.type = type;
+        this.title = title;
     }
 }

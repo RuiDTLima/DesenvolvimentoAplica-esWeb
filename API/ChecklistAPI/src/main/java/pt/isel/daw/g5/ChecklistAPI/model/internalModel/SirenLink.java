@@ -1,20 +1,8 @@
 package pt.isel.daw.g5.ChecklistAPI.model.internalModel;
 
-import com.fasterxml.jackson.annotation.JsonAlias;
-
-public class Entity {
-    @JsonAlias("class")
-    private String[] _class;
+public class SirenLink {
     private String[] rel;
     private String href;
-
-    public String[] get_class() {
-        return _class;
-    }
-
-    public void set_class(String[] _class) {
-        this._class = _class;
-    }
 
     public String[] getRel() {
         return rel;
@@ -32,8 +20,7 @@ public class Entity {
         this.href = href;
     }
 
-    public Entity(String[] _class, String[] rel, String href) {
-        this._class = _class;
+    public SirenLink(String[] rel, String href) {
         this.rel = rel;
         this.href = href;
     }

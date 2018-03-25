@@ -4,6 +4,7 @@ import javax.persistence.*;
 import java.util.List;
 
 @Entity
+@Table(name = "ChecklistTemplate")
 public class ChecklistTemplate {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -13,10 +14,10 @@ public class ChecklistTemplate {
     @ManyToOne
     private User userName;
 
-    @OneToMany
+    @OneToMany(mappedBy = "checklistTemplate")
     private List<TemplateItem> templateItems;
 
-    @OneToMany
+    @OneToMany(mappedBy = "checklistTemplate")
     private List<Checklist> checklists;
 
     public int getId() {

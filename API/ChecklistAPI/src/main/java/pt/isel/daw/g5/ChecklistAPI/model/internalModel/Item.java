@@ -3,7 +3,7 @@ package pt.isel.daw.g5.ChecklistAPI.model.internalModel;
 public class Item {
     private String href;
     private Data[] data;
-    private Link[] links;
+    private CollectionLink[] collectionLinks;
 
     public String getHref() {
         return href;
@@ -21,17 +21,17 @@ public class Item {
         this.data = data;
     }
 
-    public Link[] getLinks() {
-        return links;
+    public CollectionLink[] getCollectionLinks() {
+        return collectionLinks;
     }
 
-    public void setLinks(Link[] links) {
-        this.links = links;
+    public void setCollectionLinks(CollectionLink[] collectionLinks) {
+        this.collectionLinks = collectionLinks;
     }
 
-    public Item(String href, Data[] data, Link[] links) {
+    public Item(String href, Data[] data, CollectionLink[] collectionLinks) {
         this.href = href;
         this.data = data;
-        this.links = links;
+        this.collectionLinks = collectionLinks;
     }
 }

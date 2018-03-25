@@ -12,6 +12,7 @@ public class ChecklistItem {
     private String state;
 
     @ManyToOne
+    @JoinColumn(name = "checklist_id")
     private Checklist ChecklistId;
 
     public int getId() {

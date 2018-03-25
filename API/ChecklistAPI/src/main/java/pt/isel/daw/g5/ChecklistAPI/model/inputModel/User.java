@@ -13,10 +13,10 @@ public class User {
     @Column(name = "password")
     private String password;
 
-    @OneToMany
+    @OneToMany(mappedBy = "username")
     private List<Checklist> checklists;
 
-    @OneToMany
+    @OneToMany(mappedBy = "userName")
     private List<ChecklistTemplate> checklistTemplates;
 
     public String getUsername() {

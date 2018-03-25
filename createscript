@@ -27,7 +27,7 @@ create table Checklist (
 	Name text not null,
 	CompletionDate timestamp not null,
 	Username text references Users not null, 
-	cheklisttemplate_id int references ChecklistTemplate
+	checklisttemplate_id int references ChecklistTemplate
 )
 
 create table ChecklistItem (
@@ -51,7 +51,13 @@ insert into Users(Username, Password)
 		  ('Daniela', 'daniela')
 		
 insert into Checklist(Name, CompletionDate, Username)
-	values('Lista 1', '2018-03-23', 'Rui'),
+	values('Lista 1', '2018-03-17T20:00:00+00:00', 'Rui'),
 		  ('Lista 2', '2018-03-23', 'Steven'),
 		  ('Lista 3', '2018-03-23', 'Daniela')
 		
+insert into ChecklistItem(Name, Description, State, Checklist_id)
+	values('Item 1.1', '', 'uncompleted', 1),
+		  ('Item 1.2', 'uncompleted item', 'uncompleted', 1)
+		
+insert into ChecklistTemplate(Name, Username)
+	values('Template 1', 'Rui')

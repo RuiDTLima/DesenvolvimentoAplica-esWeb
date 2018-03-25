@@ -3,6 +3,8 @@ Content-Type: application/json
 
 
 {
-    "name":"Terceiro Teste",
-    "completionDate": "2018-03-17T20:00:00"
+    "name":"Primeiro Teste",
+    "completionDate": "2018-03-17T20:00:00",
+    "checklisttemplate_id": 1,
+    "Username": "Rui"
 }

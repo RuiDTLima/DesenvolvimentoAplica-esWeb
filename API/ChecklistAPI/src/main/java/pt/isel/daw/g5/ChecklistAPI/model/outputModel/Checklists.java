@@ -2,9 +2,9 @@ package pt.isel.daw.g5.ChecklistAPI.model.outputModel;
 
 import org.springframework.data.domain.Page;
 import pt.isel.daw.g5.ChecklistAPI.model.internalModel.Collection;
+import pt.isel.daw.g5.ChecklistAPI.model.internalModel.CollectionLink;
 import pt.isel.daw.g5.ChecklistAPI.model.internalModel.Data;
 import pt.isel.daw.g5.ChecklistAPI.model.internalModel.Item;
-import pt.isel.daw.g5.ChecklistAPI.model.internalModel.Link;
 import pt.isel.daw.g5.ChecklistAPI.model.inputModel.Checklist;
 import java.util.LinkedList;
 import java.util.List;
@@ -33,7 +33,7 @@ public class Checklists {
                 "1.0",
                 "/checklists?page=" + (checklistPage.getNumber() + 1),
                 items.toArray(new Item[items.size()]),
-                Link.produceLinks(checklistPage, pageHref));
+                CollectionLink.produceLinks(checklistPage, pageHref));
     }
 
     private Item itemFromChecklist(Checklist checklist){
@@ -51,14 +51,14 @@ public class Checklists {
                 new Data("checklisttemplate_id", checklist.getChecklistTemplate() == null? "" : Integer.toString(checklist.getChecklistTemplate().getId()), "Checklist Template Id  ")};
     }
 
-    private Link[] produceItemLinks(Checklist checklist){
-        List<Link> links = new LinkedList<>();
-        links.add(new Link("items", "/checklists/" + checklist.getId() + "/checklistitems"));
+    private CollectionLink[] produceItemLinks(Checklist checklist){
+        List<CollectionLink> collectionLinks = new LinkedList<>();
+        collectionLinks.add(new CollectionLink("items", "/checklists/" + checklist.getId() + "/checklistitems"));
 
         if(checklist.getChecklistTemplate() != null) {
-            links.add(new Link("template", "/checklisttemplates/" + checklist.getChecklistTemplate().getId()));
+            collectionLinks.add(new CollectionLink("template", "/checklisttemplates/" + checklist.getChecklistTemplate().getId()));
         }
 
-        return links.toArray(new Link[links.size()]);
+        return collectionLinks.toArray(new CollectionLink[collectionLinks.size()]);
     }
 }

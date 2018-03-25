@@ -20,10 +20,10 @@ public class Checklist {
     private User username;
 
     @ManyToOne
-    @JoinColumn(name = "cheklisttemplate_id")
+    @JoinColumn(name = "checklisttemplate_id")
     private ChecklistTemplate checklistTemplate;
 
-    @OneToMany
+    @OneToMany(mappedBy = "ChecklistId")
     private List<ChecklistItem> checklistItems;
 
     public int getId() {
@@ -66,11 +66,11 @@ public class Checklist {
         this.checklistTemplate = checklistTemplate;
     }
 
-    public List<ChecklistItem> getChecklistItems() {
+    public List<ChecklistItem> getInChecklistItems() {
         return checklistItems;
     }
 
-    public void setChecklistItems(List<ChecklistItem> checklistItems) {
+    public void setInChecklistItems(List<ChecklistItem> checklistItems) {
         this.checklistItems = checklistItems;
     }
 

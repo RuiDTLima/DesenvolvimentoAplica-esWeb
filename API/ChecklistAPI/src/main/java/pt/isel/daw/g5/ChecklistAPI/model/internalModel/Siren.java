@@ -8,7 +8,7 @@ public class Siren<T> {
     private T properties;
     private Entity[] entities;
     private Action[] actions;
-    private Link[] links;
+    private SirenLink[] sirenLinks;
 
     public String[] get_class() {
         return _class;
@@ -42,19 +42,19 @@ public class Siren<T> {
         this.actions = actions;
     }
 
-    public Link[] getLinks() {
-        return links;
+    public SirenLink[] getCollectionLinks() {
+        return sirenLinks;
     }
 
-    public void setLinks(Link[] links) {
-        this.links = links;
+    public void setCollectionLinks(SirenLink[] collectionLinks) {
+        this.sirenLinks = collectionLinks;
     }
 
-    public Siren(String[] _class, T properties, Entity[] entities, Action[] actions, Link[] links) {
+    public Siren(String[] _class, T properties, Entity[] entities, Action[] actions, SirenLink[] sirenLinks) {
         this._class = _class;
         this.properties = properties;
         this.entities = entities;
         this.actions = actions;
-        this.links = links;
+        this.sirenLinks = sirenLinks;
     }
 }
