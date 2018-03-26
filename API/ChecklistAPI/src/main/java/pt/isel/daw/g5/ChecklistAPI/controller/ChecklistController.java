@@ -8,11 +8,14 @@ import pt.isel.daw.g5.ChecklistAPI.exceptions.InvalidStateException;
 import pt.isel.daw.g5.ChecklistAPI.model.inputModel.Checklist;
 import pt.isel.daw.g5.ChecklistAPI.model.inputModel.ChecklistItem;
 import pt.isel.daw.g5.ChecklistAPI.model.inputModel.User;
+import pt.isel.daw.g5.ChecklistAPI.model.outputModel.OutChecklist;
 import pt.isel.daw.g5.ChecklistAPI.model.outputModel.OutChecklistItem;
 import pt.isel.daw.g5.ChecklistAPI.model.outputModel.Checklists;
 import pt.isel.daw.g5.ChecklistAPI.repository.ChecklistItemRepository;
 import pt.isel.daw.g5.ChecklistAPI.repository.ChecklistRepository;
 import pt.isel.daw.g5.ChecklistAPI.repository.UserRepository;
+
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -31,7 +34,7 @@ public class ChecklistController {
 
     @GetMapping
     public Checklists getChecklists(@RequestParam(value = "page", defaultValue = "1") int page){
-        /*Page<Checklist> checklistPage = checklistRepository.findAll(PageRequest.of(page - 1, PAGE_SIZE));
+        /*Page<OutChecklist> checklistPage = checklistRepository.findAll(PageRequest.of(page - 1, PAGE_SIZE));
         return new Checklists(checklistPage);*/
         throw new InvalidStateException("invalid state");
     }
@@ -42,6 +45,39 @@ public class ChecklistController {
         checklist.setUsername(rui.get()); //TODO verificar autenticação
         checklistRepository.save(checklist);
         return "Ok";
+    }
+
+    @GetMapping("/{checklist_id}")
+    public OutChecklist getChecklist(@PathVariable("checklist_id") int checklistId){
+        Optional<Checklist> checklistOptional = checklistRepository.findById(checklistId);
+        Checklist checklist = checklistOptional.get();
+        return new OutChecklist(checklist);
+    }
+
+    @PostMapping("/{checklist_id}/checklistitems")
+    public String addChecklistItem(
+            @PathVariable("checklist_id") int checklistId,
+            @RequestBody ChecklistItem checklistItem){
+        if(!checklistRepository.existsById(checklistId))
+            return "ERROR"; // TODO
+        checklistItemRepository.save(checklistItem);
+        return "OK";
+    }
+
+    @DeleteMapping("/{checklist_id}/checklistitems")
+    public String deleteChecklist(@PathVariable("checklist_id") int checklistId){
+        checklistRepository.deleteById(checklistId);
+        return "OK";
+    }
+
+    @PutMapping
+    public String updateChecklist(
+            @PathVariable("checklist_id") int checklistId,
+            @RequestBody Checklist checklist){
+        if(!checklistRepository.existsById(checklistId))
+            return "ERROR"; // TODO
+        checklistRepository.save(checklist);
+        return "OK";
     }
 
     @GetMapping("/{checklist_id}/checklistitems/{checklistitem_id}")

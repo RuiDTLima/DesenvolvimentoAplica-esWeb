@@ -46,9 +46,9 @@ public class Checklists {
     private Data[] dataFromChecklist(Checklist checklist){
         return new Data[]{
                 new Data("name", checklist.getName(), "Name"),
-                new Data("checklist_id", Integer.toString(checklist.getId()), "Checklist Id"),
+                new Data("checklist_id", Integer.toString(checklist.getId()), "OutChecklist Id"),
                 new Data("completion_date", checklist.getCompletionDate().toString(), "Completion Date"),
-                new Data("checklisttemplate_id", checklist.getChecklistTemplate() == null? "" : Integer.toString(checklist.getChecklistTemplate().getId()), "Checklist Template Id  ")};
+                new Data("checklisttemplate_id", checklist.getChecklistTemplate() == null? "" : Integer.toString(checklist.getChecklistTemplate().getId()), "OutChecklist Template Id  ")};
     }
 
     private CollectionLink[] produceItemLinks(Checklist checklist){

@@ -39,15 +39,15 @@ public class OutChecklistTemplate {
     }
 
     private Action produceDelete(ChecklistTemplate checklistTemplate) {
-        return new Action("delete-checklisttemplate", "Delete Checklist Template", "DELETE", "/checklisttemplates/" + checklistTemplate.getId(), "application/x-www-form-urlencoded", produceDeleteFields(checklistTemplate));
+        return new Action("delete-checklisttemplate", "Delete OutChecklist Template", "DELETE", "/checklisttemplates/" + checklistTemplate.getId(), "application/x-www-form-urlencoded", produceDeleteFields(checklistTemplate));
     }
 
     private Action producePut(ChecklistTemplate checklistTemplate) {
-        return new Action("update-checklisttemplate", "Update Checklist Template", "PUT", "/checklisttemplates/" + checklistTemplate.getId(), "application/json", producePutFields(checklistTemplate));
+        return new Action("update-checklisttemplate", "Update OutChecklist Template", "PUT", "/checklisttemplates/" + checklistTemplate.getId(), "application/json", producePutFields(checklistTemplate));
     }
 
     private Action producePostChecklist(ChecklistTemplate checklistTemplate) {
-        return new Action("create-checklist", "Create Checklist", "POST", "/checklists", "application/json", producePostChecklistFields(checklistTemplate));
+        return new Action("create-checklist", "Create OutChecklist", "POST", "/checklists", "application/json", producePostChecklistFields(checklistTemplate));
     }
 
     private Field[] producePostTemplateItemFields(ChecklistTemplate checklistTemplate) {
@@ -69,7 +69,7 @@ public class OutChecklistTemplate {
     }
 
     private Field[] producePostChecklistFields(ChecklistTemplate checklistTemplate) {
-        Field checklisttemplate_id = new Field("checklisttemplate_id", "hidden", Integer.toString(checklistTemplate.getId()), "Checklist Id");
+        Field checklisttemplate_id = new Field("checklisttemplate_id", "hidden", Integer.toString(checklistTemplate.getId()), "OutChecklist Id");
         Field name = new Field("name", "text", "Name");
         Field completion_date = new Field("completion_date", "text", "Completion Date");
         return new Field[]{checklisttemplate_id, name, completion_date};
