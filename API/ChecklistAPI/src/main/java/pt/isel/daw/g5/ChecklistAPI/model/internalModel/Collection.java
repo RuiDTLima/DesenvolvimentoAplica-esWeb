@@ -4,7 +4,7 @@ public class Collection {
     private String version;
     private String href;
     private Item[] items;
-    private CollectionLink[] collectionLinks;
+    private CollectionLink[] links;
 
     public String getVersion() {
         return version;
@@ -31,17 +31,17 @@ public class Collection {
     }
 
     public CollectionLink[] getCollectionLinks() {
-        return collectionLinks;
+        return links;
     }
 
     public void setCollectionLinks(CollectionLink[] collectionLinks) {
-        this.collectionLinks = collectionLinks;
+        this.links = collectionLinks;
     }
 
     public Collection(String version, String href, Item[] items, CollectionLink[] collectionLinks) {
         this.version = version;
         this.href = href;
         this.items = items;
-        this.collectionLinks = collectionLinks;
+        this.links = collectionLinks;
     }
 }

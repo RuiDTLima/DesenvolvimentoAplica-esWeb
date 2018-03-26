@@ -21,4 +21,20 @@ public class ErrorHandler extends ResponseEntityExceptionHandler {
         //return invalidState;
         return new ResponseEntity<>(invalidState, HttpStatus.BAD_REQUEST);
     }
+
+//    @ExceptionHandler(.class)
+//    public ResponseEntity<InvalidState> noAuthentication(IllegalArgumentException ex){
+//        InvalidParams invalidUsername = new InvalidParams("username", "username was not provided or is not valid", "finished");
+//        InvalidParams invalidPwd = new InvalidParams("password", "password was not provided or is not valid", "finished");
+//        InvalidState errorDetails = new InvalidState(
+//                "/authentication-error",
+//                "Authentication Failed",
+//                401,
+//                "The username or password were not provided or are invalid.",
+//                "/checklists/1/checklistitems/3", new InvalidParams[]{invalidUsername, invalidPwd});
+//        //return invalidState;
+//        return new ResponseEntity<>(errorDetails, HttpStatus.UNAUTHORIZED);
+//    }
+
+    //TODO error at the top or verify at all endpoints and throw error
 }

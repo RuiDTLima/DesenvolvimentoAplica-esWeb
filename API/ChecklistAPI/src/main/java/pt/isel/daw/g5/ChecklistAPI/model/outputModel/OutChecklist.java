@@ -17,7 +17,7 @@ public class OutChecklist {
 
     public OutChecklist(Checklist checklist) {
         siren = new Siren<>(
-                new String[] {},
+                new String[] {"checklist"},
                 checklist,
                 produceEntities(checklist),
                 produceActions(checklist),
@@ -80,7 +80,7 @@ public class OutChecklist {
                 "/checklists/" + checklist.getId(),
                 "application/x-www-form-urlencoded",
                 new Field[] {
-                        new Field("checklist_id", "hidden", "" + checklist.getId())
+                        new Field("checklist_id", "hidden", Integer.toString(checklist.getId()))
                 }
         );
     }

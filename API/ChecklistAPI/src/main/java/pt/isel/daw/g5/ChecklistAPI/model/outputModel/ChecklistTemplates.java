@@ -1,7 +1,6 @@
 package pt.isel.daw.g5.ChecklistAPI.model.outputModel;
 
 import org.springframework.data.domain.Page;
-import pt.isel.daw.g5.ChecklistAPI.model.inputModel.Checklist;
 import pt.isel.daw.g5.ChecklistAPI.model.inputModel.ChecklistTemplate;
 import pt.isel.daw.g5.ChecklistAPI.model.internalModel.Collection;
 import pt.isel.daw.g5.ChecklistAPI.model.internalModel.CollectionLink;
