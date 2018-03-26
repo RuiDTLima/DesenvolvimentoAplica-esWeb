@@ -1,6 +1,7 @@
 package pt.isel.daw.g5.ChecklistAPI.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.*;
@@ -8,6 +9,7 @@ import pt.isel.daw.g5.ChecklistAPI.exceptions.InvalidStateException;
 import pt.isel.daw.g5.ChecklistAPI.model.inputModel.Checklist;
 import pt.isel.daw.g5.ChecklistAPI.model.inputModel.ChecklistItem;
 import pt.isel.daw.g5.ChecklistAPI.model.inputModel.User;
+import pt.isel.daw.g5.ChecklistAPI.model.outputModel.ChecklistItems;
 import pt.isel.daw.g5.ChecklistAPI.model.outputModel.OutChecklist;
 import pt.isel.daw.g5.ChecklistAPI.model.outputModel.OutChecklistItem;
 import pt.isel.daw.g5.ChecklistAPI.model.outputModel.Checklists;
@@ -52,6 +54,14 @@ public class ChecklistController {
         Optional<Checklist> checklistOptional = checklistRepository.findById(checklistId);
         Checklist checklist = checklistOptional.get();
         return new OutChecklist(checklist);
+    }
+
+    @GetMapping("/{checklist_id}/checklistitems")
+    public ChecklistItems getChecklistItems(@PathVariable("checklist_id") int checklistId) {
+        if(!checklistRepository.existsById(checklistId)) return null;
+//            throw new ChangeSetPersister.NotFoundException();
+//        Page<OutChecklistItem> checklistItemPage = checklistRepository.findById(checklistId).get().getInChecklistItems();
+        return null;
     }
 
     @PostMapping("/{checklist_id}/checklistitems")
