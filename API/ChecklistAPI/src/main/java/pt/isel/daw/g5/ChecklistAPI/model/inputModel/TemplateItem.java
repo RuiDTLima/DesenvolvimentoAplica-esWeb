@@ -3,7 +3,7 @@ package pt.isel.daw.g5.ChecklistAPI.model.inputModel;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "ChecklistTemplateItem")
+@Table(name = "ChecklisttemplateItem")
 public class TemplateItem {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;

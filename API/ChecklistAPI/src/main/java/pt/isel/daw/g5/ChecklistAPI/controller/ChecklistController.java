@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.*;
+import pt.isel.daw.g5.ChecklistAPI.RequiresAuthentication;
 import pt.isel.daw.g5.ChecklistAPI.exceptions.InvalidStateException;
 import pt.isel.daw.g5.ChecklistAPI.model.databaseModels.DatabaseChecklist;
 import pt.isel.daw.g5.ChecklistAPI.model.errorModel.ProblemJSON;
@@ -24,6 +25,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/checklists")
+@RequiresAuthentication
 public class ChecklistController {
     private static final int PAGE_SIZE = 10;
 
