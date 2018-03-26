@@ -1,9 +1,14 @@
 package pt.isel.daw.g5.ChecklistAPI.model.internalModel;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
 public class Field {
     private String name;
     private String type;
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private String value;
+
     private String title;
 
     public String getName() {
@@ -38,16 +43,16 @@ public class Field {
         this.title = title;
     }
 
+    public Field(String name, String type, String title){
+        this.name = name;
+        this.type = type;
+        this.title = title;
+    }
+
     public Field(String name, String type, String value, String title) {
         this.name = name;
         this.type = type;
         this.value = value;
         this.title = title;
-    }
-
-    public Field(String name, String type, String value){
-        this.name = name;
-        this.type = type;
-        this.value = value;
     }
 }

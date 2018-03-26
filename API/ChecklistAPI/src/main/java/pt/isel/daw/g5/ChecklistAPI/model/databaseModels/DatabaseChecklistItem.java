@@ -1,8 +1,8 @@
-package pt.isel.daw.g5.ChecklistAPI.model.sirenModels;
+package pt.isel.daw.g5.ChecklistAPI.model.databaseModels;
 
 import pt.isel.daw.g5.ChecklistAPI.model.inputModel.ChecklistItem;
 
-public class SirenChecklistItem {
+public class DatabaseChecklistItem {
     private int id;
     private String name;
     private String description;
@@ -40,7 +40,7 @@ public class SirenChecklistItem {
         this.state = state;
     }
 
-    public SirenChecklistItem(ChecklistItem checklistItem){
+    public DatabaseChecklistItem(ChecklistItem checklistItem){
         id = checklistItem.getId();
         name = checklistItem.getName();
         description = checklistItem.getDescription();

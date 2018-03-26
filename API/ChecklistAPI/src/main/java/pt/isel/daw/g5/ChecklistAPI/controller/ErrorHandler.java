@@ -7,26 +7,27 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 import pt.isel.daw.g5.ChecklistAPI.exceptions.InvalidStateException;
-import pt.isel.daw.g5.ChecklistAPI.model.errorModel.InvalidState;
-import pt.isel.daw.g5.ChecklistAPI.model.internalModel.InvalidParams;
+import pt.isel.daw.g5.ChecklistAPI.exceptions.NotAuthenticatedException;
+import pt.isel.daw.g5.ChecklistAPI.model.errorModel.ProblemJSON;
 
 @ControllerAdvice
 @RestController
 public class ErrorHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(InvalidStateException.class)
-    public ResponseEntity<InvalidState> invalidState(IllegalArgumentException ex){
-        InvalidParams invalidParams = new InvalidParams("state", "state must be either 'completed' or 'uncompleted", "finished");
-        InvalidState invalidState = new InvalidState("/validation-error", "Your request parameters didn't validate.", 400, "The state value is not valid", "/checklists/1/checklistitems/3", new InvalidParams[]{invalidParams});
-        //return invalidState;
-        return new ResponseEntity<>(invalidState, HttpStatus.BAD_REQUEST);
+    public ResponseEntity<ProblemJSON> invalidState(InvalidStateException ex){
+        return new ResponseEntity<>(ex.getProblemJSON(), HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(NotAuthenticatedException.class)
+    public ResponseEntity<ProblemJSON> notAuthenticated(NotAuthenticatedException ex){
+        return new ResponseEntity<>(ex.getProblemJSON(), HttpStatus.UNAUTHORIZED);
+    }
 //    @ExceptionHandler(.class)
-//    public ResponseEntity<InvalidState> noAuthentication(IllegalArgumentException ex){
+//    public ResponseEntity<ProblemJSON> noAuthentication(IllegalArgumentException ex){
 //        InvalidParams invalidUsername = new InvalidParams("username", "username was not provided or is not valid", "finished");
 //        InvalidParams invalidPwd = new InvalidParams("password", "password was not provided or is not valid", "finished");
-//        InvalidState errorDetails = new InvalidState(
+//        ProblemJSON errorDetails = new ProblemJSON(
 //                "/authentication-error",
 //                "Authentication Failed",
 //                401,

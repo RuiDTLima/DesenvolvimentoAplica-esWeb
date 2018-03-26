@@ -3,7 +3,7 @@ package pt.isel.daw.g5.ChecklistAPI.model.errorModel;
 import com.fasterxml.jackson.annotation.JsonAlias;
 import pt.isel.daw.g5.ChecklistAPI.model.internalModel.InvalidParams;
 
-public class InvalidState {
+public class ProblemJSON {
     private String type;
     private String title;
     private int status;
@@ -60,7 +60,7 @@ public class InvalidState {
         this.invalid_params = invalid_params;
     }
 
-    public InvalidState(String type, String title, int status, String detail, String instance, InvalidParams[] invalid_params) {
+    public ProblemJSON(String type, String title, int status, String detail, String instance, InvalidParams[] invalid_params) {
         this.type = type;
         this.title = title;
         this.status = status;

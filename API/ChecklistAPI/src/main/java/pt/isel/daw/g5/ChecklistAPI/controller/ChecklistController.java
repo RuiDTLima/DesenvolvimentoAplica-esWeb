@@ -5,19 +5,21 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.*;
 import pt.isel.daw.g5.ChecklistAPI.exceptions.InvalidStateException;
+import pt.isel.daw.g5.ChecklistAPI.model.databaseModels.DatabaseChecklist;
+import pt.isel.daw.g5.ChecklistAPI.model.errorModel.ProblemJSON;
 import pt.isel.daw.g5.ChecklistAPI.model.inputModel.Checklist;
 import pt.isel.daw.g5.ChecklistAPI.model.inputModel.ChecklistItem;
+import pt.isel.daw.g5.ChecklistAPI.model.inputModel.ChecklistTemplate;
 import pt.isel.daw.g5.ChecklistAPI.model.inputModel.User;
+import pt.isel.daw.g5.ChecklistAPI.model.internalModel.InvalidParams;
 import pt.isel.daw.g5.ChecklistAPI.model.outputModel.ChecklistItems;
 import pt.isel.daw.g5.ChecklistAPI.model.outputModel.OutChecklist;
 import pt.isel.daw.g5.ChecklistAPI.model.outputModel.OutChecklistItem;
 import pt.isel.daw.g5.ChecklistAPI.model.outputModel.OutChecklists;
 import pt.isel.daw.g5.ChecklistAPI.repository.ChecklistItemRepository;
 import pt.isel.daw.g5.ChecklistAPI.repository.ChecklistRepository;
+import pt.isel.daw.g5.ChecklistAPI.repository.ChecklistTemplateRepository;
 import pt.isel.daw.g5.ChecklistAPI.repository.UserRepository;
-
-import java.util.Iterator;
-import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -34,16 +36,28 @@ public class ChecklistController {
     @Autowired
     private ChecklistItemRepository checklistItemRepository;
 
+    @Autowired
+    private ChecklistTemplateRepository checklistTemplateRepository;
+
     @GetMapping
-    public OutChecklists getChecklists(@RequestParam(value = "page", defaultValue = "1") int page){
+    public OutChecklists getChecklists(@RequestParam(value = "page", defaultValue = "0") int page){
         Page<Checklist> checklistPage = checklistRepository.findAll(PageRequest.of(page, PAGE_SIZE));
         return new OutChecklists(checklistPage);
         //throw new InvalidStateException("invalid state");
     }
 
     @PostMapping
-    public String postChecklist(@RequestBody Checklist checklist){
+    public String postChecklist(@RequestBody DatabaseChecklist databaseChecklist) throws Exception {
         Optional<User> rui = userRepository.findById("Rui");
+        Checklist checklist = new Checklist(databaseChecklist.getName(), databaseChecklist.getCompletionDate());
+
+        if (databaseChecklist.getChecklisttemplate_id() != 0){
+            Optional<ChecklistTemplate> checklistTemplate = checklistTemplateRepository.findById(databaseChecklist.getChecklisttemplate_id());
+            if (!checklistTemplate.isPresent())
+                throw new Exception();
+            checklist.setChecklistTemplate(checklistTemplate.get());
+        }
+
         checklist.setUsername(rui.get()); //TODO verificar autenticação
         checklistRepository.save(checklist);
         return "Ok";
@@ -95,23 +109,18 @@ public class ChecklistController {
     public OutChecklistItem getChecklistItem(@PathVariable("checklist_id") int checklist_id,
                                              @PathVariable("checklistitem_id") int checklistitem_id){
 
-        Optional<Checklist> checklist = checklistRepository.findById(checklist_id);
-        Iterator<ChecklistItem> iterator = checklist.get().getInChecklistItems().iterator();
-        while (iterator.hasNext()){
-            ChecklistItem nextItem = iterator.next();
-            if (nextItem.getId() == checklistitem_id){
+        /*Optional<Checklist> checklist = checklistRepository.findById(checklist_id);
+        for (ChecklistItem nextItem : checklist.get().getInChecklistItems()) {
+            if (nextItem.getId() == checklistitem_id) {
                 OutChecklistItem outChecklistItem = new OutChecklistItem(nextItem);
                 return outChecklistItem;
             }
         }
-        //throw new Exception();
-        return null;
-        /*for (ChecklistItem checklistItem : iterator.) {
+        return null;*/
+        InvalidParams invalidParams = new InvalidParams("state", "state must be either 'completed' or 'uncompleted", "finished");
+        ProblemJSON problemJSON = new ProblemJSON("/validation-error", "Your request parameters didn't validate.", 400, "The state value is not valid", "/checklists/1/checklistitems/3", new InvalidParams[]{invalidParams});
 
-        }
-        Optional<ChecklistItem> checklistItem = checklistItemRepository.findById(checklistitem_id);
-        OutChecklistItem outChecklistItem = new OutChecklistItem(checklistItem);
-        return outChecklistItem;*/
+        throw new InvalidStateException(problemJSON);
     }
 
     @DeleteMapping("/{checklist_id}/checklistitems/{checklistitem_id}")

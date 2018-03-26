@@ -2,7 +2,7 @@ package pt.isel.daw.g5.ChecklistAPI.exceptions;
 
 import pt.isel.daw.g5.ChecklistAPI.model.errorModel.ProblemJSON;
 
-public class InvalidStateException extends RuntimeException {
+public class NotAuthenticatedException extends RuntimeException {
     private ProblemJSON problemJSON;
 
     public ProblemJSON getProblemJSON() {
@@ -13,7 +13,7 @@ public class InvalidStateException extends RuntimeException {
         this.problemJSON = problemJSON;
     }
 
-    public InvalidStateException(ProblemJSON problemJSON){
+    public NotAuthenticatedException(ProblemJSON problemJSON){
         this.problemJSON = problemJSON;
     }
 }

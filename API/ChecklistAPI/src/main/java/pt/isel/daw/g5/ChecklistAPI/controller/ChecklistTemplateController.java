@@ -13,7 +13,6 @@ import pt.isel.daw.g5.ChecklistAPI.model.outputModel.OutTemplateItem;
 import pt.isel.daw.g5.ChecklistAPI.repository.ChecklistTemplateRepository;
 import pt.isel.daw.g5.ChecklistAPI.repository.TemplateItemRepository;
 import pt.isel.daw.g5.ChecklistAPI.repository.UserRepository;
-
 import java.util.Optional;
 
 @RestController
@@ -34,7 +33,6 @@ public class ChecklistTemplateController {
     public ChecklistTemplates getChecklistTemplates(@RequestParam(value = "page", defaultValue = "1") int page){
         Page<ChecklistTemplate> checklistTemplatePage = checklistTemplateRepository.findAll(PageRequest.of(page - 1, PAGE_SIZE));
         return new ChecklistTemplates(checklistTemplatePage);
-
     }
 
     @PostMapping

@@ -1,27 +1,63 @@
 package pt.isel.daw.g5.ChecklistAPI.model.outputModel;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
 import pt.isel.daw.g5.ChecklistAPI.model.inputModel.Checklist;
 import pt.isel.daw.g5.ChecklistAPI.model.internalModel.*;
 
 public class OutChecklist {
-    private Siren<Checklist> siren;
+    @JsonAlias("class")
+    private String[] _class;
+    private Checklist properties;
+    private Entity[] entities;
+    private Action[] actions;
+    private SirenLink[] sirenLinks;
 
-    public Siren<Checklist> getSiren() {
-        return siren;
+    public String[] get_class() {
+        return _class;
     }
 
-    public void setSiren(Siren<Checklist> siren) {
-        this.siren = siren;
+    public void set_class(String[] _class) {
+        this._class = _class;
+    }
+
+    public Checklist getProperties() {
+        return properties;
+    }
+
+    public void setProperties(Checklist properties) {
+        this.properties = properties;
+    }
+
+    public Entity[] getEntities() {
+        return entities;
+    }
+
+    public void setEntities(Entity[] entities) {
+        this.entities = entities;
+    }
+
+    public Action[] getActions() {
+        return actions;
+    }
+
+    public void setActions(Action[] actions) {
+        this.actions = actions;
+    }
+
+    public SirenLink[] getSirenLinks() {
+        return sirenLinks;
+    }
+
+    public void setSirenLinks(SirenLink[] sirenLinks) {
+        this.sirenLinks = sirenLinks;
     }
 
     public OutChecklist(Checklist checklist) {
-        siren = new Siren<>(
-                    new String[] {"checklist"},
-                    checklist,
-                    produceEntities(checklist),
-                    produceActions(checklist),
-                    produceLinks(checklist)
-                );
+        _class = new String[] {"checklist"};
+        properties = checklist;
+        entities = produceEntities(checklist);
+        actions = produceActions(checklist);
+        sirenLinks = produceLinks(checklist);
     }
 
     private Entity[] produceEntities(Checklist checklist) {

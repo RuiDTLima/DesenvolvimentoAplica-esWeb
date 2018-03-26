@@ -1,27 +1,63 @@
 package pt.isel.daw.g5.ChecklistAPI.model.outputModel;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
 import pt.isel.daw.g5.ChecklistAPI.model.inputModel.TemplateItem;
 import pt.isel.daw.g5.ChecklistAPI.model.internalModel.*;
 
 public class OutTemplateItem {
-    private Siren<TemplateItem> siren;
+    @JsonAlias("class")
+    private String[] _class;
+    private TemplateItem properties;
+    private Entity[] entities;
+    private Action[] actions;
+    private SirenLink[] sirenLinks;
 
-    public Siren<TemplateItem> getSiren() {
-        return siren;
+    public String[] get_class() {
+        return _class;
     }
 
-    public void setSiren(Siren<TemplateItem> siren) {
-        this.siren = siren;
+    public void set_class(String[] _class) {
+        this._class = _class;
+    }
+
+    public TemplateItem getProperties() {
+        return properties;
+    }
+
+    public void setProperties(TemplateItem properties) {
+        this.properties = properties;
+    }
+
+    public Entity[] getEntities() {
+        return entities;
+    }
+
+    public void setEntities(Entity[] entities) {
+        this.entities = entities;
+    }
+
+    public Action[] getActions() {
+        return actions;
+    }
+
+    public void setActions(Action[] actions) {
+        this.actions = actions;
+    }
+
+    public SirenLink[] getSirenLinks() {
+        return sirenLinks;
+    }
+
+    public void setSirenLinks(SirenLink[] sirenLinks) {
+        this.sirenLinks = sirenLinks;
     }
 
     public OutTemplateItem(TemplateItem templateItem){
-        siren = new Siren<>(
-                    new String[] {},
-                    templateItem,
-                    produceEntities(templateItem),
-                    produceActions(templateItem),
-                    produceLinks(templateItem)
-                );
+        _class = new String[] {};
+        properties = templateItem;
+        entities = produceEntities(templateItem);
+        actions = produceActions(templateItem);
+        sirenLinks = produceLinks(templateItem);
     }
 
     private Entity[] produceEntities(TemplateItem templateItem) {

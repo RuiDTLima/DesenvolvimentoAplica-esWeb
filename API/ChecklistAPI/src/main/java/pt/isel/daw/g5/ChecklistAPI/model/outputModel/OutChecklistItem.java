@@ -1,24 +1,64 @@
 package pt.isel.daw.g5.ChecklistAPI.model.outputModel;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
 import pt.isel.daw.g5.ChecklistAPI.model.inputModel.ChecklistItem;
 import pt.isel.daw.g5.ChecklistAPI.model.internalModel.*;
-import pt.isel.daw.g5.ChecklistAPI.model.sirenModels.SirenChecklistItem;
+import pt.isel.daw.g5.ChecklistAPI.model.databaseModels.DatabaseChecklistItem;
 
 public class OutChecklistItem {
+    @JsonAlias({"class", "ola"})
+    private String[] _class;
+    private DatabaseChecklistItem properties;
+    private Entity[] entities;
+    private Action[] actions;
+    private SirenLink[] sirenLinks;
 
-    private Siren<SirenChecklistItem> siren;
-
-    public Siren<SirenChecklistItem> getSiren() {
-        return siren;
+    public String[] get_class() {
+        return _class;
     }
 
-    public void setSiren(Siren<SirenChecklistItem> siren) {
-        this.siren = siren;
+    public void set_class(String[] _class) {
+        this._class = _class;
     }
 
-    public OutChecklistItem(ChecklistItem checklistItem) {
-        //ChecklistItem checklistItem = optionalChecklistItem.get();
-        siren = new Siren<>(new String[]{"checklistitem"}, new SirenChecklistItem(checklistItem), produceEntity(checklistItem), produceActions(checklistItem), produceLinks(checklistItem));
+    public DatabaseChecklistItem getProperties() {
+        return properties;
+    }
+
+    public void setProperties(DatabaseChecklistItem properties) {
+        this.properties = properties;
+    }
+
+    public Entity[] getEntities() {
+        return entities;
+    }
+
+    public void setEntities(Entity[] entities) {
+        this.entities = entities;
+    }
+
+    public Action[] getActions() {
+        return actions;
+    }
+
+    public void setActions(Action[] actions) {
+        this.actions = actions;
+    }
+
+    public SirenLink[] getSirenLinks() {
+        return sirenLinks;
+    }
+
+    public void setSirenLinks(SirenLink[] sirenLinks) {
+        this.sirenLinks = sirenLinks;
+    }
+
+    public OutChecklistItem(ChecklistItem checklistItem){
+        _class = new String[]{"checklistitem"};
+        properties = new DatabaseChecklistItem(checklistItem);
+        entities = produceEntity(checklistItem);
+        actions = produceActions(checklistItem);
+        sirenLinks = produceLinks(checklistItem);
     }
 
     private Entity[] produceEntity(ChecklistItem checklistItem) {

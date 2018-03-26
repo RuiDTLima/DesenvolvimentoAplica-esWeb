@@ -1,25 +1,66 @@
 package pt.isel.daw.g5.ChecklistAPI.model.outputModel;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
+import pt.isel.daw.g5.ChecklistAPI.model.databaseModels.DatabaseChecklistTemplate;
 import pt.isel.daw.g5.ChecklistAPI.model.inputModel.ChecklistTemplate;
 import pt.isel.daw.g5.ChecklistAPI.model.internalModel.*;
-
-import javax.persistence.criteria.CriteriaBuilder;
 import java.util.Optional;
 
 public class OutChecklistTemplate {
-    private Siren<ChecklistTemplate> siren;
+    @JsonAlias("class")
+    private String[] _class;
+    private DatabaseChecklistTemplate properties;
+    private Entity[] entities;
+    private Action[] actions;
+    private SirenLink[] sirenLinks;
 
-    public Siren<ChecklistTemplate> getSiren() {
-        return siren;
+    public String[] get_class() {
+        return _class;
     }
 
-    public void setSiren(Siren<ChecklistTemplate> siren) {
-        this.siren = siren;
+    public void set_class(String[] _class) {
+        this._class = _class;
+    }
+
+    public DatabaseChecklistTemplate getProperties() {
+        return properties;
+    }
+
+    public void setProperties(DatabaseChecklistTemplate properties) {
+        this.properties = properties;
+    }
+
+    public Entity[] getEntities() {
+        return entities;
+    }
+
+    public void setEntities(Entity[] entities) {
+        this.entities = entities;
+    }
+
+    public Action[] getActions() {
+        return actions;
+    }
+
+    public void setActions(Action[] actions) {
+        this.actions = actions;
+    }
+
+    public SirenLink[] getSirenLinks() {
+        return sirenLinks;
+    }
+
+    public void setSirenLinks(SirenLink[] sirenLinks) {
+        this.sirenLinks = sirenLinks;
     }
 
     public OutChecklistTemplate(Optional<ChecklistTemplate> optionalChecklistTemplate) {
         ChecklistTemplate checklistTemplate = optionalChecklistTemplate.get();
-        siren = new Siren<>(new String[]{"checklisttemplate"}, checklistTemplate, produceEntity(checklistTemplate), produceActions(checklistTemplate), produceLinks(checklistTemplate));
+        _class = new String[]{"checklisttemplate"};
+        properties = new DatabaseChecklistTemplate(checklistTemplate);
+        entities = produceEntity(checklistTemplate);
+        actions = produceActions(checklistTemplate);
+        sirenLinks = produceLinks(checklistTemplate);
     }
 
     private Entity[] produceEntity(ChecklistTemplate checklistTemplate) {
