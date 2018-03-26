@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-public class Checklists {
+public class OutChecklists {
     private Collection collection;
 
     public Collection getCollection() {
@@ -22,10 +22,10 @@ public class Checklists {
         this.collection = collection;
     }
 
-    public Checklists(Page<Checklist> checklistPage){
+    public OutChecklists(Page<Checklist> checklistPage){
         List<Item> items =
                 StreamSupport.stream(checklistPage.spliterator(), false)
-                .map(cl -> itemFromChecklist(cl))
+                .map(this::itemFromChecklist)
                 .collect(Collectors.toList());
 
         String pageHref = "/checklists";

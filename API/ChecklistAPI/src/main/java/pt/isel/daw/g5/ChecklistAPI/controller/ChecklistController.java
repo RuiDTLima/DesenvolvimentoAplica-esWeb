@@ -1,8 +1,6 @@
 package pt.isel.daw.g5.ChecklistAPI.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.*;
 import pt.isel.daw.g5.ChecklistAPI.exceptions.InvalidStateException;
 import pt.isel.daw.g5.ChecklistAPI.model.inputModel.Checklist;
@@ -10,12 +8,11 @@ import pt.isel.daw.g5.ChecklistAPI.model.inputModel.ChecklistItem;
 import pt.isel.daw.g5.ChecklistAPI.model.inputModel.User;
 import pt.isel.daw.g5.ChecklistAPI.model.outputModel.OutChecklist;
 import pt.isel.daw.g5.ChecklistAPI.model.outputModel.OutChecklistItem;
-import pt.isel.daw.g5.ChecklistAPI.model.outputModel.Checklists;
+import pt.isel.daw.g5.ChecklistAPI.model.outputModel.OutChecklists;
 import pt.isel.daw.g5.ChecklistAPI.repository.ChecklistItemRepository;
 import pt.isel.daw.g5.ChecklistAPI.repository.ChecklistRepository;
 import pt.isel.daw.g5.ChecklistAPI.repository.UserRepository;
 
-import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -33,9 +30,9 @@ public class ChecklistController {
     private ChecklistItemRepository checklistItemRepository;
 
     @GetMapping
-    public Checklists getChecklists(@RequestParam(value = "page", defaultValue = "1") int page){
+    public OutChecklists getChecklists(@RequestParam(value = "page", defaultValue = "1") int page){
         /*Page<OutChecklist> checklistPage = checklistRepository.findAll(PageRequest.of(page - 1, PAGE_SIZE));
-        return new Checklists(checklistPage);*/
+        return new OutChecklists(checklistPage);*/
         throw new InvalidStateException("invalid state");
     }
 
@@ -57,7 +54,8 @@ public class ChecklistController {
     @PostMapping("/{checklist_id}/checklistitems")
     public String addChecklistItem(
             @PathVariable("checklist_id") int checklistId,
-            @RequestBody ChecklistItem checklistItem){
+            @RequestBody ChecklistItem checklistItem
+    ){
         if(!checklistRepository.existsById(checklistId))
             return "ERROR"; // TODO
         checklistItemRepository.save(checklistItem);

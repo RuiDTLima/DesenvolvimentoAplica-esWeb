@@ -45,9 +45,9 @@ public class Field {
         this.title = title;
     }
 
-    public Field(String name, String type, String title){
+    public Field(String name, String type, String value){
         this.name = name;
         this.type = type;
-        this.title = title;
+        this.value = value;
     }
 }
