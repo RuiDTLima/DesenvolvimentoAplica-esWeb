@@ -31,7 +31,7 @@ public class OutChecklists {
         String pageHref = "/checklists";
         collection = new Collection(
                 "1.0",
-                "/checklists?page=" + (checklistPage.getNumber() + 1),
+                "/checklists?page=" + (checklistPage.getNumber()),
                 items.toArray(new Item[items.size()]),
                 CollectionLink.produceLinks(checklistPage, pageHref));
     }
@@ -48,7 +48,7 @@ public class OutChecklists {
                 new Data("name", checklist.getName(), "Name"),
                 new Data("checklist_id", Integer.toString(checklist.getId()), "OutChecklist Id"),
                 new Data("completion_date", checklist.getCompletionDate().toString(), "Completion Date"),
-                new Data("checklisttemplate_id", checklist.getChecklistTemplate() == null? "" : Integer.toString(checklist.getChecklistTemplate().getId()), "OutChecklist Template Id  ")};
+                new Data("checklisttemplate_id", checklist.getChecklistTemplate() == null ? "" : Integer.toString(checklist.getChecklistTemplate().getId()), "OutChecklist Template Id")};
     }
 
     private CollectionLink[] produceItemLinks(Checklist checklist){

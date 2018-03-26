@@ -16,6 +16,8 @@ import pt.isel.daw.g5.ChecklistAPI.repository.ChecklistItemRepository;
 import pt.isel.daw.g5.ChecklistAPI.repository.ChecklistRepository;
 import pt.isel.daw.g5.ChecklistAPI.repository.UserRepository;
 
+import java.util.Iterator;
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -34,9 +36,9 @@ public class ChecklistController {
 
     @GetMapping
     public OutChecklists getChecklists(@RequestParam(value = "page", defaultValue = "1") int page){
-        /*Page<Checklist> checklistPage = checklistRepository.findAll(PageRequest.of(page - 1, PAGE_SIZE));
-        return new OutChecklists(checklistPage);*/
-        throw new InvalidStateException("invalid state");
+        Page<Checklist> checklistPage = checklistRepository.findAll(PageRequest.of(page, PAGE_SIZE));
+        return new OutChecklists(checklistPage);
+        //throw new InvalidStateException("invalid state");
     }
 
     @PostMapping
@@ -93,9 +95,23 @@ public class ChecklistController {
     public OutChecklistItem getChecklistItem(@PathVariable("checklist_id") int checklist_id,
                                              @PathVariable("checklistitem_id") int checklistitem_id){
 
+        Optional<Checklist> checklist = checklistRepository.findById(checklist_id);
+        Iterator<ChecklistItem> iterator = checklist.get().getInChecklistItems().iterator();
+        while (iterator.hasNext()){
+            ChecklistItem nextItem = iterator.next();
+            if (nextItem.getId() == checklistitem_id){
+                OutChecklistItem outChecklistItem = new OutChecklistItem(nextItem);
+                return outChecklistItem;
+            }
+        }
+        //throw new Exception();
+        return null;
+        /*for (ChecklistItem checklistItem : iterator.) {
+
+        }
         Optional<ChecklistItem> checklistItem = checklistItemRepository.findById(checklistitem_id);
         OutChecklistItem outChecklistItem = new OutChecklistItem(checklistItem);
-        return outChecklistItem;
+        return outChecklistItem;*/
     }
 
     @DeleteMapping("/{checklist_id}/checklistitems/{checklistitem_id}")

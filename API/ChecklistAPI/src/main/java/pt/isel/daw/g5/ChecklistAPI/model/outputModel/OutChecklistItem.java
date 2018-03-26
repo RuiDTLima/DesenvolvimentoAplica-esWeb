@@ -2,22 +2,23 @@ package pt.isel.daw.g5.ChecklistAPI.model.outputModel;
 
 import pt.isel.daw.g5.ChecklistAPI.model.inputModel.ChecklistItem;
 import pt.isel.daw.g5.ChecklistAPI.model.internalModel.*;
-import java.util.Optional;
+import pt.isel.daw.g5.ChecklistAPI.model.sirenModels.SirenChecklistItem;
 
 public class OutChecklistItem {
-    private Siren<ChecklistItem> siren;
 
-    public Siren<ChecklistItem> getSiren() {
+    private Siren<SirenChecklistItem> siren;
+
+    public Siren<SirenChecklistItem> getSiren() {
         return siren;
     }
 
-    public void setSiren(Siren<ChecklistItem> siren) {
+    public void setSiren(Siren<SirenChecklistItem> siren) {
         this.siren = siren;
     }
 
-    public OutChecklistItem(Optional<ChecklistItem> optionalChecklistItem) {
-        ChecklistItem checklistItem = optionalChecklistItem.get();
-        siren = new Siren<>(new String[]{"checklistitem"}, checklistItem, produceEntity(checklistItem), produceActions(checklistItem), produceLinks(checklistItem));
+    public OutChecklistItem(ChecklistItem checklistItem) {
+        //ChecklistItem checklistItem = optionalChecklistItem.get();
+        siren = new Siren<>(new String[]{"checklistitem"}, new SirenChecklistItem(checklistItem), produceEntity(checklistItem), produceActions(checklistItem), produceLinks(checklistItem));
     }
 
     private Entity[] produceEntity(ChecklistItem checklistItem) {

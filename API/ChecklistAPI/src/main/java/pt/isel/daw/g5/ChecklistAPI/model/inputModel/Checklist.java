@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
+@Table(name = "Checklist")
 public class Checklist {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -2,9 +2,10 @@ package pt.isel.daw.g5.ChecklistAPI.model.inputModel;
 
 import javax.persistence.*;
 import java.util.List;
+import java.util.Set;
 
 @Entity
-@Table(name = "ChecklistTemplate")
+@Table(name = "Checklisttemplate")
 public class ChecklistTemplate {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -12,13 +13,14 @@ public class ChecklistTemplate {
     private String name;
 
     @ManyToOne
+    @JoinColumn(name = "Username")
     private User userName;
 
     @OneToMany(mappedBy = "checklistTemplate")
     private List<TemplateItem> templateItems;
 
-    @OneToMany(mappedBy = "checklistTemplate")
-    private List<Checklist> checklists;
+    @OneToMany(mappedBy = "checklistTemplate", cascade = CascadeType.ALL)
+    private Set<Checklist> checklists;
 
     public int getId() {
         return id;
@@ -52,11 +54,11 @@ public class ChecklistTemplate {
         this.templateItems = templateItems;
     }
 
-    public List<Checklist> getChecklists() {
+    public Set<Checklist> getChecklists() {
         return checklists;
     }
 
-    public void setChecklists(List<Checklist> checklists) {
+    public void setChecklists(Set<Checklist> checklists) {
         this.checklists = checklists;
     }
 

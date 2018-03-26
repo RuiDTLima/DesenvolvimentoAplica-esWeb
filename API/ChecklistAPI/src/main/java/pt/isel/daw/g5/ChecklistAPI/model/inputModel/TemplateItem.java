@@ -3,6 +3,7 @@ package pt.isel.daw.g5.ChecklistAPI.model.inputModel;
 import javax.persistence.*;
 
 @Entity
+@Table(name = "ChecklistTemplateItem")
 public class TemplateItem {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
@@ -11,6 +12,7 @@ public class TemplateItem {
     private String description;
 
     @ManyToOne
+    @JoinColumn(name = "ChecklistTemplate_id")
     private ChecklistTemplate checklistTemplate;
 
     public int getId() {

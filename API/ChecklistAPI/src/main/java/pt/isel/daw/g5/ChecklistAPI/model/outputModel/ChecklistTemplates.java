@@ -6,7 +6,6 @@ import pt.isel.daw.g5.ChecklistAPI.model.internalModel.Collection;
 import pt.isel.daw.g5.ChecklistAPI.model.internalModel.CollectionLink;
 import pt.isel.daw.g5.ChecklistAPI.model.internalModel.Data;
 import pt.isel.daw.g5.ChecklistAPI.model.internalModel.Item;
-
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;

@@ -1,6 +1,5 @@
 package pt.isel.daw.g5.ChecklistAPI.model.outputModel;
 
-import com.fasterxml.jackson.annotation.JsonAlias;
 import pt.isel.daw.g5.ChecklistAPI.model.inputModel.Checklist;
 import pt.isel.daw.g5.ChecklistAPI.model.internalModel.*;
 
@@ -17,12 +16,12 @@ public class OutChecklist {
 
     public OutChecklist(Checklist checklist) {
         siren = new Siren<>(
-                new String[] {"checklist"},
-                checklist,
-                produceEntities(checklist),
-                produceActions(checklist),
-                produceLinks(checklist)
-        );
+                    new String[] {"checklist"},
+                    checklist,
+                    produceEntities(checklist),
+                    produceActions(checklist),
+                    produceLinks(checklist)
+                );
     }
 
     private Entity[] produceEntities(Checklist checklist) {
