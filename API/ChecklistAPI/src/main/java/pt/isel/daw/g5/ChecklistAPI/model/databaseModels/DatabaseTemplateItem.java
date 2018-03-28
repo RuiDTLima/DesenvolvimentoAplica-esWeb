@@ -40,6 +40,10 @@ public class DatabaseTemplateItem {
         this.checklistTemplateId = checklistTemplateId;
     }
 
+    protected DatabaseTemplateItem(){
+
+    }
+
     public DatabaseTemplateItem(TemplateItem templateItem){
         this.id = templateItem.getId();
         this.name = templateItem.getName();

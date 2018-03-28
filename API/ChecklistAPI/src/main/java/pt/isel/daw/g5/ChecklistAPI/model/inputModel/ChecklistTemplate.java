@@ -19,8 +19,8 @@ public class ChecklistTemplate {
     @OneToMany(mappedBy = "checklistTemplate")
     private List<TemplateItem> templateItems;
 
-    @OneToMany(mappedBy = "checklistTemplate", cascade = CascadeType.ALL)
-    private Set<Checklist> checklists;
+    @OneToMany(mappedBy = "checklistTemplate")
+    private List<Checklist> checklists;
 
     public int getId() {
         return id;
@@ -54,11 +54,11 @@ public class ChecklistTemplate {
         this.templateItems = templateItems;
     }
 
-    public Set<Checklist> getChecklists() {
+    public List<Checklist> getChecklists() {
         return checklists;
     }
 
-    public void setChecklists(Set<Checklist> checklists) {
+    public void setChecklists(List<Checklist> checklists) {
         this.checklists = checklists;
     }
 

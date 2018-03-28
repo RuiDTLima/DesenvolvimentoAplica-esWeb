@@ -1,10 +1,8 @@
 POST http://localhost:8080/checklists
+Authorization: UnVpOnJ1aQ==
 Content-Type: application/json
 
-
 {
-    "name":"Primeiro Teste",
-    "completionDate": "2018-03-17T20:00:00",
-    "checklisttemplate_id": 1,
-    "Username": "Rui"
+    "name":"Segundo Teste",
+    "completionDate": "2018-03-17T20:00:00"
 }

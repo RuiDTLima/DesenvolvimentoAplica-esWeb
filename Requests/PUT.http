@@ -1,0 +1,9 @@
+PUT http://localhost:8080/checklists/1/checklistitems/13
+Authorization: UnVpOnJ1aQ==
+Content-Type: application/json
+
+{
+    "name": "Test PUT",
+    "description": "item test",
+    "state": "completed"
+}

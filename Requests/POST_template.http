@@ -1,0 +1,8 @@
+POST http://localhost:8080/checklisttemplates/1/templateitems
+Authorization: UnVpOnJ1aQ==
+Content-Type: application/json
+
+{
+    "name": "teste",
+    "description": "template item de teste"
+}

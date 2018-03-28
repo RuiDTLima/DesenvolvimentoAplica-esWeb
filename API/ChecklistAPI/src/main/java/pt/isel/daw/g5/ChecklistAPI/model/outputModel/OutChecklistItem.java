@@ -1,16 +1,20 @@
 package pt.isel.daw.g5.ChecklistAPI.model.outputModel;
 
-import com.fasterxml.jackson.annotation.JsonAlias;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import pt.isel.daw.g5.ChecklistAPI.model.inputModel.ChecklistItem;
 import pt.isel.daw.g5.ChecklistAPI.model.internalModel.*;
 import pt.isel.daw.g5.ChecklistAPI.model.databaseModels.DatabaseChecklistItem;
 
 public class OutChecklistItem {
-    @JsonAlias({"class", "ola"})
+    @JsonProperty("class")
     private String[] _class;
+    @JsonProperty("properties")
     private DatabaseChecklistItem properties;
+    @JsonProperty("entities")
     private Entity[] entities;
+    @JsonProperty("actions")
     private Action[] actions;
+    @JsonProperty("links")
     private SirenLink[] sirenLinks;
 
     public String[] get_class() {
@@ -82,14 +86,14 @@ public class OutChecklistItem {
     }
 
     private Field[] produceDeleteFields(ChecklistItem checklistItem) {
-        Field checklist_id = new Field("checklist_id", "hidden", Integer.toString(checklistItem.getChecklistId().getId()), "OutChecklist Id");
-        Field checklistitem_id = new Field("checklistitem_id", "hidden", Integer.toString(checklistItem.getId()), "OutChecklist Item Id");
+        Field checklist_id = new Field("checklist_id", "hidden", Integer.toString(checklistItem.getChecklistId().getId()), "Checklist Id");
+        Field checklistitem_id = new Field("checklistitem_id", "hidden", Integer.toString(checklistItem.getId()), "Checklist Item Id");
         return new Field[]{checklist_id, checklistitem_id};
     }
 
     private Field[] producePutFields(ChecklistItem checklistItem) {
-        Field checklist_id = new Field("checklist_id", "hidden", Integer.toString(checklistItem.getChecklistId().getId()), "OutChecklist Id");
-        Field id = new Field("id", "hidden", Integer.toString(checklistItem.getId()), "OutChecklist Item Id");
+        Field checklist_id = new Field("checklist_id", "hidden", Integer.toString(checklistItem.getChecklistId().getId()), "Checklist Id");
+        Field id = new Field("checklistitem_id", "hidden", Integer.toString(checklistItem.getId()), "Checklist Item Id");
         Field name = new Field("name", "text", "Name");
         Field description = new Field("description", "text", "Description");
         Field state = new Field("state", "text", "State");
@@ -98,7 +102,6 @@ public class OutChecklistItem {
 
     private SirenLink[] produceLinks(ChecklistItem checklistItem) {
         SirenLink self = new SirenLink(new String[]{"self"}, String.format("/checklists/%s/checklistitems/%s", checklistItem.getChecklistId().getId(), checklistItem.getId()));
-        //TODO adicionar os links next e previous
         return new SirenLink[]{self};
     }
 }

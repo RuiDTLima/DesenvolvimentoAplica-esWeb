@@ -1,17 +1,20 @@
 package pt.isel.daw.g5.ChecklistAPI.model.outputModel;
 
-import com.fasterxml.jackson.annotation.JsonAlias;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import pt.isel.daw.g5.ChecklistAPI.model.databaseModels.DatabaseChecklistTemplate;
 import pt.isel.daw.g5.ChecklistAPI.model.inputModel.ChecklistTemplate;
 import pt.isel.daw.g5.ChecklistAPI.model.internalModel.*;
-import java.util.Optional;
 
 public class OutChecklistTemplate {
-    @JsonAlias("class")
+    @JsonProperty("class")
     private String[] _class;
+    @JsonProperty("properties")
     private DatabaseChecklistTemplate properties;
+    @JsonProperty("entities")
     private Entity[] entities;
+    @JsonProperty("actions")
     private Action[] actions;
+    @JsonProperty("links")
     private SirenLink[] sirenLinks;
 
     public String[] get_class() {
@@ -54,8 +57,7 @@ public class OutChecklistTemplate {
         this.sirenLinks = sirenLinks;
     }
 
-    public OutChecklistTemplate(Optional<ChecklistTemplate> optionalChecklistTemplate) {
-        ChecklistTemplate checklistTemplate = optionalChecklistTemplate.get();
+    public OutChecklistTemplate(ChecklistTemplate checklistTemplate) {
         _class = new String[]{"checklisttemplate"};
         properties = new DatabaseChecklistTemplate(checklistTemplate);
         entities = produceEntity(checklistTemplate);

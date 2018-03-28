@@ -7,6 +7,7 @@ public class DatabaseChecklistItem {
     private String name;
     private String description;
     private String state;
+    private int checklist_id;
 
     public int getId() {
         return id;
@@ -40,10 +41,19 @@ public class DatabaseChecklistItem {
         this.state = state;
     }
 
+    public int getChecklist_id() {
+        return checklist_id;
+    }
+
+    public void setChecklist_id(int checklist_id) {
+        this.checklist_id = checklist_id;
+    }
+
     public DatabaseChecklistItem(ChecklistItem checklistItem){
         id = checklistItem.getId();
         name = checklistItem.getName();
         description = checklistItem.getDescription();
         state = checklistItem.getState();
+        checklist_id = checklistItem.getChecklistId().getId();
     }
 }

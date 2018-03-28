@@ -1,11 +1,13 @@
 package pt.isel.daw.g5.ChecklistAPI.model.internalModel;
 
-import com.fasterxml.jackson.annotation.JsonAlias;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class Entity {
-    @JsonAlias("class")
+    @JsonProperty("class")
     private String[] _class;
+    @JsonProperty("res")
     private String[] rel;
+    @JsonProperty("href")
     private String href;
 
     public String[] get_class() {
