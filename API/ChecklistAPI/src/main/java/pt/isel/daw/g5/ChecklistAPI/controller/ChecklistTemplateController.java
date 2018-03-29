@@ -1,5 +1,7 @@
 package pt.isel.daw.g5.ChecklistAPI.controller;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -27,6 +29,7 @@ import java.util.Optional;
 @RequestMapping("/checklisttemplates")
 @RequiresAuthentication
 public class ChecklistTemplateController {
+    private static final Logger log = LoggerFactory.getLogger(ChecklistTemplateController.class);
     private static final int PAGE_SIZE = 10;
 
     @Autowired
@@ -56,20 +59,10 @@ public class ChecklistTemplateController {
     public OutChecklistTemplate getChecklistTemplate(@PathVariable("checklisttemplate_id") int checklisttemplate_id,
                                                      HttpServletRequest request){
 
-        String username = (String) request.getAttribute("Username");
-        Optional<ChecklistTemplate> optionalChecklistTemplate = checklistTemplateRepository.findById(checklisttemplate_id);
+        log.info(String.format("Trying to retrieve the checklistTemplate %s.", checklisttemplate_id));
+        ChecklistTemplate checklistTemplate = validateOperation(checklisttemplate_id, request);
 
-        if (!optionalChecklistTemplate.isPresent())
-            throw new NotFoundException();
-
-        ChecklistTemplate checklistTemplate = optionalChecklistTemplate.get();
-
-        if (!checklistTemplate.getUserName().getUsername().equals(username)){
-            InvalidParams notIncludedUser = new InvalidParams("username", "username is invalid");
-            ProblemJSON problemJSON = new ProblemJSON("/authentication-error", "Invalid User.", 403, "The user provided does not have access to this list", request.getRequestURI(), new InvalidParams[]{notIncludedUser});
-            throw new NotAuthenticatedException(problemJSON);
-        }
-
+        log.info("ChecklistTemplate found and being returned.");
         return new OutChecklistTemplate(checklistTemplate);
     }
 
@@ -77,19 +70,11 @@ public class ChecklistTemplateController {
     public String deleteChecklistTemplate(@PathVariable("checklisttemplate_id") int checklisttemplate_id,
                                           HttpServletRequest request){
 
-        String username = (String) request.getAttribute("Username");
-        Optional<ChecklistTemplate> optionalChecklistTemplate = checklistTemplateRepository.findById(checklisttemplate_id);
-
-        if (!optionalChecklistTemplate.isPresent())
-            throw new NotFoundException();
-
-        if (!optionalChecklistTemplate.get().getUserName().getUsername().equals(username)){
-            InvalidParams notIncludedUser = new InvalidParams("username", "username is invalid");
-            ProblemJSON problemJSON = new ProblemJSON("/authentication-error", "Invalid User.", 403, "The user provided does not have access to this list", request.getRequestURI(), new InvalidParams[]{notIncludedUser});
-            throw new NotAuthenticatedException(problemJSON);
-        }
+        log.info(String.format("Trying to delete the checklistTemplate %s", checklisttemplate_id));
+        validateOperation(checklisttemplate_id, request);
 
         checklistTemplateRepository.deleteById(checklisttemplate_id);
+        log.info("ChecklistTemplate successfully deleted");
         return "OK";
     }
 
@@ -97,22 +82,14 @@ public class ChecklistTemplateController {
     public String updateChecklistTemplate(@PathVariable("checklisttemplate_id") int checklisttemplate_id,
                                           @RequestBody ChecklistTemplate checklistTemplate,
                                           HttpServletRequest request){
-
+        log.info(String.format("Trying to update the information regarding the checklistTemplate %s", checklisttemplate_id));
         String username = (String) request.getAttribute("Username");
-        Optional<ChecklistTemplate> optionalChecklistTemplate = checklistTemplateRepository.findById(checklisttemplate_id);
-
-        if (!optionalChecklistTemplate.isPresent())
-            throw new NotFoundException();
-
-        if (!optionalChecklistTemplate.get().getUserName().getUsername().equals(username)){
-            InvalidParams notIncludedUser = new InvalidParams("username", "username is invalid");
-            ProblemJSON problemJSON = new ProblemJSON("/authentication-error", "Invalid User.", 403, "The user provided does not have access to this list", request.getRequestURI(), new InvalidParams[]{notIncludedUser});
-            throw new NotAuthenticatedException(problemJSON);
-        }
+        validateOperation(checklisttemplate_id, request);
 
         checklistTemplate.setUserName(userRepository.findById(username).get());
         checklistTemplate.setId(checklisttemplate_id);
         checklistTemplateRepository.save(checklistTemplate);
+        log.info("ChecklistTemplate successfully updated");
         return "OK";
     }
 
@@ -177,5 +154,27 @@ public class ChecklistTemplateController {
             return "ERROR"; // TODO ???
         templateItemRepository.deleteById(templateItemId);
         return "OK";
+    }
+
+    private ChecklistTemplate validateOperation(@PathVariable("checklisttemplate_id") int checklisttemplate_id, HttpServletRequest request) {
+        log.info("Validating the operation.");
+        String username = (String) request.getAttribute("Username");
+        Optional<ChecklistTemplate> optionalChecklistTemplate = checklistTemplateRepository.findById(checklisttemplate_id);
+
+        if (!optionalChecklistTemplate.isPresent()) {
+            log.warn(String.format("ChecklistTemplate does not exist."));
+            throw new NotFoundException();
+        }
+
+        ChecklistTemplate checklistTemplate = optionalChecklistTemplate.get();
+
+        if (!checklistTemplate.getUserName().getUsername().equals(username)){
+            log.warn(String.format("ChecklistTemplate %s does not belong to the user %s", checklisttemplate_id, username));
+            InvalidParams notIncludedUser = new InvalidParams("username", "username is invalid");
+            ProblemJSON problemJSON = new ProblemJSON("/authentication-error", "Invalid User.", 403, "The user provided does not have access to this list", request.getRequestURI(), new InvalidParams[]{notIncludedUser});
+            throw new NotAuthenticatedException(problemJSON);
+        }
+        log.info("Validations successful");
+        return checklistTemplate;
     }
 }

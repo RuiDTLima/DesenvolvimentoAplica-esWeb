@@ -7,6 +7,7 @@ import pt.isel.daw.g5.ChecklistAPI.model.internalModel.*;
 public class OutChecklist {
     @JsonAlias("class")
     private String[] _class;
+
     private Checklist properties;
     private Entity[] entities;
     private Action[] actions;
@@ -61,17 +62,11 @@ public class OutChecklist {
     }
 
     private Entity[] produceEntities(Checklist checklist) {
-        return new Entity[] {
-                produceChecklistItemEntity(checklist),
-                produceChecklistTemplateEntity(checklist)
-        };
+        return new Entity[] {produceChecklistItemEntity(checklist), produceChecklistTemplateEntity(checklist)};
     }
 
     private Entity produceChecklistItemEntity(Checklist checklist) {
-        return new Entity(
-                new String[] {"checklistitem"},
-                new String[] {"/checklists/" + checklist.getId()},
-                "/checklists/" + checklist.getId() + "/checklistitems"
+        return new Entity(new String[] {"checklistitem"},  new String[] {"/checklists/" + checklist.getId()}, "/checklists/" + checklist.getId() + "/checklistitems"
                 // TODO LINKS IN SIREN -> new SirenLink[0]
         );
     }

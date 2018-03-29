@@ -8,12 +8,16 @@ import pt.isel.daw.g5.ChecklistAPI.model.databaseModels.DatabaseChecklistItem;
 public class OutChecklistItem {
     @JsonProperty("class")
     private String[] _class;
+
     @JsonProperty("properties")
     private DatabaseChecklistItem properties;
+
     @JsonProperty("entities")
     private Entity[] entities;
+
     @JsonProperty("actions")
     private Action[] actions;
+
     @JsonProperty("links")
     private SirenLink[] sirenLinks;
 

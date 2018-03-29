@@ -5,14 +5,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
-import org.springframework.web.servlet.HandlerMapping;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import pt.isel.daw.g5.ChecklistAPI.exceptions.NotAuthenticatedException;
 import pt.isel.daw.g5.ChecklistAPI.model.errorModel.ProblemJSON;
 import pt.isel.daw.g5.ChecklistAPI.model.inputModel.User;
 import pt.isel.daw.g5.ChecklistAPI.model.internalModel.InvalidParams;
 import pt.isel.daw.g5.ChecklistAPI.repository.UserRepository;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.lang.reflect.Method;

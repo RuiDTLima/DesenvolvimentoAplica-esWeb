@@ -22,7 +22,6 @@ public class UserController {
         User user = new User(databaseUser.getUsername(), databaseUser.getPassword());
         userRepository.save(user);
         String authorization = databaseUser.getUsername() + ":" + databaseUser.getPassword();
-        String auth = new String(Base64.getEncoder().encode(authorization.getBytes()));
-        return auth;
+        return new String(Base64.getEncoder().encode(authorization.getBytes()));
     }
 }

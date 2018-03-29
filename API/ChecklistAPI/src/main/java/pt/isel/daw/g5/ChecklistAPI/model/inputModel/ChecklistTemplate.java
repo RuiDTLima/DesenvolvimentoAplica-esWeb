@@ -2,7 +2,6 @@ package pt.isel.daw.g5.ChecklistAPI.model.inputModel;
 
 import javax.persistence.*;
 import java.util.List;
-import java.util.Set;
 
 @Entity
 @Table(name = "Checklisttemplate")
