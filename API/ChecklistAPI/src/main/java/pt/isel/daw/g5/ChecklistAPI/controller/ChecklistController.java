@@ -27,6 +27,7 @@ import pt.isel.daw.g5.ChecklistAPI.repository.ChecklistRepository;
 import pt.isel.daw.g5.ChecklistAPI.repository.ChecklistTemplateRepository;
 import pt.isel.daw.g5.ChecklistAPI.repository.UserRepository;
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -185,8 +186,9 @@ public class ChecklistController {
 
         log.info(String.format("Updating the item %s from the checklist %s.", checklistitem_id, checklist_id));
         Checklist checklist = validateOperation(checklist_id, request);
+        Optional<ChecklistItem> optionalChecklistItem = checklistItemRepository.findById(checklistitem_id);
 
-        if (!checklistItemRepository.existsById(checklistitem_id) || checklistItem.getChecklistId().getId() != checklist_id) {
+        if (!optionalChecklistItem.isPresent() || optionalChecklistItem.get().getChecklistId().getId() != checklist_id) {
             log.warn(String.format("The item %s does not belong to the checklist %s, or it does not exist", checklistitem_id, checklist_id));
             throw new NotFoundException();
         }
