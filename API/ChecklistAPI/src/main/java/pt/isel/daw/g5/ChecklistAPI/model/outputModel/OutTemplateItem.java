@@ -1,5 +1,6 @@
 package pt.isel.daw.g5.ChecklistAPI.model.outputModel;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import pt.isel.daw.g5.ChecklistAPI.model.databaseModels.DatabaseTemplateItem;
 import pt.isel.daw.g5.ChecklistAPI.model.internalModel.*;
@@ -11,6 +12,7 @@ public class OutTemplateItem {
     private DatabaseTemplateItem properties;
     private Entity[] entities;
     private Action[] actions;
+    @JsonProperty("links")
     private SirenLink[] sirenLinks;
 
     public String[] get_class() {

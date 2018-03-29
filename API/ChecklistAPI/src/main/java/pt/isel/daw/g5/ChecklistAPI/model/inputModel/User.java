@@ -16,7 +16,7 @@ public class User {
     @OneToMany(mappedBy = "username")
     private List<Checklist> checklists;
 
-    @OneToMany(mappedBy = "userName")
+    @OneToMany(mappedBy = "user")
     private List<ChecklistTemplate> checklistTemplates;
 
     public String getUsername() {

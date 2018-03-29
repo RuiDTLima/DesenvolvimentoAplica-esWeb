@@ -34,6 +34,6 @@ public class DatabaseChecklistTemplate {
     public DatabaseChecklistTemplate(ChecklistTemplate checklistTemplate) {
         id = checklistTemplate.getId();
         name = checklistTemplate.getName();
-        username = checklistTemplate.getUserName().getUsername();
+        username = checklistTemplate.getUser().getUsername();
     }
 }

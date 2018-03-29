@@ -12,8 +12,8 @@ public class ChecklistTemplate {
     private String name;
 
     @ManyToOne
-    @JoinColumn(name = "Username")
-    private User userName;
+    @JoinColumn(name = "username")
+    private User user;
 
     @OneToMany(mappedBy = "checklistTemplate")
     private List<TemplateItem> templateItems;
@@ -37,12 +37,12 @@ public class ChecklistTemplate {
         this.name = name;
     }
 
-    public User getUserName() {
-        return userName;
+    public User getUser() {
+        return user;
     }
 
-    public void setUserName(User userName) {
-        this.userName = userName;
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public List<TemplateItem> getTemplateItems() {
