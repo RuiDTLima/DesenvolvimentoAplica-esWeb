@@ -65,7 +65,7 @@ public class ChecklistController {
                 throw new NotFoundException();
             ChecklistTemplate checklistTemplate = optionalChecklistTemplate.get();
 
-            if (!checklistTemplate.getUserName().getUsername().equals(username)) {
+            if (!checklistTemplate.getUser().getUsername().equals(username)) {
                 InvalidParams notIncludedUser = new InvalidParams("username", "username is invalid");
                 ProblemJSON problemJSON = new ProblemJSON("/authentication-error", "Invalid User.", 403, "The user provided does not have access to this list", request.getRequestURI(), new InvalidParams[]{notIncludedUser});
                 throw new NotAuthenticatedException(problemJSON);

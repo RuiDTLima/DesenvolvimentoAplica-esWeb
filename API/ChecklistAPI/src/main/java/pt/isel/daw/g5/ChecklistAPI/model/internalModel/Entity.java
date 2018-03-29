@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class Entity {
     @JsonProperty("class")
     private String[] _class;
-    @JsonProperty("res")
+    @JsonProperty("rel")
     private String[] rel;
     @JsonProperty("href")
     private String href;
