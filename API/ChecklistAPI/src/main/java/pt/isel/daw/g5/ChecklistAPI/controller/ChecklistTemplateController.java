@@ -181,9 +181,11 @@ public class ChecklistTemplateController {
                                            HttpServletRequest request){
 
         log.info(String.format("Trying to retrive an item from the checklistTemplate %s", checklistTemplateId));
-        validateOperation(checklistTemplateId, request);
-        if(!templateItemRepository.existsById(templateItemId))
+        ChecklistTemplate template = validateOperation(checklistTemplateId, request);
+        if(!templateItemRepository.existsById(templateItemId) ||
+                !template.getTemplateItems().stream().anyMatch(item -> item.getId() == templateItemId)){
             throw new NotFoundException();
+        }
 
         TemplateItem templateItem = templateItemRepository.findById(templateItemId).get();
         DatabaseTemplateItem databaseTemplateItem = new DatabaseTemplateItem(templateItem);
@@ -206,9 +208,11 @@ public class ChecklistTemplateController {
                                      HttpServletRequest request){
 
         log.info(String.format("Trying to update an item from the checklistTemplate %s", checklistTemplateId));
-        validateOperation(checklistTemplateId, request);
-        if(!templateItemRepository.existsById(templateItemId))
+        ChecklistTemplate template = validateOperation(checklistTemplateId, request);
+        if(!templateItemRepository.existsById(templateItemId) ||
+           !template.getTemplateItems().stream().anyMatch(item -> item.getId() == templateItemId)){
             throw new NotFoundException();
+        }
 
         TemplateItem updatedItem = templateItemRepository.findById(templateItemId).get();
         updatedItem.setName(templateItem.getName());
@@ -231,9 +235,11 @@ public class ChecklistTemplateController {
                                      HttpServletRequest request){
 
         log.info(String.format("Trying to delete an item from the checklistTemplate %s", checklistTemplateId));
-        validateOperation(checklistTemplateId, request);
-        if(!templateItemRepository.existsById(templateItemId))
+        ChecklistTemplate template = validateOperation(checklistTemplateId, request);
+        if(!templateItemRepository.existsById(templateItemId) ||
+                !template.getTemplateItems().stream().anyMatch(item -> item.getId() == templateItemId)){
             throw new NotFoundException();
+        }
 
         templateItemRepository.deleteById(templateItemId);
         log.info("ChecklistTemplate successfully deleted");
