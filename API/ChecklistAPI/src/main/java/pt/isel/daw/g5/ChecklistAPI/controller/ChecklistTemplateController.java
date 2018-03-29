@@ -55,6 +55,12 @@ public class ChecklistTemplateController {
         return "Ok";
     }
 
+    /**
+     * Método para apresentar a informação referente a um checklistTemplate identificado por checklisttemplate_id.
+     * @param checklisttemplate_id
+     * @param request
+     * @return
+     */
     @GetMapping(path = "/{checklisttemplate_id}", produces = "application/vnd.siren+json")
     public OutChecklistTemplate getChecklistTemplate(@PathVariable("checklisttemplate_id") int checklisttemplate_id,
                                                      HttpServletRequest request){
@@ -66,6 +72,12 @@ public class ChecklistTemplateController {
         return new OutChecklistTemplate(checklistTemplate);
     }
 
+    /**
+     * Método para apagar um checklistTemplate identificado por checklisttemplate_id
+     * @param checklisttemplate_id
+     * @param request
+     * @return
+     */
     @DeleteMapping("/{checklisttemplate_id}")
     public String deleteChecklistTemplate(@PathVariable("checklisttemplate_id") int checklisttemplate_id,
                                           HttpServletRequest request){
@@ -78,6 +90,14 @@ public class ChecklistTemplateController {
         return "OK";
     }
 
+    /**
+     * Método para actualizar a informação de um checklistTemplate identificado por checklisttemplate_id. O
+     * checklistTemplate é uma entidade que representa o template com a informação actualizada.
+     * @param checklisttemplate_id
+     * @param checklistTemplate
+     * @param request
+     * @return
+     */
     @PutMapping("/{checklisttemplate_id}")
     public String updateChecklistTemplate(@PathVariable("checklisttemplate_id") int checklisttemplate_id,
                                           @RequestBody ChecklistTemplate checklistTemplate,
@@ -211,6 +231,13 @@ public class ChecklistTemplateController {
         return "OK";
     }
 
+    /**
+     * Método para validar se a operação reune as condições necessárias para prosseguir. Sendo essas a de o template
+     * existir e pertence ao utilizador autenticado.
+     * @param checklisttemplate_id
+     * @param request
+     * @return
+     */
     private ChecklistTemplate validateOperation(@PathVariable("checklisttemplate_id") int checklisttemplate_id, HttpServletRequest request) {
         log.info("Validating the operation.");
         String username = (String) request.getAttribute("Username");

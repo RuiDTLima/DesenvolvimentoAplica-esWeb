@@ -55,6 +55,15 @@ public class ChecklistController {
         //throw new InvalidStateException("invalid state");
     }
 
+    /**
+     * Método para criar uma checklist. Esta operação pode ser feita com ou sem o uso de um checklistTemplate, sendo que
+     * ai o campo checklistTemplate_id tem um valor diferente de 0. A única diferença na operação é o facto de caso esta
+     * seja realizada com o uso de um checklistTemplate a nova checklist deve ter o seu identificador no campo
+     * checklisttemplate_id
+     * @param databaseChecklist Entidade que representa uma checklist tal como está na base de dados.
+     * @param request
+     * @return
+     */
     @PostMapping
     public String postChecklist(@RequestBody DatabaseChecklist databaseChecklist,
                                 HttpServletRequest request) {
@@ -66,6 +75,7 @@ public class ChecklistController {
 
         if (databaseChecklist.getChecklisttemplate_id() != 0){ // Significa que o checklist é gerado através de um checklisttemplate
             log.info("The checklist is being created with the help of a ChecklistTemplate");
+
             Optional<ChecklistTemplate> optionalChecklistTemplate = checklistTemplateRepository.findById(databaseChecklist.getChecklisttemplate_id());
             if (!optionalChecklistTemplate.isPresent()) {
                 log.warn("The ChecklistTemplate being used does not exist");
@@ -131,6 +141,14 @@ public class ChecklistController {
         return "OK";
     }
 
+    /**
+     * Método para apresentat um item pertencente a uma checklist. Sendo que caso o item identificado por
+     * checklistitem_id não pertença à checklist identificada por checklist_id ou não exista, um erro é retornado.
+     * @param checklist_id Id da checklist
+     * @param checklistitem_id Id do item da checklist
+     * @param request
+     * @return
+     */
     @GetMapping(path = "/{checklist_id}/checklistitems/{checklistitem_id}", produces = "application/vnd.siren+json")
     @Transactional //TODO validar uso da anotação
     public OutChecklistItem getChecklistItem(@PathVariable("checklist_id") int checklist_id,
@@ -150,6 +168,15 @@ public class ChecklistController {
         throw new NotFoundException();
     }
 
+    /**
+     * Método para actualizar a informação de um item de uma checklist. Caso o item identificado por checklistitem_id
+     * não pertença à checklist identificada por checklist_id ou não exista, um erro é retornado.
+     * @param checklist_id Id da checklist
+     * @param checklistitem_id Id do item da checklist
+     * @param checklistItem A representação do item com a informação actualizada
+     * @param request
+     * @return
+     */
     @PutMapping("/{checklist_id}/checklistitems/{checklistitem_id}")
     public String putChecklistItem(@PathVariable("checklist_id") int checklist_id,
                                    @PathVariable("checklistitem_id") int checklistitem_id,
@@ -171,6 +198,14 @@ public class ChecklistController {
         return "OK";
     }
 
+    /**
+     * Método para eliminar um item de uma checklist. Caso o item identificado por checklistitem_id não pertença à
+     * checklist identificada por checklist_id ou não exista é retornado um erro.
+     * @param checklist_id Id da checklist
+     * @param checklistitem_id Id do item da checklist
+     * @param request
+     * @return
+     */
     @DeleteMapping("/{checklist_id}/checklistitems/{checklistitem_id}")
     public ResponseEntity<String> deleteChecklistItem(@PathVariable("checklist_id") int checklist_id,
                                                       @PathVariable("checklistitem_id") int checklistitem_id,
@@ -191,6 +226,13 @@ public class ChecklistController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    /**
+     * Método para validar se a operação reune as condições necessárias para prosseguir. Sendo essas a de a checklist
+     * existir e pertencer ao utilizador autenticado.
+     * @param checklist_id
+     * @param request
+     * @return
+     */
     private Checklist validateOperation(@PathVariable("checklist_id") int checklist_id, HttpServletRequest request) {
         log.info("Validating the operation");
         String username = (String) request.getAttribute("Username");
