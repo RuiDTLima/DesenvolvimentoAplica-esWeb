@@ -38,7 +38,7 @@ public class ChecklistTemplateController {
     @Autowired
     private UserRepository userRepository;
 
-    @GetMapping
+    @GetMapping(produces = "application/vnd.collection+json")
     public OutChecklistTemplates getChecklistTemplates(@RequestParam(value = "page", defaultValue = "1") int page){
         Page<ChecklistTemplate> checklistTemplatePage = checklistTemplateRepository.findAll(PageRequest.of(page - 1, PAGE_SIZE));
         return new OutChecklistTemplates(checklistTemplatePage);
@@ -52,7 +52,7 @@ public class ChecklistTemplateController {
         return "Ok";
     }
 
-    @GetMapping("/{checklisttemplate_id}")
+    @GetMapping(path = "/{checklisttemplate_id}", produces = "application/vnd.siren+json")
     public OutChecklistTemplate getChecklistTemplate(@PathVariable("checklisttemplate_id") int checklisttemplate_id,
                                                      HttpServletRequest request){
 
@@ -116,7 +116,7 @@ public class ChecklistTemplateController {
         return "OK";
     }
 
-    @GetMapping("/{checklisttemplate_id}/templateitems")
+    @GetMapping(path = "/{checklisttemplate_id}/templateitems", produces = "application/vnd.collection+json")
     public OutTemplateItems getTemplateItems(@PathVariable("checklisttemplate_id") int checklistTemplateId,
                                              @RequestParam(value = "page", defaultValue = "0") int page){
 
@@ -149,7 +149,7 @@ public class ChecklistTemplateController {
         return "OK";
     }
 
-    @GetMapping("/{checklisttemplate_id}/templateitems/{templateitem_id}")
+    @GetMapping(path = "/{checklisttemplate_id}/templateitems/{templateitem_id}", produces = "application/vnd.siren+json")
     public OutTemplateItem getTemplateItem(@PathVariable("checklisttemplate_id") int checklistTemplateId,
                                            @PathVariable("templateitem_id") int templateItemId){
 

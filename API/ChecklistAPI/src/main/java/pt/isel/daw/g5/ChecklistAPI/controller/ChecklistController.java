@@ -45,7 +45,7 @@ public class ChecklistController {
     @Autowired
     private ChecklistTemplateRepository checklistTemplateRepository;
 
-    @GetMapping
+    @GetMapping(produces = "application/vnd.collection+json")
     public OutChecklists getChecklists(@RequestParam(value = "page", defaultValue = "0") int page){
         Page<Checklist> checklistPage = checklistRepository.findAll(PageRequest.of(page, PAGE_SIZE));
         return new OutChecklists(checklistPage);
@@ -80,7 +80,7 @@ public class ChecklistController {
         return "Ok";
     }
 
-    @GetMapping("/{checklist_id}")
+    @GetMapping(path = "/{checklist_id}", produces = "application/vnd.siren+json")
     public OutChecklist getChecklist(@PathVariable("checklist_id") int checklistId){
         Optional<Checklist> checklistOptional = checklistRepository.findById(checklistId);
         Checklist checklist = checklistOptional.get();
@@ -103,7 +103,7 @@ public class ChecklistController {
         return "OK";
     }
 
-    @GetMapping("/{checklist_id}/checklistitems")
+    @GetMapping(path = "/{checklist_id}/checklistitems", produces = "application/vnd.collection+json")
     public ChecklistItems getChecklistItems(@PathVariable("checklist_id") int checklistId) {
         if(!checklistRepository.existsById(checklistId)) return null;
 //            throw new ChangeSetPersister.NotFoundException();

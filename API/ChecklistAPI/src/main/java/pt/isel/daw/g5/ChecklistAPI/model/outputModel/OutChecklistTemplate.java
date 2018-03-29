@@ -120,7 +120,6 @@ public class OutChecklistTemplate {
 
     private SirenLink[] produceLinks(ChecklistTemplate checklistTemplate) {
         SirenLink self = new SirenLink(new String[]{"self"}, String.format("/checklisttemplates/%s", checklistTemplate.getId()));
-        //TODO adicionar os links next e previous
         return new SirenLink[]{self};
     }
 }

@@ -1,9 +1,7 @@
 package pt.isel.daw.g5.ChecklistAPI.model.outputModel;
 
-import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import pt.isel.daw.g5.ChecklistAPI.model.databaseModels.DatabaseTemplateItem;
-import pt.isel.daw.g5.ChecklistAPI.model.inputModel.TemplateItem;
 import pt.isel.daw.g5.ChecklistAPI.model.internalModel.*;
 
 public class OutTemplateItem {
