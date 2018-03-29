@@ -1,8 +1,11 @@
 package pt.isel.daw.g5.ChecklistAPI.exceptions;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import pt.isel.daw.g5.ChecklistAPI.model.errorModel.ProblemJSON;
 
-public class NotAuthenticatedException extends RuntimeException {
+@ResponseStatus(HttpStatus.CONFLICT)
+public class RepeatedInformationException extends RuntimeException {
     private ProblemJSON problemJSON;
 
     public ProblemJSON getProblemJSON() {
@@ -13,7 +16,7 @@ public class NotAuthenticatedException extends RuntimeException {
         this.problemJSON = problemJSON;
     }
 
-    public NotAuthenticatedException(ProblemJSON problemJSON){
+    public RepeatedInformationException(ProblemJSON problemJSON){
         this.problemJSON = problemJSON;
     }
 }

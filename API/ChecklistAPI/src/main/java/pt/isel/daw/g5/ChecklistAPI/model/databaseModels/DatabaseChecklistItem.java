@@ -49,6 +49,9 @@ public class DatabaseChecklistItem {
         this.checklist_id = checklist_id;
     }
 
+    public DatabaseChecklistItem() {
+    }
+
     public DatabaseChecklistItem(ChecklistItem checklistItem){
         id = checklistItem.getId();
         name = checklistItem.getName();

@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
-import pt.isel.daw.g5.ChecklistAPI.exceptions.NotAuthenticatedException;
+import pt.isel.daw.g5.ChecklistAPI.exceptions.UnauthorizedException;
 import pt.isel.daw.g5.ChecklistAPI.model.errorModel.ProblemJSON;
 import pt.isel.daw.g5.ChecklistAPI.model.inputModel.User;
 import pt.isel.daw.g5.ChecklistAPI.model.internalModel.InvalidParams;
@@ -38,7 +38,7 @@ public class ChecklistApiInterceptor extends HandlerInterceptorAdapter {
             InvalidParams notIncludedUser = new InvalidParams("username", "username must be provided");
             InvalidParams notIncludedPassword = new InvalidParams("password", "password must be provided");
             ProblemJSON problemJSON = new ProblemJSON("/authentication-error", "Authentication Failed.", 401, "The username and it's corresponding password must be provided", request.getRequestURI(), new InvalidParams[]{notIncludedUser, notIncludedPassword});
-            throw new NotAuthenticatedException(problemJSON);
+            throw new UnauthorizedException(problemJSON);
         }
 
         String auth = new String(Base64.getDecoder().decode(authentication));
@@ -49,7 +49,7 @@ public class ChecklistApiInterceptor extends HandlerInterceptorAdapter {
             InvalidParams notIncludedUser = new InvalidParams("username", "username is invalid");
             InvalidParams notIncludedPassword = new InvalidParams("password", "password is invalid");
             ProblemJSON problemJSON = new ProblemJSON("/authentication-error", "Authentication Failed.", 401, "The username or the password are not valid", request.getRequestURI(), new InvalidParams[]{notIncludedUser, notIncludedPassword});
-            throw new NotAuthenticatedException(problemJSON);
+            throw new UnauthorizedException(problemJSON);
         }
         request.setAttribute("Username", params[0]);
         return true;

@@ -5,15 +5,17 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pt.isel.daw.g5.ChecklistAPI.RequiresAuthentication;
-import pt.isel.daw.g5.ChecklistAPI.exceptions.NotAuthenticatedException;
+import pt.isel.daw.g5.ChecklistAPI.exceptions.ForbiddenException;
 import pt.isel.daw.g5.ChecklistAPI.exceptions.NotFoundException;
+import pt.isel.daw.g5.ChecklistAPI.model.databaseModels.DatabaseChecklistTemplate;
 import pt.isel.daw.g5.ChecklistAPI.model.databaseModels.DatabaseTemplateItem;
 import pt.isel.daw.g5.ChecklistAPI.model.errorModel.ProblemJSON;
 import pt.isel.daw.g5.ChecklistAPI.model.inputModel.ChecklistTemplate;
 import pt.isel.daw.g5.ChecklistAPI.model.inputModel.TemplateItem;
-import pt.isel.daw.g5.ChecklistAPI.model.inputModel.User;
 import pt.isel.daw.g5.ChecklistAPI.model.internalModel.InvalidParams;
 import pt.isel.daw.g5.ChecklistAPI.model.outputModel.OutChecklistTemplates;
 import pt.isel.daw.g5.ChecklistAPI.model.outputModel.OutChecklistTemplate;
@@ -91,39 +93,47 @@ public class ChecklistTemplateController {
      * @return
      */
     @DeleteMapping("/{checklisttemplate_id}")
-    public String deleteChecklistTemplate(@PathVariable("checklisttemplate_id") int checklisttemplate_id,
-                                          HttpServletRequest request){
+    public ResponseEntity deleteChecklistTemplate(@PathVariable("checklisttemplate_id") int checklisttemplate_id,
+                                                  HttpServletRequest request){
 
         log.info(String.format("Trying to delete the checklistTemplate %s", checklisttemplate_id));
         validateOperation(checklisttemplate_id, request);
 
-        checklistTemplateRepository.deleteById(checklisttemplate_id);
+        Optional<ChecklistTemplate> optionalChecklistTemplate = checklistTemplateRepository.findById(checklisttemplate_id);
+
+        if (optionalChecklistTemplate.isPresent()){
+            ChecklistTemplate checklistTemplate = optionalChecklistTemplate.get();
+            checklistTemplate.setUsable(false);
+            checklistTemplateRepository.save(checklistTemplate);
+        }
+        else
+            checklistTemplateRepository.deleteById(checklisttemplate_id);
         log.info("ChecklistTemplate successfully deleted");
-        return "OK";
+        return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
 
     /**
      * Método para actualizar a informação de um checklistTemplate identificado por checklisttemplate_id. O
-     * checklistTemplate é uma entidade que representa o template com a informação actualizada.
+     * databaseChecklistTemplate é uma entidade que representa o template com a informação actualizada.
      * @param checklisttemplate_id
-     * @param checklistTemplate
+     * @param databaseChecklistTemplate
      * @param request
      * @return
      */
     @PutMapping("/{checklisttemplate_id}")
-    public String updateChecklistTemplate(@PathVariable("checklisttemplate_id") int checklisttemplate_id,
-                                          @RequestBody ChecklistTemplate checklistTemplate,
-                                          HttpServletRequest request){
+    public ResponseEntity updateChecklistTemplate(@PathVariable("checklisttemplate_id") int checklisttemplate_id,
+                                                  @RequestBody DatabaseChecklistTemplate databaseChecklistTemplate,
+                                                  HttpServletRequest request){
         log.info(String.format("Trying to update the information regarding the checklistTemplate %s", checklisttemplate_id));
         String username = (String) request.getAttribute("Username");
 
-        validateOperation(checklisttemplate_id, request);
+        ChecklistTemplate checklistTemplate = validateOperation(checklisttemplate_id, request);
 
-        checklistTemplate.setUser(userRepository.findById(username).get());
-        checklistTemplate.setId(checklisttemplate_id);
+        checklistTemplate.setName(databaseChecklistTemplate.getName());
         checklistTemplateRepository.save(checklistTemplate);
         log.info("ChecklistTemplate successfully updated");
-        return "OK";
+
+        return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
 
     /**
@@ -263,7 +273,7 @@ public class ChecklistTemplateController {
             log.warn(String.format("ChecklistTemplate %s does not belong to the user %s", checklisttemplate_id, username));
             InvalidParams notIncludedUser = new InvalidParams("username", "username is invalid");
             ProblemJSON problemJSON = new ProblemJSON("/authentication-error", "Invalid User.", 403, "The user provided does not have access to this list", request.getRequestURI(), new InvalidParams[]{notIncludedUser});
-            throw new NotAuthenticatedException(problemJSON);
+            throw new ForbiddenException(problemJSON);
         }
         log.info("Validations successful");
         return checklistTemplate;

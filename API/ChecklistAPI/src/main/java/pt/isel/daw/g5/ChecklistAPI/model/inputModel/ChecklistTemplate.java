@@ -10,6 +10,7 @@ public class ChecklistTemplate {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private String name;
+    private boolean usable;
 
     @ManyToOne
     @JoinColumn(name = "username")
@@ -61,10 +62,19 @@ public class ChecklistTemplate {
         this.checklists = checklists;
     }
 
+    public boolean isUsable() {
+        return usable;
+    }
+
+    public void setUsable(boolean usable) {
+        this.usable = usable;
+    }
+
     protected ChecklistTemplate(){
     }
 
     public ChecklistTemplate(String name) {
         this.name = name;
+        usable = true;
     }
 }

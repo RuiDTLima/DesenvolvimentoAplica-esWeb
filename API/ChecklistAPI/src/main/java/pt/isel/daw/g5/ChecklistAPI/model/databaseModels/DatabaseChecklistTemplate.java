@@ -31,6 +31,10 @@ public class DatabaseChecklistTemplate {
         this.username = username;
     }
 
+    protected DatabaseChecklistTemplate(){
+
+    }
+
     public DatabaseChecklistTemplate(ChecklistTemplate checklistTemplate) {
         id = checklistTemplate.getId();
         name = checklistTemplate.getName();

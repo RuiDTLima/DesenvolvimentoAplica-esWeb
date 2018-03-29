@@ -10,9 +10,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import pt.isel.daw.g5.ChecklistAPI.RequiresAuthentication;
-import pt.isel.daw.g5.ChecklistAPI.exceptions.NotAuthenticatedException;
+import pt.isel.daw.g5.ChecklistAPI.exceptions.ForbiddenException;
 import pt.isel.daw.g5.ChecklistAPI.exceptions.NotFoundException;
 import pt.isel.daw.g5.ChecklistAPI.model.databaseModels.DatabaseChecklist;
+import pt.isel.daw.g5.ChecklistAPI.model.databaseModels.DatabaseChecklistItem;
 import pt.isel.daw.g5.ChecklistAPI.model.errorModel.ProblemJSON;
 import pt.isel.daw.g5.ChecklistAPI.model.inputModel.Checklist;
 import pt.isel.daw.g5.ChecklistAPI.model.inputModel.ChecklistItem;
@@ -27,7 +28,6 @@ import pt.isel.daw.g5.ChecklistAPI.repository.ChecklistRepository;
 import pt.isel.daw.g5.ChecklistAPI.repository.ChecklistTemplateRepository;
 import pt.isel.daw.g5.ChecklistAPI.repository.UserRepository;
 import javax.servlet.http.HttpServletRequest;
-import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -84,11 +84,17 @@ public class ChecklistController {
             }
             ChecklistTemplate checklistTemplate = optionalChecklistTemplate.get();
 
+            if (!checklistTemplate.isUsable()){
+                log.warn(String.format("The checklistTemplate %s is no longer valid to use", checklistTemplate.getId()));
+                InvalidParams notValidTemplate = new InvalidParams("usable", "Template is not valid to use");
+                ProblemJSON problemJSON = new ProblemJSON("/invalid-template", "Invalid Template.", 403, "The template can longer be used to create a checklist since it has been deleted", request.getRequestURI(), new InvalidParams[]{notValidTemplate});
+                throw new ForbiddenException(problemJSON);
+            }
             if (!checklistTemplate.getUser().getUsername().equals(username)) {
                 log.warn(String.format("The checklistTemplate %s does not belong to the user %s", checklistTemplate.getId(), username));
-                InvalidParams notIncludedUser = new InvalidParams("username", "username is invalid");
-                ProblemJSON problemJSON = new ProblemJSON("/authentication-error", "Invalid User.", 403, "The user provided does not have access to this template", request.getRequestURI(), new InvalidParams[]{notIncludedUser});
-                throw new NotAuthenticatedException(problemJSON);
+                InvalidParams notValidUser = new InvalidParams("username", "username is invalid");
+                ProblemJSON problemJSON = new ProblemJSON("/authentication-error", "Invalid User.", 403, "The user provided does not have access to this template", request.getRequestURI(), new InvalidParams[]{notValidUser});
+                throw new ForbiddenException(problemJSON);
             }
 
             checklist.setChecklistTemplate(checklistTemplate);
@@ -143,7 +149,7 @@ public class ChecklistController {
     }
 
     /**
-     * Método para apresentat um item pertencente a uma checklist. Sendo que caso o item identificado por
+     * Método para apresentar um item pertencente a uma checklist. Sendo que caso o item identificado por
      * checklistitem_id não pertença à checklist identificada por checklist_id ou não exista, um erro é retornado.
      * @param checklist_id Id da checklist
      * @param checklistitem_id Id do item da checklist
@@ -151,7 +157,7 @@ public class ChecklistController {
      * @return
      */
     @GetMapping(path = "/{checklist_id}/checklistitems/{checklistitem_id}", produces = "application/vnd.siren+json")
-    @Transactional //TODO validar uso da anotação
+    @Transactional
     public OutChecklistItem getChecklistItem(@PathVariable("checklist_id") int checklist_id,
                                              @PathVariable("checklistitem_id") int checklistitem_id,
                                              HttpServletRequest request){
@@ -174,18 +180,18 @@ public class ChecklistController {
      * não pertença à checklist identificada por checklist_id ou não exista, um erro é retornado.
      * @param checklist_id Id da checklist
      * @param checklistitem_id Id do item da checklist
-     * @param checklistItem A representação do item com a informação actualizada
+     * @param databaseChecklistItem A representação do item com a informação actualizada
      * @param request
      * @return
      */
     @PutMapping("/{checklist_id}/checklistitems/{checklistitem_id}")
-    public String putChecklistItem(@PathVariable("checklist_id") int checklist_id,
+    public ResponseEntity putChecklistItem(@PathVariable("checklist_id") int checklist_id,
                                    @PathVariable("checklistitem_id") int checklistitem_id,
-                                   @RequestBody ChecklistItem checklistItem,
+                                   @RequestBody DatabaseChecklistItem databaseChecklistItem,
                                    HttpServletRequest request){
 
         log.info(String.format("Updating the item %s from the checklist %s.", checklistitem_id, checklist_id));
-        Checklist checklist = validateOperation(checklist_id, request);
+        validateOperation(checklist_id, request);
         Optional<ChecklistItem> optionalChecklistItem = checklistItemRepository.findById(checklistitem_id);
 
         if (!optionalChecklistItem.isPresent() || optionalChecklistItem.get().getChecklistId().getId() != checklist_id) {
@@ -193,11 +199,14 @@ public class ChecklistController {
             throw new NotFoundException();
         }
 
-        checklistItem.setId(checklistitem_id);
-        checklistItem.setChecklistId(checklist);
+        ChecklistItem checklistItem = optionalChecklistItem.get();
+        checklistItem.setName(databaseChecklistItem.getName());
+        checklistItem.setDescription(databaseChecklistItem.getDescription());
+        checklistItem.setState(databaseChecklistItem.getState());
         checklistItemRepository.save(checklistItem);
+
         log.info("Item updated.");
-        return "OK";
+        return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
 
     /**
@@ -251,7 +260,7 @@ public class ChecklistController {
             log.warn(String.format("The checklist %s does not belong to the user %s", checklist_id, username));
             InvalidParams notIncludedUser = new InvalidParams("username", "username is invalid");
             ProblemJSON problemJSON = new ProblemJSON("/authentication-error", "Invalid User.", 403, "The user provided does not have access to this checklist", request.getRequestURI(), new InvalidParams[]{notIncludedUser});
-            throw new NotAuthenticatedException(problemJSON);
+            throw new ForbiddenException(problemJSON);
         }
         log.info("Validation was successful.");
         return checklist;

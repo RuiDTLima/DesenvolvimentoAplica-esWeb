@@ -34,7 +34,7 @@ create table ChecklistItem (
 	Id serial primary key,
 	Name text not null,
 	Description text not null,
-	State text check (State = 'completed ' or State = 'uncompleted'),
+	State text check (State = 'completed' or State = 'uncompleted'),
 	Checklist_id int references Checklist not null
 )
 
@@ -42,6 +42,7 @@ create table ChecklistTemplateItem (
 	Id serial primary key,
 	Name text not null,
 	Description text not null,
+	Usable boolean not null,
 	ChecklistTemplate_id int references ChecklistTemplate not null
 )
 
