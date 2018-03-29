@@ -1,6 +1,5 @@
 package pt.isel.daw.g5.ChecklistAPI.model.outputModel;
 
-import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import pt.isel.daw.g5.ChecklistAPI.model.databaseModels.DatabaseTemplateItem;
 import pt.isel.daw.g5.ChecklistAPI.model.internalModel.*;
@@ -72,8 +71,8 @@ public class OutTemplateItem {
     private Entity produceChecklistTemplateEntity(DatabaseTemplateItem templateItem) {
         return new Entity(
                 new String[] {"checklisttemplate"},
-                new String[] {"/checklisttemplates/" + templateItem.getChecklistTemplateId()},
-                "/checklisttemplates/" + templateItem.getChecklistTemplateId()
+                new String[] {"/checklisttemplates/" + templateItem.getChecklisttemplate_id()},
+                "/checklisttemplates/" + templateItem.getChecklisttemplate_id()
                 // TODO LINKS IN SIREN -> new SirenLink[0]
         );
     }
@@ -90,11 +89,11 @@ public class OutTemplateItem {
                 "delete-templateitem",
                 "Delete Template Item",
                 "DELETE",
-                "/checklisttemplates/" + templateItem.getChecklistTemplateId() + "/templateitems/" + templateItem.getId(),
+                "/checklisttemplates/" + templateItem.getChecklisttemplate_id() + "/templateitems/" + templateItem.getTemplateitem_id(),
                 "application/x-www-form-urlencoded",
                 new Field[] {
-                        new Field("checklisttemplate_id", "hidden", Integer.toString(templateItem.getChecklistTemplateId())),
-                        new Field("templateitem_id", "hidden", Integer.toString(templateItem.getId()))
+                        new Field("checklisttemplate_id", "hidden", Integer.toString(templateItem.getChecklisttemplate_id())),
+                        new Field("templateitem_id", "hidden", Integer.toString(templateItem.getTemplateitem_id()))
                 }
         );
     }
@@ -104,11 +103,11 @@ public class OutTemplateItem {
                 "update-templateitem",
                 "Update Template Item",
                 "PUT",
-                "/checklisttemplates/" + templateItem.getChecklistTemplateId() + "/templateitems/" + templateItem.getId(),
+                "/checklisttemplates/" + templateItem.getChecklisttemplate_id() + "/templateitems/" + templateItem.getTemplateitem_id(),
                 "application/json",
                 new Field[] {
-                        new Field("checklisttemplate_id", "hidden", "" + templateItem.getChecklistTemplateId()),
-                        new Field("templateitem_id", "hidden", Integer.toString(templateItem.getId())),
+                        new Field("checklisttemplate_id", "hidden", "" + templateItem.getChecklisttemplate_id()),
+                        new Field("templateitem_id", "hidden", Integer.toString(templateItem.getTemplateitem_id())),
                         new Field("name", "text", ""),
                         new Field("description", "text", "")
                 }
@@ -116,7 +115,7 @@ public class OutTemplateItem {
     }
 
     private SirenLink[] produceLinks(DatabaseTemplateItem templateItem) {
-        SirenLink self = new SirenLink(new String[]{"self"}, "/checklisttemplates/" + templateItem.getChecklistTemplateId() + "/templateitems/" + templateItem.getId());
+        SirenLink self = new SirenLink(new String[]{"self"}, "/checklisttemplates/" + templateItem.getChecklisttemplate_id() + "/templateitems/" + templateItem.getTemplateitem_id());
         // TODO NEXT AND PREV
         return new SirenLink[]{self};
     }
