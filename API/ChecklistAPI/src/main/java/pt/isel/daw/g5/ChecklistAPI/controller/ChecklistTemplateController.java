@@ -41,18 +41,30 @@ public class ChecklistTemplateController {
     @Autowired
     private UserRepository userRepository;
 
+    /**
+     * Finds and returns a collection of checklist templates
+     * @param page
+     * @return
+     */
     @GetMapping(produces = "application/vnd.collection+json")
     public OutChecklistTemplates getChecklistTemplates(@RequestParam(value = "page", defaultValue = "1") int page){
         Page<ChecklistTemplate> checklistTemplatePage = checklistTemplateRepository.findAll(PageRequest.of(page - 1, PAGE_SIZE));
         return new OutChecklistTemplates(checklistTemplatePage);
     }
 
+    /**
+     * Creates a new checklist template
+     * @param checklistTemplate the new checklist template to be added
+     * @param request
+     * @return
+     */
     @PostMapping
-    public String postChecklistTemplate(@RequestBody ChecklistTemplate checklistTemplate) {
-        Optional<User> rui = userRepository.findById("Rui");
-        checklistTemplate.setUser(rui.get()); //TODO verificar autenticação
+    public String postChecklistTemplate(@RequestBody ChecklistTemplate checklistTemplate,
+                                        HttpServletRequest request) {
+        String username = (String) request.getAttribute("Username");
+        checklistTemplate.setUser(userRepository.findById(username).get());
         checklistTemplateRepository.save(checklistTemplate);
-        return "Ok";
+        return "OK";
     }
 
     /**
@@ -114,48 +126,86 @@ public class ChecklistTemplateController {
         return "OK";
     }
 
+    /**
+     * Returns the items belonging in the checklist template identified by checklistTemplateId
+     * @param checklistTemplateId the identifier of the checklist template
+     * @param page
+     * @param request
+     * @return
+     */
     @GetMapping(path = "/{checklisttemplate_id}/templateitems", produces = "application/vnd.collection+json")
     public OutTemplateItems getTemplateItems(@PathVariable("checklisttemplate_id") int checklistTemplateId,
                                              @RequestParam(value = "page", defaultValue = "0") int page,
                                              HttpServletRequest request){
 
+        log.info(String.format("Trying to retrive items from the checklistTemplate %s", checklistTemplateId));
         validateOperation(checklistTemplateId, request);
+
         Page<TemplateItem> itemPage = templateItemRepository.findAllByChecklistTemplate_Id(checklistTemplateId, PageRequest.of(page, PAGE_SIZE));
+        log.info("ChecklistTemplate items found and being returned");
         return new OutTemplateItems(itemPage, checklistTemplateId);
     }
 
+    /**
+     * Adds a new template item to a checklist template
+     * @param checklisttemplate_id the identifier of the checklist template
+     * @param templateItem the identifier of the template item
+     * @param request
+     * @return
+     */
     @PostMapping("/{checklisttemplate_id}/templateitems")
     public String postTemplateItem(@PathVariable("checklisttemplate_id") int checklisttemplate_id,
                                    @RequestBody DatabaseTemplateItem templateItem,
                                    HttpServletRequest request){
 
+        log.info(String.format("Trying to add a new item to the checklistTemplate %s", checklisttemplate_id));
         ChecklistTemplate checklistTemplate = validateOperation(checklisttemplate_id, request);
+
         TemplateItem newItem = new TemplateItem(templateItem.getName(), templateItem.getDescription());
         newItem.setChecklistTemplate(checklistTemplate);
         templateItemRepository.save(newItem);
+        log.info("ChecklistTemplate item successfully added");
         return "OK";
     }
 
+    /**
+     * Finds and returns a template item
+     * @param checklistTemplateId the identifier of the checklist template
+     * @param templateItemId the identifier of the template item
+     * @param request
+     * @return
+     */
     @GetMapping(path = "/{checklisttemplate_id}/templateitems/{templateitem_id}", produces = "application/vnd.siren+json")
     public OutTemplateItem getTemplateItem(@PathVariable("checklisttemplate_id") int checklistTemplateId,
                                            @PathVariable("templateitem_id") int templateItemId,
                                            HttpServletRequest request){
 
+        log.info(String.format("Trying to retrive an item from the checklistTemplate %s", checklistTemplateId));
         validateOperation(checklistTemplateId, request);
         if(!templateItemRepository.existsById(templateItemId))
             throw new NotFoundException();
 
         TemplateItem templateItem = templateItemRepository.findById(templateItemId).get();
         DatabaseTemplateItem databaseTemplateItem = new DatabaseTemplateItem(templateItem);
+        log.info("ChecklistTemplate item retrieved and being returned");
         return new OutTemplateItem(databaseTemplateItem);
     }
 
+    /**
+     * Updates a template item
+     * @param checklistTemplateId the identifier of the checklist template
+     * @param templateItemId the identifier of the template item
+     * @param templateItem the item containing the fields to be updated
+     * @param request
+     * @return
+     */
     @PutMapping("/{checklisttemplate_id}/templateitems/{templateitem_id}")
     public String updateTemplateItem(@PathVariable("checklisttemplate_id") int checklistTemplateId,
                                      @PathVariable("templateitem_id") int templateItemId,
                                      @RequestBody DatabaseTemplateItem templateItem,
                                      HttpServletRequest request){
 
+        log.info(String.format("Trying to update an item from the checklistTemplate %s", checklistTemplateId));
         validateOperation(checklistTemplateId, request);
         if(!templateItemRepository.existsById(templateItemId))
             throw new NotFoundException();
@@ -164,19 +214,29 @@ public class ChecklistTemplateController {
         updatedItem.setName(templateItem.getName());
         updatedItem.setDescription(templateItem.getDescription());
         templateItemRepository.save(updatedItem);
+        log.info("ChecklistTemplate item successfully updated");
         return "OK";
     }
 
+    /**
+     * Deletes a template item from a checklist template
+     * @param checklistTemplateId the identifier of the checklist template
+     * @param templateItemId the identifier of the template item
+     * @param request
+     * @return
+     */
     @DeleteMapping("/{checklisttemplate_id}/templateitems/{templateitem_id}")
     public String deleteTemplateItem(@PathVariable("checklisttemplate_id") int checklistTemplateId,
                                      @PathVariable("templateitem_id") int templateItemId,
                                      HttpServletRequest request){
 
+        log.info(String.format("Trying to delete an item from the checklistTemplate %s", checklistTemplateId));
         validateOperation(checklistTemplateId, request);
         if(!templateItemRepository.existsById(templateItemId))
             throw new NotFoundException();
 
         templateItemRepository.deleteById(templateItemId);
+        log.info("ChecklistTemplate successfully deleted");
         return "OK";
     }
 
