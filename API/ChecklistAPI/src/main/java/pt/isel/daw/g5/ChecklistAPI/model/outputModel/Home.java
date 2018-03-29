@@ -14,11 +14,11 @@ public class Home {
     }
 
     public Home() {
-        ChecklistsHome checklistsHome = new ChecklistsHome("/checklists", produceChecklistsHints());
-        ChecklistHome checklistHome = new ChecklistHome("/checklists/{checklist_id}", produceChecklistHrefVars(), produceChecklistHints());
-        ChecklistTemplatesHome checklistTemplatesHome = new ChecklistTemplatesHome("/checklisttemplates", produceChecklistTemplatesHints());
-        ChecklistTemplateHome checklistTemplateHome = new ChecklistTemplateHome("/checklisttemplates/{checklisttemplate_id", produceChecklistTemplateHrefVars(), produceChecklistTemplateHints());
-        UsersHome usersHome = new UsersHome("/users", produceUsersHints());
+        HomeResource checklistsHome = new HomeResource("/checklists", produceChecklistsHints());
+        HomeResource checklistHome = new HomeResource("/checklists/{checklist_id}", produceChecklistHrefVars(), produceChecklistHints());
+        HomeResource checklistTemplatesHome = new HomeResource("/checklisttemplates", produceChecklistTemplatesHints());
+        HomeResource checklistTemplateHome = new HomeResource("/checklisttemplates/{checklisttemplate_id", produceChecklistTemplateHrefVars(), produceChecklistTemplateHints());
+        HomeResource usersHome = new HomeResource("/users", produceUsersHints());
         resources = new Resources(checklistsHome, checklistHome, checklistTemplatesHome, checklistTemplateHome, usersHome);
     }
 

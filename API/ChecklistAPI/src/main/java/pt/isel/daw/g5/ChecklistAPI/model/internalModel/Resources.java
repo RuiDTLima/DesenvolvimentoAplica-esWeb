@@ -5,65 +5,65 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class Resources {
     @JsonProperty("/checklists")
-    private ChecklistsHome checklistsHome;
+    private HomeResource checklistsHome;
 
     @JsonProperty("/checklist")
-    private ChecklistHome checklistHome;
+    private HomeResource checklistHome;
 
     @JsonProperty("/checklisttemplates")
-    private ChecklistTemplatesHome checklistTemplatesHome;
+    private HomeResource checklistTemplatesHome;
 
     @JsonProperty("/checklisttemplate")
-    private ChecklistTemplateHome checklistTemplateHome;
+    private HomeResource checklistTemplateHome;
 
     @JsonProperty("/users")
-    private UsersHome usersHome;
+    private HomeResource usersHome;
 
-    public ChecklistsHome getChecklistsHome() {
+    public HomeResource getChecklistsHome() {
         return checklistsHome;
     }
 
-    public void setChecklistsHome(ChecklistsHome checklistsHome) {
+    public void setChecklistsHome(HomeResource checklistsHome) {
         this.checklistsHome = checklistsHome;
     }
 
-    public ChecklistHome getChecklistHome() {
+    public HomeResource getChecklistHome() {
         return checklistHome;
     }
 
-    public void setChecklistHome(ChecklistHome checklistHome) {
+    public void setChecklistHome(HomeResource checklistHome) {
         this.checklistHome = checklistHome;
     }
 
-    public ChecklistTemplatesHome getChecklistTemplatesHome() {
+    public HomeResource getChecklistTemplatesHome() {
         return checklistTemplatesHome;
     }
 
-    public void setChecklistTemplatesHome(ChecklistTemplatesHome checklistTemplatesHome) {
+    public void setChecklistTemplatesHome(HomeResource checklistTemplatesHome) {
         this.checklistTemplatesHome = checklistTemplatesHome;
     }
 
-    public ChecklistTemplateHome getChecklistTemplateHome() {
+    public HomeResource getChecklistTemplateHome() {
         return checklistTemplateHome;
     }
 
-    public void setChecklistTemplateHome(ChecklistTemplateHome checklistTemplateHome) {
+    public void setChecklistTemplateHome(HomeResource checklistTemplateHome) {
         this.checklistTemplateHome = checklistTemplateHome;
     }
 
-    public UsersHome getUsersHome() {
+    public HomeResource getUsersHome() {
         return usersHome;
     }
 
-    public void setUsersHome(UsersHome usersHome) {
+    public void setUsersHome(HomeResource usersHome) {
         this.usersHome = usersHome;
     }
 
-    public Resources(ChecklistsHome checklistsHome,
-                     ChecklistHome checklistHome,
-                     ChecklistTemplatesHome checklistTemplatesHome,
-                     ChecklistTemplateHome checklistTemplateHome,
-                     UsersHome usersHome) {
+    public Resources(HomeResource checklistsHome,
+                     HomeResource checklistHome,
+                     HomeResource checklistTemplatesHome,
+                     HomeResource checklistTemplateHome,
+                     HomeResource usersHome) {
 
         this.checklistsHome = checklistsHome;
         this.checklistHome = checklistHome;
