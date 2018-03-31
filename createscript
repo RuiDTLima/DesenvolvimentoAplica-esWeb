@@ -19,6 +19,7 @@ create table Users (
 create table ChecklistTemplate (
 	Id serial primary key,
 	Name text not null,
+	Usable boolean not null,
 	Username text references Users not null
 )
 
@@ -42,7 +43,6 @@ create table ChecklistTemplateItem (
 	Id serial primary key,
 	Name text not null,
 	Description text not null,
-	Usable boolean not null,
 	ChecklistTemplate_id int references ChecklistTemplate not null
 )
 
@@ -60,5 +60,5 @@ insert into ChecklistItem(Name, Description, State, Checklist_id)
 	values('Item 1.1', '', 'uncompleted', 1),
 		  ('Item 1.2', 'uncompleted item', 'uncompleted', 1)
 		
-insert into ChecklistTemplate(Name, Username)
-	values('Template 1', 'Rui')
+insert into ChecklistTemplate(Name, Username, Usable)
+	values('Template 1', 'Rui', true)
