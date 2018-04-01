@@ -21,6 +21,6 @@ public class ErrorHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(ForbiddenException.class)
     public ResponseEntity<ProblemJSON> notAuthenticated(ForbiddenException ex){
-        return new ResponseEntity<>(ex.getProblemJSON(), HttpStatus.UNAUTHORIZED);
+        return new ResponseEntity<>(ex.getProblemJSON(), HttpStatus.FORBIDDEN);
     }
 }

@@ -4,7 +4,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import pt.isel.daw.g5.ChecklistAPI.model.errorModel.ProblemJSON;
 
-@ResponseStatus(HttpStatus.FORBIDDEN)
 public class ForbiddenException extends RuntimeException {
     private ProblemJSON problemJSON;
 
