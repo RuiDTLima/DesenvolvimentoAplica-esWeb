@@ -1,8 +1,11 @@
 package pt.isel.daw.g5.ChecklistAPI.model.internalModel;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class Item {
     private String href;
     private Data[] data;
+    @JsonProperty("links")
     private CollectionLink[] collectionLinks;
 
     public String getHref() {

@@ -6,6 +6,7 @@ public class DatabaseChecklistTemplate {
     private int id;
     private String name;
     private String username;
+    private boolean usable;
 
     public int getId() {
         return id;
@@ -31,6 +32,14 @@ public class DatabaseChecklistTemplate {
         this.username = username;
     }
 
+    public boolean isUsable() {
+        return usable;
+    }
+
+    public void setUsable(boolean usable) {
+        this.usable = usable;
+    }
+
     protected DatabaseChecklistTemplate(){
 
     }
@@ -39,5 +48,8 @@ public class DatabaseChecklistTemplate {
         id = checklistTemplate.getId();
         name = checklistTemplate.getName();
         username = checklistTemplate.getUser().getUsername();
+        usable = checklistTemplate.isUsable();
     }
+
+
 }

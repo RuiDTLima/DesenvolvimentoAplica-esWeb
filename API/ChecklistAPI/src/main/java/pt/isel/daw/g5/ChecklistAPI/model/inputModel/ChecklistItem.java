@@ -14,7 +14,7 @@ public class ChecklistItem {
 
     @ManyToOne
     @JoinColumn(name = "checklist_id")
-    private Checklist ChecklistId;
+    private Checklist checklist;
 
     public int getId() {
         return id;
@@ -48,12 +48,12 @@ public class ChecklistItem {
         this.state = state;
     }
 
-    public Checklist getChecklistId() {
-        return ChecklistId;
+    public Checklist getChecklist() {
+        return checklist;
     }
 
-    public void setChecklistId(Checklist checklistId) {
-        ChecklistId = checklistId;
+    public void setChecklist(Checklist checklist) {
+        this.checklist = checklist;
     }
 
     protected ChecklistItem(){

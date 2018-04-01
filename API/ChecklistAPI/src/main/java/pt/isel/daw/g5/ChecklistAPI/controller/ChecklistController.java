@@ -19,9 +19,9 @@ import pt.isel.daw.g5.ChecklistAPI.model.inputModel.Checklist;
 import pt.isel.daw.g5.ChecklistAPI.model.inputModel.ChecklistItem;
 import pt.isel.daw.g5.ChecklistAPI.model.inputModel.ChecklistTemplate;
 import pt.isel.daw.g5.ChecklistAPI.model.internalModel.InvalidParams;
-import pt.isel.daw.g5.ChecklistAPI.model.outputModel.ChecklistItems;
 import pt.isel.daw.g5.ChecklistAPI.model.outputModel.OutChecklist;
 import pt.isel.daw.g5.ChecklistAPI.model.outputModel.OutChecklistItem;
+import pt.isel.daw.g5.ChecklistAPI.model.outputModel.OutChecklistItems;
 import pt.isel.daw.g5.ChecklistAPI.model.outputModel.OutChecklists;
 import pt.isel.daw.g5.ChecklistAPI.repository.ChecklistItemRepository;
 import pt.isel.daw.g5.ChecklistAPI.repository.ChecklistRepository;
@@ -131,11 +131,14 @@ public class ChecklistController {
     }
 
     @GetMapping(path = "/{checklist_id}/checklistitems", produces = "application/vnd.collection+json")
-    public ChecklistItems getChecklistItems(@PathVariable("checklist_id") int checklistId) {
-        if(!checklistRepository.existsById(checklistId)) return null;
-//            throw new ChangeSetPersister.NotFoundException();
-//        Page<OutChecklistItem> checklistItemPage = checklistRepository.findById(checklistId).get().getInChecklistItems();
-        return null; //TODO paging
+    public OutChecklistItems getChecklistItems(@PathVariable("checklist_id") int checklistId,
+                                               @RequestParam(value = "page", defaultValue = "0") int page,
+                                               HttpServletRequest request) {
+        log.info(String.format("Trying to retrive items from the checklist %s", checklistId));
+        validateOperation(checklistId, request);
+        Page<ChecklistItem> checklistItemPage = checklistItemRepository.findAllByChecklistId(checklistId, PageRequest.of(page, PAGE_SIZE));
+        log.info("Checklist items found and being returned");
+        return new OutChecklistItems(checklistItemPage, checklistId);
     }
 
     @PostMapping("/{checklist_id}/checklistitems")
@@ -194,7 +197,7 @@ public class ChecklistController {
         validateOperation(checklist_id, request);
         Optional<ChecklistItem> optionalChecklistItem = checklistItemRepository.findById(checklistitem_id);
 
-        if (!optionalChecklistItem.isPresent() || optionalChecklistItem.get().getChecklistId().getId() != checklist_id) {
+        if (!optionalChecklistItem.isPresent() || optionalChecklistItem.get().getChecklist().getId() != checklist_id) {
             log.warn(String.format("The item %s does not belong to the checklist %s, or it does not exist", checklistitem_id, checklist_id));
             throw new NotFoundException();
         }
@@ -227,7 +230,7 @@ public class ChecklistController {
         validateOperation(checklist_id, request);
 
         Optional<ChecklistItem> optionalChecklistItem = checklistItemRepository.findById(checklistitem_id);
-        if (!optionalChecklistItem.isPresent() || optionalChecklistItem.get().getChecklistId().getId() != checklist_id) {
+        if (!optionalChecklistItem.isPresent() || optionalChecklistItem.get().getChecklist().getId() != checklist_id) {
             log.warn(String.format("The item %s does not belong to the checklist %s, or it does not exist", checklistitem_id, checklist_id));
             throw new NotFoundException();
         }

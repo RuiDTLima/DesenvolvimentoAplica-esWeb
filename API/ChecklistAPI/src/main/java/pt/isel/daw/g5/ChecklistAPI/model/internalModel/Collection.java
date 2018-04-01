@@ -1,9 +1,12 @@
 package pt.isel.daw.g5.ChecklistAPI.model.internalModel;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class Collection {
     private String version;
     private String href;
     private Item[] items;
+    @JsonProperty("links")
     private CollectionLink[] links;
 
     public String getVersion() {
@@ -30,6 +33,7 @@ public class Collection {
         this.items = items;
     }
 
+    @JsonProperty("links")
     public CollectionLink[] getCollectionLinks() {
         return links;
     }

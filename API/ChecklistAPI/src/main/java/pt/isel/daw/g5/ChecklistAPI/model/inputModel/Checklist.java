@@ -24,7 +24,7 @@ public class Checklist {
     @JoinColumn(name = "checklisttemplate_id")
     private ChecklistTemplate checklistTemplate;
 
-    @OneToMany(mappedBy = "ChecklistId")
+    @OneToMany(mappedBy = "checklist")
     private List<ChecklistItem> checklistItems;
 
     public int getId() {

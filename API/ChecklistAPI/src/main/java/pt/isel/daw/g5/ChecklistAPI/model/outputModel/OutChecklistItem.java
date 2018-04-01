@@ -70,7 +70,7 @@ public class OutChecklistItem {
     }
 
     private Entity[] produceEntity(ChecklistItem checklistItem) {
-        int checklistId = checklistItem.getChecklistId().getId();
+        int checklistId = checklistItem.getChecklist().getId();
         String[] _class = new String[]{"checklist"};
         String[] rel = new String[]{"/checklists/" + checklistId};
         String href = String.format("/checklists/%s/checklistitems", checklistId);
@@ -82,21 +82,21 @@ public class OutChecklistItem {
     }
 
     private Action produceDelete(ChecklistItem checklistItem) {
-        return new Action("delete-checklistitem", "Delete OutChecklist Item", "DELETE", String.format("/checklists/%s/checklistitems/%s", checklistItem.getChecklistId().getId(), checklistItem.getId()), "application/x-www-form-urlencoded", produceDeleteFields(checklistItem));
+        return new Action("delete-checklistitem", "Delete OutChecklist Item", "DELETE", String.format("/checklists/%s/checklistitems/%s", checklistItem.getChecklist().getId(), checklistItem.getId()), "application/x-www-form-urlencoded", produceDeleteFields(checklistItem));
     }
 
     private Action producePut(ChecklistItem checklistItem) {
-        return new Action("update-checklistitem", "Update OutChecklist Item", "PUT", String.format("/checklists/%s/checklistitems/%s", checklistItem.getChecklistId().getId(), checklistItem.getId()), "application/json", producePutFields(checklistItem));
+        return new Action("update-checklistitem", "Update OutChecklist Item", "PUT", String.format("/checklists/%s/checklistitems/%s", checklistItem.getChecklist().getId(), checklistItem.getId()), "application/json", producePutFields(checklistItem));
     }
 
     private Field[] produceDeleteFields(ChecklistItem checklistItem) {
-        Field checklist_id = new Field("checklist_id", "hidden", Integer.toString(checklistItem.getChecklistId().getId()), "Checklist Id");
+        Field checklist_id = new Field("checklist_id", "hidden", Integer.toString(checklistItem.getChecklist().getId()), "Checklist Id");
         Field checklistitem_id = new Field("checklistitem_id", "hidden", Integer.toString(checklistItem.getId()), "Checklist Item Id");
         return new Field[]{checklist_id, checklistitem_id};
     }
 
     private Field[] producePutFields(ChecklistItem checklistItem) {
-        Field checklist_id = new Field("checklist_id", "hidden", Integer.toString(checklistItem.getChecklistId().getId()), "Checklist Id");
+        Field checklist_id = new Field("checklist_id", "hidden", Integer.toString(checklistItem.getChecklist().getId()), "Checklist Id");
         Field id = new Field("checklistitem_id", "hidden", Integer.toString(checklistItem.getId()), "Checklist Item Id");
         Field name = new Field("name", "text", "Name");
         Field description = new Field("description", "text", "Description");
@@ -105,7 +105,7 @@ public class OutChecklistItem {
     }
 
     private SirenLink[] produceLinks(ChecklistItem checklistItem) {
-        SirenLink self = new SirenLink(new String[]{"self"}, String.format("/checklists/%s/checklistitems/%s", checklistItem.getChecklistId().getId(), checklistItem.getId()));
+        SirenLink self = new SirenLink(new String[]{"self"}, String.format("/checklists/%s/checklistitems/%s", checklistItem.getChecklist().getId(), checklistItem.getId()));
         return new SirenLink[]{self};
     }
 }

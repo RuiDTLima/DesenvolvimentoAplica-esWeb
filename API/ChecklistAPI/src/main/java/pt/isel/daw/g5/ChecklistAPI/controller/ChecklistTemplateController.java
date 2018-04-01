@@ -49,24 +49,26 @@ public class ChecklistTemplateController {
      * @return
      */
     @GetMapping(produces = "application/vnd.collection+json")
-    public OutChecklistTemplates getChecklistTemplates(@RequestParam(value = "page", defaultValue = "1") int page){
-        Page<ChecklistTemplate> checklistTemplatePage = checklistTemplateRepository.findAll(PageRequest.of(page - 1, PAGE_SIZE));
+    public OutChecklistTemplates getChecklistTemplates(@RequestParam(value = "page", defaultValue = "0") int page){
+        Page<ChecklistTemplate> checklistTemplatePage = checklistTemplateRepository.findAll(PageRequest.of(page, PAGE_SIZE));
         return new OutChecklistTemplates(checklistTemplatePage);
     }
 
     /**
      * Creates a new checklist template
-     * @param checklistTemplate the new checklist template to be added
+     * @param databaseChecklistTemplate the new checklist template to be added
      * @param request
      * @return
      */
     @PostMapping
-    public String postChecklistTemplate(@RequestBody ChecklistTemplate checklistTemplate,
+    public ResponseEntity postChecklistTemplate(@RequestBody DatabaseChecklistTemplate databaseChecklistTemplate,
                                         HttpServletRequest request) {
+
+        ChecklistTemplate template =  new ChecklistTemplate(databaseChecklistTemplate.getName());
         String username = (String) request.getAttribute("Username");
-        checklistTemplate.setUser(userRepository.findById(username).get());
-        checklistTemplateRepository.save(checklistTemplate);
-        return "OK";
+        template.setUser(userRepository.findById(username).get());
+        checklistTemplateRepository.save(template);
+        return new ResponseEntity(HttpStatus.OK);
     }
 
     /**

@@ -57,6 +57,6 @@ public class DatabaseChecklistItem {
         name = checklistItem.getName();
         description = checklistItem.getDescription();
         state = checklistItem.getState();
-        checklist_id = checklistItem.getChecklistId().getId();
+        checklist_id = checklistItem.getChecklist().getId();
     }
 }
