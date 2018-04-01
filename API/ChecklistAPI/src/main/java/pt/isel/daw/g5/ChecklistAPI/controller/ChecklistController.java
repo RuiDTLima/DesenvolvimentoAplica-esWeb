@@ -108,26 +108,34 @@ public class ChecklistController {
     }
 
     @GetMapping(path = "/{checklist_id}", produces = "application/vnd.siren+json")
-    public OutChecklist getChecklist(@PathVariable("checklist_id") int checklistId){
-        Optional<Checklist> checklistOptional = checklistRepository.findById(checklistId);
-        Checklist checklist = checklistOptional.get();
-        return new OutChecklist(checklist);
-    }
+    public OutChecklist getChecklist(@PathVariable("checklist_id") int checklistId,
+                                     HttpServletRequest request){
 
-    @DeleteMapping("/{checklist_id}")
-    public String deleteChecklist(@PathVariable("checklist_id") int checklistId){
-        checklistRepository.deleteById(checklistId);
-        return "OK";
+        Checklist checklist = validateOperation(checklistId, request);
+        DatabaseChecklist databaseChecklist = new DatabaseChecklist(checklist);
+        return new OutChecklist(databaseChecklist);
     }
 
     @PutMapping("/{checklist_id}")
-    public String updateChecklist(
+    public ResponseEntity updateChecklist(
             @PathVariable("checklist_id") int checklistId,
-            @RequestBody Checklist checklist){
-        if(!checklistRepository.existsById(checklistId))
-            return "ERROR"; // TODO
+            @RequestBody DatabaseChecklist updatedChecklist,
+            HttpServletRequest request){
+
+        Checklist checklist = validateOperation(checklistId, request);
+        checklist.setName(updatedChecklist.getName());
+        checklist.setCompletionDate(updatedChecklist.getCompletionDate());
         checklistRepository.save(checklist);
-        return "OK";
+        return new ResponseEntity(HttpStatus.NO_CONTENT);
+    }
+
+    @DeleteMapping("/{checklist_id}")
+    public ResponseEntity deleteChecklist(@PathVariable("checklist_id") int checklistId,
+                                          HttpServletRequest request){
+
+        Checklist checklist = validateOperation(checklistId, request);
+        checklistRepository.delete(checklist);
+        return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
 
     @GetMapping(path = "/{checklist_id}/checklistitems", produces = "application/vnd.collection+json")

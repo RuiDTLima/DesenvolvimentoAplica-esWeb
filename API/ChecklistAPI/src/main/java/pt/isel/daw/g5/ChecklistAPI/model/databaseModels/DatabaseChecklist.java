@@ -1,20 +1,22 @@
 package pt.isel.daw.g5.ChecklistAPI.model.databaseModels;
 
+import pt.isel.daw.g5.ChecklistAPI.model.inputModel.Checklist;
+
 import java.time.LocalDateTime;
 
 public class DatabaseChecklist {
-    private int id;
+    private int checklist_id;
     private String name;
     private LocalDateTime completionDate;
     private String username;
     private int checklisttemplate_id;
 
-    public int getId() {
-        return id;
+    public int getChecklist_id() {
+        return checklist_id;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setChecklist_id(int checklist_id) {
+        this.checklist_id = checklist_id;
     }
 
     public String getName() {
@@ -47,5 +49,15 @@ public class DatabaseChecklist {
 
     public void setChecklisttemplate_id(int checklisttemplate_id) {
         this.checklisttemplate_id = checklisttemplate_id;
+    }
+
+    public DatabaseChecklist() {}
+
+    public DatabaseChecklist(Checklist checklist){
+        this.checklist_id = checklist.getId();
+        this.name = checklist.getName();
+        this.completionDate = checklist.getCompletionDate();
+        if(checklist.getChecklistTemplate() != null)
+            this.checklisttemplate_id = checklist.getChecklistTemplate().getId();
     }
 }
