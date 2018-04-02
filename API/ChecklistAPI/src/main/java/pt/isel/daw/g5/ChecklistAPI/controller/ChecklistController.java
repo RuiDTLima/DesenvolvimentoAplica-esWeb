@@ -77,10 +77,10 @@ public class ChecklistController {
 
         Checklist checklist = new Checklist(databaseChecklist.getName(), databaseChecklist.getCompletionDate());
 
-        if (databaseChecklist.getChecklisttemplate_id() != 0){ // Significa que o checklist é gerado através de um checklisttemplate
+        if (databaseChecklist.getChecklistTemplateId() != 0){ // Significa que o checklist é gerado através de um checklisttemplate
             log.info("The checklist is being created with the help of a ChecklistTemplate");
 
-            Optional<ChecklistTemplate> optionalChecklistTemplate = checklistTemplateRepository.findById(databaseChecklist.getChecklisttemplate_id());
+            Optional<ChecklistTemplate> optionalChecklistTemplate = checklistTemplateRepository.findById(databaseChecklist.getChecklistTemplateId());
             if (!optionalChecklistTemplate.isPresent()) {
                 log.warn("The ChecklistTemplate being used does not exist");
                 throw new NotFoundException();
@@ -133,10 +133,12 @@ public class ChecklistController {
     }
 
     @DeleteMapping("/{checklist_id}")
+    @Transactional
     public ResponseEntity deleteChecklist(@PathVariable("checklist_id") int checklistId,
                                           HttpServletRequest request){
 
         Checklist checklist = validateOperation(checklistId, request);
+        checklistItemRepository.deleteAllByChecklistId(checklistId);
         checklistRepository.delete(checklist);
         return new ResponseEntity(HttpStatus.NO_CONTENT);
     }

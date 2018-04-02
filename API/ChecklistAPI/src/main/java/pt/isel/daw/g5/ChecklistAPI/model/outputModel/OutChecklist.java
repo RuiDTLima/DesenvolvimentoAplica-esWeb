@@ -1,6 +1,5 @@
 package pt.isel.daw.g5.ChecklistAPI.model.outputModel;
 
-import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import pt.isel.daw.g5.ChecklistAPI.model.databaseModels.DatabaseChecklist;
 import pt.isel.daw.g5.ChecklistAPI.model.internalModel.*;
@@ -68,7 +67,7 @@ public class OutChecklist {
     }
 
     private Entity produceChecklistItemEntity(DatabaseChecklist checklist) {
-        return new Entity(new String[] {"checklistitem"},  new String[] {"/checklists/" + checklist.getChecklist_id()}, "/checklists/" + checklist.getChecklist_id() + "/checklistitems"
+        return new Entity(new String[] {"checklistitem"},  new String[] {"/checklists/" + checklist.getChecklistId()}, "/checklists/" + checklist.getChecklistId() + "/checklistitems"
                 // TODO LINKS IN SIREN -> new SirenLink[0]
         );
     }
@@ -77,7 +76,7 @@ public class OutChecklist {
         return new Entity(
                 new String[] {"checklisttemplates"},
                 new String[] {"/checklisttemplates"},
-                String.format("/checklisttemplates/%s", checklist.getChecklisttemplate_id())
+                String.format("/checklisttemplates/%s", checklist.getChecklistTemplateId())
         );
     }
 
@@ -94,7 +93,7 @@ public class OutChecklist {
                 "add-checklistitem",
                 "Add Checklist Item",
                 "POST",
-                "/checklists/" + checklist.getChecklist_id() + "/checklistitems",
+                "/checklists/" + checklist.getChecklistId() + "/checklistitems",
                 "application/json",
                 new Field[] {
                         new Field("checklist_id", "hidden", "1"),
@@ -108,10 +107,10 @@ public class OutChecklist {
                 "delete-checklist",
                 "Delete Checklist",
                 "DELETE",
-                "/checklists/" + checklist.getChecklist_id(),
+                "/checklists/" + checklist.getChecklistId(),
                 "application/x-www-form-urlencoded",
                 new Field[] {
-                        new Field("checklist_id", "hidden", Integer.toString(checklist.getChecklist_id()))
+                        new Field("checklist_id", "hidden", Integer.toString(checklist.getChecklistId()))
                 }
         );
     }
@@ -121,10 +120,10 @@ public class OutChecklist {
                 "update-checklist",
                 "Update Checklist",
                 "PUT",
-                "/checklists/" + checklist.getChecklist_id(),
+                "/checklists/" + checklist.getChecklistId(),
                 "application/json",
                 new Field[] {
-                        new Field("checklist_id", "hidden", "" + checklist.getChecklist_id()),
+                        new Field("checklist_id", "hidden", "" + checklist.getChecklistId()),
                         new Field("name", "text", ""),
                         new Field("completion_date", "text", "")
                 }
@@ -132,7 +131,7 @@ public class OutChecklist {
     }
 
     private SirenLink[] produceLinks(DatabaseChecklist checklist) {
-        SirenLink self = new SirenLink(new String[] {"self"}, "/checklists" + checklist.getChecklist_id());
+        SirenLink self = new SirenLink(new String[] {"self"}, "/checklists" + checklist.getChecklistId());
         return new SirenLink[]{self};
     }
 }

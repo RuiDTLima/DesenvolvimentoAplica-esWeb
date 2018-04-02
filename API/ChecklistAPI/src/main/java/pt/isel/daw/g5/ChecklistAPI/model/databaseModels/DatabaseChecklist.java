@@ -1,5 +1,6 @@
 package pt.isel.daw.g5.ChecklistAPI.model.databaseModels;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import pt.isel.daw.g5.ChecklistAPI.model.inputModel.Checklist;
@@ -7,19 +8,23 @@ import pt.isel.daw.g5.ChecklistAPI.model.inputModel.Checklist;
 import java.time.LocalDateTime;
 
 public class DatabaseChecklist {
-    private int checklist_id;
+    @JsonAlias("checklistId")
+    private int checklistId;
     private String name;
     @JsonSerialize(using = ToStringSerializer.class)
+    @JsonAlias("completion_date")
     private LocalDateTime completionDate;
+    @JsonAlias("username")
     private String username;
-    private int checklisttemplate_id;
+    @JsonAlias("checklistTemplateId")
+    private int checklistTemplateId;
 
-    public int getChecklist_id() {
-        return checklist_id;
+    public int getChecklistId() {
+        return checklistId;
     }
 
-    public void setChecklist_id(int checklist_id) {
-        this.checklist_id = checklist_id;
+    public void setChecklistId(int checklistId) {
+        this.checklistId = checklistId;
     }
 
     public String getName() {
@@ -46,21 +51,21 @@ public class DatabaseChecklist {
         this.username = username;
     }
 
-    public int getChecklisttemplate_id() {
-        return checklisttemplate_id;
+    public int getChecklistTemplateId() {
+        return checklistTemplateId;
     }
 
-    public void setChecklisttemplate_id(int checklisttemplate_id) {
-        this.checklisttemplate_id = checklisttemplate_id;
+    public void setChecklistTemplateId(int checklistTemplateId) {
+        this.checklistTemplateId = checklistTemplateId;
     }
 
     public DatabaseChecklist() {}
 
     public DatabaseChecklist(Checklist checklist){
-        this.checklist_id = checklist.getId();
+        this.checklistId = checklist.getId();
         this.name = checklist.getName();
         this.completionDate = checklist.getCompletionDate();
         if(checklist.getChecklistTemplate() != null)
-            this.checklisttemplate_id = checklist.getChecklistTemplate().getId();
+            this.checklistTemplateId = checklist.getChecklistTemplate().getId();
     }
 }
