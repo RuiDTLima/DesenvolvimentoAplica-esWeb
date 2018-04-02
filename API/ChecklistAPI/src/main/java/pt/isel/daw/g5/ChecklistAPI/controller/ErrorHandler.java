@@ -1,6 +1,8 @@
 package pt.isel.daw.g5.ChecklistAPI.controller;
 
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -17,16 +19,22 @@ public class ErrorHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(InvalidStateException.class)
     public ResponseEntity<ProblemJSON> invalidState(InvalidStateException ex){
-        return new ResponseEntity<>(ex.getProblemJSON(), HttpStatus.BAD_REQUEST);
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_PROBLEM_JSON);
+        return new ResponseEntity<>(ex.getProblemJSON(), headers, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(ForbiddenException.class)
     public ResponseEntity<ProblemJSON> notAuthenticated(ForbiddenException ex){
-        return new ResponseEntity<>(ex.getProblemJSON(), HttpStatus.FORBIDDEN);
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_PROBLEM_JSON);
+        return new ResponseEntity<>(ex.getProblemJSON(), headers, HttpStatus.FORBIDDEN);
     }
 
     @ExceptionHandler(UnauthorizedException.class)
     public ResponseEntity<ProblemJSON> notAuthenticated(UnauthorizedException ex){
-        return new ResponseEntity<>(ex.getProblemJSON(), HttpStatus.UNAUTHORIZED);
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_PROBLEM_JSON);
+        return new ResponseEntity<>(ex.getProblemJSON(), headers, HttpStatus.UNAUTHORIZED);
     }
 }
