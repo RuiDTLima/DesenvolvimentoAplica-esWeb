@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import pt.isel.daw.g5.ChecklistAPI.RequiresAuthentication;
 import pt.isel.daw.g5.ChecklistAPI.exceptions.ForbiddenException;
+import pt.isel.daw.g5.ChecklistAPI.exceptions.InvalidStateException;
 import pt.isel.daw.g5.ChecklistAPI.exceptions.NotFoundException;
 import pt.isel.daw.g5.ChecklistAPI.model.databaseModels.DatabaseChecklist;
 import pt.isel.daw.g5.ChecklistAPI.model.databaseModels.DatabaseChecklistItem;
@@ -125,7 +126,7 @@ public class ChecklistController {
             @RequestBody DatabaseChecklist updatedChecklist,
             HttpServletRequest request){
 
-        Checklist checklist = validateOperation(checklistId, request);
+        Checklist checklist = validateOperation(checklistId, request); //todo zonedatetime
         checklist.setName(updatedChecklist.getName());
         checklist.setCompletionDate(updatedChecklist.getCompletionDate());
         checklistRepository.save(checklist);
@@ -223,6 +224,23 @@ public class ChecklistController {
             throw new NotFoundException();
         }
 
+        log.info("Verify if state is valid");
+        String state = databaseChecklistItem.getState();
+        if(!state.equals("completed") && !state.equals("uncompleted")) {
+            InvalidParams invalidState = new InvalidParams(
+                    "state",
+                    "state must be either 'completed' or 'uncompleted'",
+                    state);
+            ProblemJSON problemJSON = new ProblemJSON(
+                    "/validation-error",
+                    "Your request parameters aren't valid.",
+                    400,
+                    "The state value is not valid",
+                    request.getRequestURI(),
+                    new InvalidParams[]{invalidState}
+            );
+            throw new InvalidStateException(problemJSON);
+        }
         ChecklistItem checklistItem = optionalChecklistItem.get();
         checklistItem.setName(databaseChecklistItem.getName());
         checklistItem.setDescription(databaseChecklistItem.getDescription());
