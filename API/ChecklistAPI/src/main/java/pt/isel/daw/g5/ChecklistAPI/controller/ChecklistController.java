@@ -69,7 +69,7 @@ public class ChecklistController {
      * @return
      */
     @PostMapping
-    public String postChecklist(@RequestBody DatabaseChecklist databaseChecklist,
+    public ResponseEntity postChecklist(@RequestBody DatabaseChecklist databaseChecklist,
                                 HttpServletRequest request) {
 
         String username = (String) request.getAttribute("Username");
@@ -100,14 +100,14 @@ public class ChecklistController {
                 throw new ForbiddenException(problemJSON);
             }
 
-            checklist.setChecklistTemplate(checklistTemplate);
+            checklist.setChecklistTemplate(checklistTemplate); // todo cpy items from template
         }
 
         checklist.setUsername(userRepository.findById(username).get());
         checklistRepository.save(checklist);
 
         log.info("Checklist successfully created.");
-        return "Ok";
+        return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
 
     @GetMapping(path = "/{checklist_id}", produces = "application/vnd.siren+json")
@@ -155,13 +155,21 @@ public class ChecklistController {
     }
 
     @PostMapping("/{checklist_id}/checklistitems")
-    public String addChecklistItem(@PathVariable("checklist_id") int checklistId,
-                                   @RequestBody ChecklistItem checklistItem){
+    public ResponseEntity addChecklistItem(@PathVariable("checklist_id") int checklistId,
+                                   @RequestBody DatabaseChecklistItem databaseChecklistItem,
+                                   HttpServletRequest request){
 
-        if(!checklistRepository.existsById(checklistId))
-            return "ERROR"; // TODO
-        checklistItemRepository.save(checklistItem);
-        return "OK";
+        log.info(String.format("Trying to add a new item to the checklist %s", checklistId));
+        Checklist checklist = validateOperation(checklistId, request);
+
+        ChecklistItem newItem = new ChecklistItem(
+                databaseChecklistItem.getName(),
+                databaseChecklistItem.getDescription());
+        newItem.setChecklist(checklist);
+
+        checklistItemRepository.save(newItem);
+        log.info("Checklist item successfully added");
+        return new ResponseEntity(HttpStatus.OK);
     }
 
     /**

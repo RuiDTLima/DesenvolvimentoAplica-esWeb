@@ -60,6 +60,12 @@ public class ChecklistItem {
 
     }
 
+    public ChecklistItem(String name, String description) {
+        this.name = name;
+        this.description = description;
+        this.state = "uncompleted";
+    }
+
     public ChecklistItem(String name, String description, String state) {
         this.name = name;
         this.description = description;
