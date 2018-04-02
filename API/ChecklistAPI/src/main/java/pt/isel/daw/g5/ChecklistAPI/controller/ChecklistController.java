@@ -18,6 +18,7 @@ import pt.isel.daw.g5.ChecklistAPI.model.errorModel.ProblemJSON;
 import pt.isel.daw.g5.ChecklistAPI.model.inputModel.Checklist;
 import pt.isel.daw.g5.ChecklistAPI.model.inputModel.ChecklistItem;
 import pt.isel.daw.g5.ChecklistAPI.model.inputModel.ChecklistTemplate;
+import pt.isel.daw.g5.ChecklistAPI.model.inputModel.User;
 import pt.isel.daw.g5.ChecklistAPI.model.internalModel.InvalidParams;
 import pt.isel.daw.g5.ChecklistAPI.model.outputModel.OutChecklist;
 import pt.isel.daw.g5.ChecklistAPI.model.outputModel.OutChecklistItem;
@@ -50,10 +51,12 @@ public class ChecklistController {
     private ChecklistTemplateRepository checklistTemplateRepository;
 
     @GetMapping(produces = "application/vnd.collection+json")
-    public OutChecklists getChecklists(@RequestParam(value = "page", defaultValue = "0") int page){
-        Page<Checklist> checklistPage = checklistRepository.findAll(PageRequest.of(page, PAGE_SIZE));
+    public OutChecklists getChecklists(@RequestParam(value = "page", defaultValue = "0") int page,
+                                       HttpServletRequest request){
+        String username = (String) request.getAttribute("Username");
+        User user = userRepository.findById(username).get();
+        Page<Checklist> checklistPage = checklistRepository.findAllByUsername(user, PageRequest.of(page, 1));
         return new OutChecklists(checklistPage);
-        //throw new InvalidStateException("invalid state");
     }
 
     /**

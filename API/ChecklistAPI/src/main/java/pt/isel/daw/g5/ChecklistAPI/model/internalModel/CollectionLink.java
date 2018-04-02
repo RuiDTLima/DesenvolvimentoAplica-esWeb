@@ -36,7 +36,7 @@ public class CollectionLink {
     }
 
     private static <T> CollectionLink produceNext(Page<T> page, String link){
-        if(page.hasNext()) return new CollectionLink("next", link + "?page=" + page.getNumber());
+        if(page.hasNext()) return new CollectionLink("next", link + "?page=" + (page.getNumber() + 1));
         return null;
     }
 
