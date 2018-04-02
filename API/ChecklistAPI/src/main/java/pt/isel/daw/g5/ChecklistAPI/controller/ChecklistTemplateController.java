@@ -16,6 +16,7 @@ import pt.isel.daw.g5.ChecklistAPI.model.databaseModels.DatabaseTemplateItem;
 import pt.isel.daw.g5.ChecklistAPI.model.errorModel.ProblemJSON;
 import pt.isel.daw.g5.ChecklistAPI.model.inputModel.ChecklistTemplate;
 import pt.isel.daw.g5.ChecklistAPI.model.inputModel.TemplateItem;
+import pt.isel.daw.g5.ChecklistAPI.model.inputModel.User;
 import pt.isel.daw.g5.ChecklistAPI.model.internalModel.InvalidParams;
 import pt.isel.daw.g5.ChecklistAPI.model.outputModel.OutChecklistTemplates;
 import pt.isel.daw.g5.ChecklistAPI.model.outputModel.OutChecklistTemplate;
@@ -49,8 +50,14 @@ public class ChecklistTemplateController {
      * @return
      */
     @GetMapping(produces = "application/vnd.collection+json")
-    public OutChecklistTemplates getChecklistTemplates(@RequestParam(value = "page", defaultValue = "0") int page){
-        Page<ChecklistTemplate> checklistTemplatePage = checklistTemplateRepository.findAll(PageRequest.of(page, PAGE_SIZE));
+    public OutChecklistTemplates getChecklistTemplates(@RequestParam(value = "page", defaultValue = "0") int page,
+                                                       HttpServletRequest request){
+        String username = (String) request.getAttribute("Username");
+        User user = userRepository.findById(username).get();
+        Page<ChecklistTemplate> checklistTemplatePage = checklistTemplateRepository.findAllByUser(
+                user,
+                PageRequest.of(page, PAGE_SIZE)
+        );
         return new OutChecklistTemplates(checklistTemplatePage);
     }
 
@@ -127,7 +134,6 @@ public class ChecklistTemplateController {
                                                   @RequestBody DatabaseChecklistTemplate databaseChecklistTemplate,
                                                   HttpServletRequest request){
         log.info(String.format("Trying to update the information regarding the checklistTemplate %s", checklisttemplate_id));
-        String username = (String) request.getAttribute("Username");
 
         ChecklistTemplate checklistTemplate = validateOperation(checklisttemplate_id, request);
 
