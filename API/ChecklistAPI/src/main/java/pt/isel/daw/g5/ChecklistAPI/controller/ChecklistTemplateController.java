@@ -286,7 +286,7 @@ public class ChecklistTemplateController {
         if (!checklistTemplate.getUser().getUsername().equals(username)){
             log.warn(String.format("ChecklistTemplate %s does not belong to the user %s", checklisttemplate_id, username));
             InvalidParams notIncludedUser = new InvalidParams("username", "username is invalid");
-            ProblemJSON problemJSON = new ProblemJSON("/authentication-error", "Invalid User.", 403, "The user provided does not have access to this list", request.getRequestURI(), new InvalidParams[]{notIncludedUser});
+            ProblemJSON problemJSON = new ProblemJSON("/authentication-error", "Invalid User.", 403, "The user provided does not have access to this resource", request.getRequestURI(), new InvalidParams[]{notIncludedUser});
             throw new ForbiddenException(problemJSON);
         }
         log.info("Validations successful");

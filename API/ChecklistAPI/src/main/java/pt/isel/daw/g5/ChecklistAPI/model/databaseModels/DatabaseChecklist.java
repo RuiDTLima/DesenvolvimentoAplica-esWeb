@@ -1,5 +1,7 @@
 package pt.isel.daw.g5.ChecklistAPI.model.databaseModels;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import pt.isel.daw.g5.ChecklistAPI.model.inputModel.Checklist;
 
 import java.time.LocalDateTime;
@@ -7,6 +9,7 @@ import java.time.LocalDateTime;
 public class DatabaseChecklist {
     private int checklist_id;
     private String name;
+    @JsonSerialize(using = ToStringSerializer.class)
     private LocalDateTime completionDate;
     private String username;
     private int checklisttemplate_id;

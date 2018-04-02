@@ -1,16 +1,18 @@
 package pt.isel.daw.g5.ChecklistAPI.model.outputModel;
 
 import com.fasterxml.jackson.annotation.JsonAlias;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import pt.isel.daw.g5.ChecklistAPI.model.databaseModels.DatabaseChecklist;
 import pt.isel.daw.g5.ChecklistAPI.model.internalModel.*;
 
 public class OutChecklist {
-    @JsonAlias("class")
+    @JsonProperty("class")
     private String[] _class;
 
     private DatabaseChecklist properties;
     private Entity[] entities;
     private Action[] actions;
+    @JsonProperty("links")
     private SirenLink[] sirenLinks;
 
     public String[] get_class() {
