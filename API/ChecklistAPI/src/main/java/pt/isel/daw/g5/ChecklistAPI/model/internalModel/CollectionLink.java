@@ -36,12 +36,12 @@ public class CollectionLink {
     }
 
     private static <T> CollectionLink produceNext(Page<T> page, String link){
-        if(page.hasNext()) return new CollectionLink("next", link + "?page=" + (page.getNumber() + 2));
+        if(page.hasNext()) return new CollectionLink("next", link + "?page=" + page.getNumber());
         return null;
     }
 
     private static <T> CollectionLink producePrevious(Page<T> page, String link){
-        if(page.getNumber() > 0) return new CollectionLink("previous", link + "?page=" + (page.getNumber()));
+        if(page.getNumber() > 0) return new CollectionLink("previous", link + "?page=" + (page.getNumber() - 1));
         return null;
     }
 }
