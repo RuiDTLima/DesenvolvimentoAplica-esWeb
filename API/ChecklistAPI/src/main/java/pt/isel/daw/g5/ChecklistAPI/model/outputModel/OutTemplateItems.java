@@ -31,7 +31,7 @@ public class OutTemplateItems {
         String pageHref = "/checklisttemplates";
         collection = new Collection(
                 "1.0",
-                "/checklisttemplates/" + checklistTemplateId + "/templateitems?page=" + (templateItems.getNumber() + 1),
+                "/checklisttemplates/" + checklistTemplateId + "/templateitems?page=" + (templateItems.getNumber()),
                 items.toArray(new Item[items.size()]),
                 CollectionLink.produceLinks(templateItems, pageHref));
     }

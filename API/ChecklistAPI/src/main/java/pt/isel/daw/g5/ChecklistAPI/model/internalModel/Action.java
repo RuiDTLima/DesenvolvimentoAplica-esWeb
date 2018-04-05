@@ -1,11 +1,15 @@
 package pt.isel.daw.g5.ChecklistAPI.model.internalModel;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
 public class Action {
     private String name;
     private String title;
     private String method;
     private String href;
     private String type;
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private Field[] fields;
 
     public String getName() {

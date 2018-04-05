@@ -1,0 +1,2 @@
+DELETE http://localhost:8080/checklists/1
+Authorization: UnVpOnJ1aQ==

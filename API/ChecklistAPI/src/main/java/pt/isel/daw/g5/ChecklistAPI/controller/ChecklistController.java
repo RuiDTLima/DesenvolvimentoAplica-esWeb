@@ -84,6 +84,7 @@ public class ChecklistController {
                 log.warn("The ChecklistTemplate being used does not exist");
                 throw new NotFoundException();
             }
+
             ChecklistTemplate checklistTemplate = optionalChecklistTemplate.get();
 
             if (!checklistTemplate.isUsable()){
@@ -133,8 +134,7 @@ public class ChecklistController {
                                      HttpServletRequest request){
 
         Checklist checklist = validateOperation(checklistId, request);
-        DatabaseChecklist databaseChecklist = new DatabaseChecklist(checklist);
-        return new OutChecklist(databaseChecklist);
+        return new OutChecklist(new DatabaseChecklist(checklist));
     }
 
     @PutMapping("/{checklist_id}")

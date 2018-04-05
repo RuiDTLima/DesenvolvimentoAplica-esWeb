@@ -11,6 +11,7 @@ public class OutTemplateItem {
     private DatabaseTemplateItem properties;
     private Entity[] entities;
     private Action[] actions;
+
     @JsonProperty("links")
     private SirenLink[] sirenLinks;
 
@@ -55,7 +56,7 @@ public class OutTemplateItem {
     }
 
     public OutTemplateItem(DatabaseTemplateItem templateItem){
-        _class = new String[] {"templateitem"};
+        _class = new String[]{"templateitem"};
         properties = templateItem;
         entities = produceEntities(templateItem);
         actions = produceActions(templateItem);
@@ -63,54 +64,23 @@ public class OutTemplateItem {
     }
 
     private Entity[] produceEntities(DatabaseTemplateItem templateItem) {
-        return new Entity[]{
-                produceChecklistTemplateEntity(templateItem)
-        };
+        return new Entity[]{produceChecklistTemplateEntity(templateItem)};
     }
 
     private Entity produceChecklistTemplateEntity(DatabaseTemplateItem templateItem) {
-        return new Entity(
-                new String[] {"checklisttemplate"},
-                new String[] {"/checklisttemplates/" + templateItem.getChecklisttemplate_id()},
-                "/checklisttemplates/" + templateItem.getChecklisttemplate_id()
-        );
+        return new Entity(new String[] {"checklisttemplate"}, new String[] {"/checklisttemplates/" + templateItem.getChecklisttemplate_id()},"/checklisttemplates/" + templateItem.getChecklisttemplate_id());
     }
 
     private Action[] produceActions(DatabaseTemplateItem templateItem) {
-        return new Action[]{
-                produceDeleteTemplateItemAction(templateItem),
-                produceUpdateTemplateItemAction(templateItem)
-        };
+        return new Action[]{produceDeleteTemplateItemAction(templateItem), produceUpdateTemplateItemAction(templateItem)};
     }
 
     private Action produceDeleteTemplateItemAction(DatabaseTemplateItem templateItem) {
-        return new Action(
-                "delete-templateitem",
-                "Delete Template Item",
-                "DELETE",
-                "/checklisttemplates/" + templateItem.getChecklisttemplate_id() + "/templateitems/" + templateItem.getTemplateitem_id(),
-                "application/x-www-form-urlencoded",
-                new Field[] {
-                        new Field("checklisttemplate_id", "hidden", Integer.toString(templateItem.getChecklisttemplate_id())),
-                        new Field("templateitem_id", "hidden", Integer.toString(templateItem.getTemplateitem_id()))
-                }
-        );
+        return new Action("delete-templateitem", "Delete Template Item", "DELETE", "/checklisttemplates/" + templateItem.getChecklisttemplate_id() + "/templateitems/" + templateItem.getTemplateitem_id(), "application/x-www-form-urlencoded", null);
     }
 
     private Action produceUpdateTemplateItemAction(DatabaseTemplateItem templateItem) {
-        return new Action(
-                "update-templateitem",
-                "Update Template Item",
-                "PUT",
-                "/checklisttemplates/" + templateItem.getChecklisttemplate_id() + "/templateitems/" + templateItem.getTemplateitem_id(),
-                "application/json",
-                new Field[] {
-                        new Field("checklisttemplate_id", "hidden", "" + templateItem.getChecklisttemplate_id()),
-                        new Field("templateitem_id", "hidden", Integer.toString(templateItem.getTemplateitem_id())),
-                        new Field("name", "text", ""),
-                        new Field("description", "text", "")
-                }
-        );
+        return new Action("update-templateitem", "Update Template Item", "PUT", "/checklisttemplates/" + templateItem.getChecklisttemplate_id() + "/templateitems/" + templateItem.getTemplateitem_id(), "application/json", new Field[] { new Field("checklisttemplate_id", "hidden", "" + templateItem.getChecklisttemplate_id(), "Checklist Template Id"), new Field("templateitem_id", "hidden", Integer.toString(templateItem.getTemplateitem_id()), "Template Item Id"), new Field("name", "text", "Name"), new Field("description", "text", "Description")});
     }
 
     private SirenLink[] produceLinks(DatabaseTemplateItem templateItem) {

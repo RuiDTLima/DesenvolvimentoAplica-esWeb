@@ -6,6 +6,7 @@ public class Collection {
     private String version;
     private String href;
     private Item[] items;
+
     @JsonProperty("links")
     private CollectionLink[] links;
 

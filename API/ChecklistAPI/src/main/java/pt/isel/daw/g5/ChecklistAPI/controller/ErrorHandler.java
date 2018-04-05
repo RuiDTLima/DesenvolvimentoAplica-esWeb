@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 import pt.isel.daw.g5.ChecklistAPI.exceptions.InvalidStateException;
 import pt.isel.daw.g5.ChecklistAPI.exceptions.ForbiddenException;
+import pt.isel.daw.g5.ChecklistAPI.exceptions.RepeatedInformationException;
 import pt.isel.daw.g5.ChecklistAPI.exceptions.UnauthorizedException;
 import pt.isel.daw.g5.ChecklistAPI.model.errorModel.ProblemJSON;
 
@@ -36,5 +37,12 @@ public class ErrorHandler extends ResponseEntityExceptionHandler {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_PROBLEM_JSON);
         return new ResponseEntity<>(ex.getProblemJSON(), headers, HttpStatus.UNAUTHORIZED);
+    }
+
+    @ExceptionHandler(RepeatedInformationException.class)
+    public ResponseEntity<ProblemJSON> conflit(RepeatedInformationException ex){
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_PROBLEM_JSON);
+        return new ResponseEntity<>(ex.getProblemJSON(), headers, HttpStatus.CONFLICT);
     }
 }

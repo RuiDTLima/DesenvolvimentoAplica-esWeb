@@ -1,5 +1,6 @@
 package pt.isel.daw.g5.ChecklistAPI.model.errorModel;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import pt.isel.daw.g5.ChecklistAPI.model.internalModel.InvalidParams;
 
@@ -10,6 +11,7 @@ public class ProblemJSON {
     private String detail;
     private String instance;
 
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     @JsonProperty("invalid-params")
     private InvalidParams[] invalid_params;
 

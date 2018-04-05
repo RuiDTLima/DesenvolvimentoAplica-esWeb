@@ -1,0 +1,9 @@
+PUT http://localhost:8080/checklists/1
+Authorization: UnVpOnJ1aQ==
+Content-Type: application/json
+
+{
+    "checklist_id": "1",
+    "name": "Test PUT3",
+    "completion_date": "2018-03-17T20:00:00"
+}

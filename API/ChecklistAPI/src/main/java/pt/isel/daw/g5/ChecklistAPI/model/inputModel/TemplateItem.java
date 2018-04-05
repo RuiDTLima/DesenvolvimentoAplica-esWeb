@@ -5,7 +5,8 @@ import javax.persistence.*;
 @Entity
 @Table(name = "Checklisttemplateitem")
 public class TemplateItem {
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
     private String name;

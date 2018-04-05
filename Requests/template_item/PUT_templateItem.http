@@ -1,0 +1,10 @@
+PUT http://localhost:8080/checklisttemplates/1/templateitems/1
+Authorization: UnVpOnJ1aQ==
+Content-Type: application/json
+
+{
+    "checklisttemplate_id": "1",
+    "templateitem_id": "1",
+    "name": "err",
+    "description": "Update de teste" 
+}

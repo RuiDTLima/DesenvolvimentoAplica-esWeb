@@ -7,6 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import pt.isel.daw.g5.ChecklistAPI.RequiresAuthentication;
 import pt.isel.daw.g5.ChecklistAPI.exceptions.ForbiddenException;
@@ -106,17 +107,17 @@ public class ChecklistTemplateController {
                                                   HttpServletRequest request){
 
         log.info(String.format("Trying to delete the checklistTemplate %s", checklisttemplate_id));
-        validateOperation(checklisttemplate_id, request);
+        ChecklistTemplate checklistTemplate = validateOperation(checklisttemplate_id, request);
 
-        Optional<ChecklistTemplate> optionalChecklistTemplate = checklistTemplateRepository.findById(checklisttemplate_id);
+        isTemplateUsable(checklisttemplate_id, request, checklistTemplate);
 
-        if (optionalChecklistTemplate.isPresent()){
-            ChecklistTemplate checklistTemplate = optionalChecklistTemplate.get();
+        if (!checklistTemplate.getChecklists().isEmpty()){
             checklistTemplate.setUsable(false);
             checklistTemplateRepository.save(checklistTemplate);
         }
         else
             checklistTemplateRepository.deleteById(checklisttemplate_id);
+
         log.info("ChecklistTemplate successfully deleted");
         return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
@@ -136,6 +137,8 @@ public class ChecklistTemplateController {
         log.info(String.format("Trying to update the information regarding the checklistTemplate %s", checklisttemplate_id));
 
         ChecklistTemplate checklistTemplate = validateOperation(checklisttemplate_id, request);
+
+        isTemplateUsable(checklisttemplate_id, request, checklistTemplate);
 
         checklistTemplate.setName(databaseChecklistTemplate.getName());
         checklistTemplateRepository.save(checklistTemplate);
@@ -179,6 +182,8 @@ public class ChecklistTemplateController {
         log.info(String.format("Trying to add a new item to the checklistTemplate %s", checklisttemplate_id));
         ChecklistTemplate checklistTemplate = validateOperation(checklisttemplate_id, request);
 
+        isTemplateUsable(checklisttemplate_id, request, checklistTemplate);
+
         TemplateItem newItem = new TemplateItem(templateItem.getName(), templateItem.getDescription());
         newItem.setChecklistTemplate(checklistTemplate);
         templateItemRepository.save(newItem);
@@ -194,14 +199,15 @@ public class ChecklistTemplateController {
      * @return
      */
     @GetMapping(path = "/{checklisttemplate_id}/templateitems/{templateitem_id}", produces = "application/vnd.siren+json")
+    @Transactional
     public OutTemplateItem getTemplateItem(@PathVariable("checklisttemplate_id") int checklistTemplateId,
                                            @PathVariable("templateitem_id") int templateItemId,
                                            HttpServletRequest request){
 
         log.info(String.format("Trying to retrive an item from the checklistTemplate %s", checklistTemplateId));
         ChecklistTemplate template = validateOperation(checklistTemplateId, request);
-        if(!templateItemRepository.existsById(templateItemId) ||
-                !template.getTemplateItems().stream().anyMatch(item -> item.getId() == templateItemId)){
+
+        if(!template.getTemplateItems().stream().anyMatch(item -> item.getId() == templateItemId)){
             throw new NotFoundException();
         }
 
@@ -213,22 +219,26 @@ public class ChecklistTemplateController {
 
     /**
      * Updates a template item
-     * @param checklistTemplateId the identifier of the checklist template
+     * @param checklisttemplate_id the identifier of the checklist template
      * @param templateItemId the identifier of the template item
      * @param templateItem the item containing the fields to be updated
      * @param request
      * @return
      */
     @PutMapping("/{checklisttemplate_id}/templateitems/{templateitem_id}")
-    public ResponseEntity updateTemplateItem(@PathVariable("checklisttemplate_id") int checklistTemplateId,
+    @Transactional
+    public ResponseEntity updateTemplateItem(@PathVariable("checklisttemplate_id") int checklisttemplate_id,
                                              @PathVariable("templateitem_id") int templateItemId,
                                              @RequestBody DatabaseTemplateItem templateItem,
                                              HttpServletRequest request){
 
-        log.info(String.format("Trying to update an item from the checklistTemplate %s", checklistTemplateId));
-        ChecklistTemplate template = validateOperation(checklistTemplateId, request);
+        log.info(String.format("Trying to update an item from the checklistTemplate %s", checklisttemplate_id));
+        ChecklistTemplate checklistTemplate = validateOperation(checklisttemplate_id, request);
+
+        isTemplateUsable(checklisttemplate_id, request, checklistTemplate);
+
         if(!templateItemRepository.existsById(templateItemId) ||
-           !template.getTemplateItems().stream().anyMatch(item -> item.getId() == templateItemId)){
+           !checklistTemplate.getTemplateItems().stream().anyMatch(item -> item.getId() == templateItemId)){
             throw new NotFoundException();
         }
 
@@ -242,26 +252,39 @@ public class ChecklistTemplateController {
 
     /**
      * Deletes a template item from a checklist template
-     * @param checklistTemplateId the identifier of the checklist template
+     * @param checklisttemplate_id the identifier of the checklist template
      * @param templateItemId the identifier of the template item
      * @param request
      * @return
      */
     @DeleteMapping("/{checklisttemplate_id}/templateitems/{templateitem_id}")
-    public ResponseEntity deleteTemplateItem(@PathVariable("checklisttemplate_id") int checklistTemplateId,
+    @Transactional
+    public ResponseEntity deleteTemplateItem(@PathVariable("checklisttemplate_id") int checklisttemplate_id,
                                              @PathVariable("templateitem_id") int templateItemId,
                                              HttpServletRequest request){
 
-        log.info(String.format("Trying to delete an item from the checklistTemplate %s", checklistTemplateId));
-        ChecklistTemplate template = validateOperation(checklistTemplateId, request);
+        log.info(String.format("Trying to delete an item from the checklistTemplate %s", checklisttemplate_id));
+        ChecklistTemplate checklistTemplate = validateOperation(checklisttemplate_id, request);
+
+        isTemplateUsable(checklisttemplate_id, request, checklistTemplate);
+
         if(!templateItemRepository.existsById(templateItemId) ||
-                !template.getTemplateItems().stream().anyMatch(item -> item.getId() == templateItemId)){
+                !checklistTemplate.getTemplateItems().stream().anyMatch(item -> item.getId() == templateItemId)){
             throw new NotFoundException();
         }
 
         templateItemRepository.deleteById(templateItemId);
         log.info("ChecklistTemplate successfully deleted");
         return new ResponseEntity(HttpStatus.NO_CONTENT);
+    }
+
+    private void isTemplateUsable(int checklisttemplate_id, HttpServletRequest request, ChecklistTemplate checklistTemplate) {
+        String username = (String) request.getAttribute("Username");
+        if (!checklistTemplate.isUsable()){
+            log.warn(String.format("ChecklistTemplate %s is no longer valid to use", checklisttemplate_id, username));
+            ProblemJSON problemJSON = new ProblemJSON("/invalid-error", "Invalid ChecklistTemplate.", 403, "This ChecklistTemplate is no longer valid to use.", request.getRequestURI(),null);
+            throw new ForbiddenException(problemJSON);
+        }
     }
 
     /**
@@ -289,6 +312,7 @@ public class ChecklistTemplateController {
             ProblemJSON problemJSON = new ProblemJSON("/authentication-error", "Invalid User.", 403, "The user provided does not have access to this resource", request.getRequestURI(), new InvalidParams[]{notIncludedUser});
             throw new ForbiddenException(problemJSON);
         }
+
         log.info("Validations successful");
         return checklistTemplate;
     }

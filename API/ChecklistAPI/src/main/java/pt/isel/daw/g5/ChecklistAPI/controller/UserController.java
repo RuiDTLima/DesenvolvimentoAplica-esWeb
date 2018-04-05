@@ -30,7 +30,7 @@ public class UserController {
         if (userRepository.existsById(databaseUser.getUsername())){
             log.warn("A User with that username already exists.");
             InvalidParams repeatedUser = new InvalidParams("username", "username already exists");
-            ProblemJSON problemJSON = new ProblemJSON("/authentication-error", "Invalid credentials.", 409, "The username provided already exists.", "/users", new InvalidParams[]{repeatedUser});
+            ProblemJSON problemJSON = new ProblemJSON("/creation-error", "Invalid credentials.", 409, "The username provided already exists.", "/users", new InvalidParams[]{repeatedUser});
             throw new RepeatedInformationException(problemJSON);
         }
 

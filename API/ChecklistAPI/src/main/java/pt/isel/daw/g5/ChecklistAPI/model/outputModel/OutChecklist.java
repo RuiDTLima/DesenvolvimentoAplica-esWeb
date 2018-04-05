@@ -10,6 +10,7 @@ public class OutChecklist {
     private DatabaseChecklist properties;
     private Entity[] entities;
     private Action[] actions;
+
     @JsonProperty("links")
     private SirenLink[] sirenLinks;
 
@@ -62,7 +63,9 @@ public class OutChecklist {
     }
 
     private Entity[] produceEntities(DatabaseChecklist checklist) {
-        return new Entity[] {produceChecklistItemEntity(checklist), produceChecklistTemplateEntity(checklist)};
+        if (checklist.getChecklistTemplateId() != 0)
+            return new Entity[] {produceChecklistItemEntity(checklist), produceChecklistTemplateEntity(checklist)};
+        return new Entity[] {produceChecklistItemEntity(checklist)};
     }
 
     private Entity produceChecklistItemEntity(DatabaseChecklist checklist) {
@@ -94,9 +97,9 @@ public class OutChecklist {
                 "/checklists/" + checklist.getChecklistId() + "/checklistitems",
                 "application/json",
                 new Field[] {
-                        new Field("checklist_id", "hidden", "1"),
-                        new Field("name", "text", ""),
-                        new Field("description", "text", "")
+                        new Field("checklist_id", "hidden", "1", "Checklist Id"),
+                        new Field("name", "text", "Name"),
+                        new Field("description", "text", "Description")
                 });
     }
 
@@ -107,9 +110,7 @@ public class OutChecklist {
                 "DELETE",
                 "/checklists/" + checklist.getChecklistId(),
                 "application/x-www-form-urlencoded",
-                new Field[] {
-                        new Field("checklist_id", "hidden", Integer.toString(checklist.getChecklistId()))
-                }
+                null
         );
     }
 
@@ -121,9 +122,9 @@ public class OutChecklist {
                 "/checklists/" + checklist.getChecklistId(),
                 "application/json",
                 new Field[] {
-                        new Field("checklist_id", "hidden", "" + checklist.getChecklistId()),
-                        new Field("name", "text", ""),
-                        new Field("completion_date", "text", "")
+                        new Field("checklist_id", "hidden", "" + checklist.getChecklistId(), "Checklist Id"),
+                        new Field("name", "text", "Name"),
+                        new Field("completion_date", "text", "Completion Date")
                 }
         );
     }

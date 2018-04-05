@@ -1,0 +1,2 @@
+GET http://localhost:8080/checklisttemplates/1/templateitems/1
+Authorization: UnVpOnJ1aQ==
