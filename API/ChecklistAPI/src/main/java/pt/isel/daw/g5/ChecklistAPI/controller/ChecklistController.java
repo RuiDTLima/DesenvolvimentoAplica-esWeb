@@ -16,10 +16,7 @@ import pt.isel.daw.g5.ChecklistAPI.exceptions.NotFoundException;
 import pt.isel.daw.g5.ChecklistAPI.model.databaseModels.DatabaseChecklist;
 import pt.isel.daw.g5.ChecklistAPI.model.databaseModels.DatabaseChecklistItem;
 import pt.isel.daw.g5.ChecklistAPI.model.errorModel.ProblemJSON;
-import pt.isel.daw.g5.ChecklistAPI.model.inputModel.Checklist;
-import pt.isel.daw.g5.ChecklistAPI.model.inputModel.ChecklistItem;
-import pt.isel.daw.g5.ChecklistAPI.model.inputModel.ChecklistTemplate;
-import pt.isel.daw.g5.ChecklistAPI.model.inputModel.User;
+import pt.isel.daw.g5.ChecklistAPI.model.inputModel.*;
 import pt.isel.daw.g5.ChecklistAPI.model.internalModel.InvalidParams;
 import pt.isel.daw.g5.ChecklistAPI.model.outputModel.OutChecklist;
 import pt.isel.daw.g5.ChecklistAPI.model.outputModel.OutChecklistItem;
@@ -30,6 +27,8 @@ import pt.isel.daw.g5.ChecklistAPI.repository.ChecklistRepository;
 import pt.isel.daw.g5.ChecklistAPI.repository.ChecklistTemplateRepository;
 import pt.isel.daw.g5.ChecklistAPI.repository.UserRepository;
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -101,7 +100,17 @@ public class ChecklistController {
                 throw new ForbiddenException(problemJSON);
             }
 
-            checklist.setChecklistTemplate(checklistTemplate); // todo cpy items from template
+            checklist.setChecklistTemplate(checklistTemplate);
+
+            List<TemplateItem> templateItems = checklistTemplate.getTemplateItems();
+            List<ChecklistItem> checklistItems = new ArrayList<>(templateItems.size());
+
+            checklistTemplate
+                    .getTemplateItems()
+                    .forEach(templateItem ->
+                        checklistItems.add(new ChecklistItem(templateItem.getName(), templateItem.getDescription())));
+
+            checklist.setInChecklistItems(checklistItems);
         }
 
         checklist.setUsername(userRepository.findById(username).get());
@@ -188,13 +197,10 @@ public class ChecklistController {
                                              HttpServletRequest request){
 
         log.info(String.format("Begin operation to retrieve the item %s from the checklist %s", checklistitem_id, checklist_id));
-        Checklist checklist = validateOperation(checklist_id, request);
-
-        for (ChecklistItem nextItem : checklist.getInChecklistItems()) {
-            if (nextItem.getId() == checklistitem_id) {
-                log.info("Found the item. Returning.");
-                return new OutChecklistItem(nextItem);
-            }
+        Optional<ChecklistItem> item = checklistItemRepository.findById(checklistitem_id);
+        if(item.isPresent()) {
+            log.info("Found the item. Returning.");
+            return new OutChecklistItem(item.get());
         }
         log.warn(String.format("The item %s does not belong to the checklist %s, or it does not exist", checklistitem_id, checklist_id));
         throw new NotFoundException();

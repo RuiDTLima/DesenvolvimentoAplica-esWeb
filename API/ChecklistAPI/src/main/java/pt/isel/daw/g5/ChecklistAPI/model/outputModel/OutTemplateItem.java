@@ -73,7 +73,6 @@ public class OutTemplateItem {
                 new String[] {"checklisttemplate"},
                 new String[] {"/checklisttemplates/" + templateItem.getChecklisttemplate_id()},
                 "/checklisttemplates/" + templateItem.getChecklisttemplate_id()
-                // TODO LINKS IN SIREN -> new SirenLink[0]
         );
     }
 
@@ -116,7 +115,6 @@ public class OutTemplateItem {
 
     private SirenLink[] produceLinks(DatabaseTemplateItem templateItem) {
         SirenLink self = new SirenLink(new String[]{"self"}, "/checklisttemplates/" + templateItem.getChecklisttemplate_id() + "/templateitems/" + templateItem.getTemplateitem_id());
-        // TODO NEXT AND PREV
         return new SirenLink[]{self};
     }
 }

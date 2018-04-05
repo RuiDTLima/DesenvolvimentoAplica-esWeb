@@ -68,7 +68,6 @@ public class OutChecklist {
 
     private Entity produceChecklistItemEntity(DatabaseChecklist checklist) {
         return new Entity(new String[] {"checklistitem"},  new String[] {"/checklists/" + checklist.getChecklistId()}, "/checklists/" + checklist.getChecklistId() + "/checklistitems"
-                // TODO LINKS IN SIREN -> new SirenLink[0]
         );
     }
 
