@@ -62,3 +62,7 @@ insert into ChecklistItem(Name, Description, State, Checklist_id)
 		
 insert into ChecklistTemplate(Name, Username, Usable)
 	values('Template 1', 'Rui', true)
+	
+insert into ChecklistTemplateItem(Name, Description, ChecklistTemplate_id)
+	values('Item T1.1', 'Item template 1', 1),
+		  ('Item T1.2', 'Item template 2', 1)

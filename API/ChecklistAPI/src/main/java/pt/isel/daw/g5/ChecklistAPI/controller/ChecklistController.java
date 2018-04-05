@@ -187,7 +187,7 @@ public class ChecklistController {
 
         checklistItemRepository.save(newItem);
         log.info("Checklist item successfully added");
-        return new ResponseEntity(HttpStatus.OK);
+        return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
 
     /**
@@ -290,7 +290,7 @@ public class ChecklistController {
 
         checklistItemRepository.deleteById(checklistitem_id);
         log.info("Item deleted.");
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     /**

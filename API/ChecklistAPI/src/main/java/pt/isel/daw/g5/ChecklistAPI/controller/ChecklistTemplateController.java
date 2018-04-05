@@ -75,7 +75,7 @@ public class ChecklistTemplateController {
         String username = (String) request.getAttribute("Username");
         template.setUser(userRepository.findById(username).get());
         checklistTemplateRepository.save(template);
-        return new ResponseEntity(HttpStatus.OK);
+        return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
 
     /**
@@ -172,9 +172,9 @@ public class ChecklistTemplateController {
      * @return
      */
     @PostMapping("/{checklisttemplate_id}/templateitems")
-    public String postTemplateItem(@PathVariable("checklisttemplate_id") int checklisttemplate_id,
-                                   @RequestBody DatabaseTemplateItem templateItem,
-                                   HttpServletRequest request){
+    public ResponseEntity postTemplateItem(@PathVariable("checklisttemplate_id") int checklisttemplate_id,
+                                           @RequestBody DatabaseTemplateItem templateItem,
+                                           HttpServletRequest request){
 
         log.info(String.format("Trying to add a new item to the checklistTemplate %s", checklisttemplate_id));
         ChecklistTemplate checklistTemplate = validateOperation(checklisttemplate_id, request);
@@ -183,7 +183,7 @@ public class ChecklistTemplateController {
         newItem.setChecklistTemplate(checklistTemplate);
         templateItemRepository.save(newItem);
         log.info("ChecklistTemplate item successfully added");
-        return "OK";
+        return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
 
     /**
@@ -220,10 +220,10 @@ public class ChecklistTemplateController {
      * @return
      */
     @PutMapping("/{checklisttemplate_id}/templateitems/{templateitem_id}")
-    public String updateTemplateItem(@PathVariable("checklisttemplate_id") int checklistTemplateId,
-                                     @PathVariable("templateitem_id") int templateItemId,
-                                     @RequestBody DatabaseTemplateItem templateItem,
-                                     HttpServletRequest request){
+    public ResponseEntity updateTemplateItem(@PathVariable("checklisttemplate_id") int checklistTemplateId,
+                                             @PathVariable("templateitem_id") int templateItemId,
+                                             @RequestBody DatabaseTemplateItem templateItem,
+                                             HttpServletRequest request){
 
         log.info(String.format("Trying to update an item from the checklistTemplate %s", checklistTemplateId));
         ChecklistTemplate template = validateOperation(checklistTemplateId, request);
@@ -237,7 +237,7 @@ public class ChecklistTemplateController {
         updatedItem.setDescription(templateItem.getDescription());
         templateItemRepository.save(updatedItem);
         log.info("ChecklistTemplate item successfully updated");
-        return "OK";
+        return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
 
     /**
@@ -248,9 +248,9 @@ public class ChecklistTemplateController {
      * @return
      */
     @DeleteMapping("/{checklisttemplate_id}/templateitems/{templateitem_id}")
-    public String deleteTemplateItem(@PathVariable("checklisttemplate_id") int checklistTemplateId,
-                                     @PathVariable("templateitem_id") int templateItemId,
-                                     HttpServletRequest request){
+    public ResponseEntity deleteTemplateItem(@PathVariable("checklisttemplate_id") int checklistTemplateId,
+                                             @PathVariable("templateitem_id") int templateItemId,
+                                             HttpServletRequest request){
 
         log.info(String.format("Trying to delete an item from the checklistTemplate %s", checklistTemplateId));
         ChecklistTemplate template = validateOperation(checklistTemplateId, request);
@@ -261,7 +261,7 @@ public class ChecklistTemplateController {
 
         templateItemRepository.deleteById(templateItemId);
         log.info("ChecklistTemplate successfully deleted");
-        return "OK";
+        return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
 
     /**

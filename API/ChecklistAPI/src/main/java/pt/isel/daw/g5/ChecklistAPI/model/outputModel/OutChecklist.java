@@ -7,7 +7,6 @@ import pt.isel.daw.g5.ChecklistAPI.model.internalModel.*;
 public class OutChecklist {
     @JsonProperty("class")
     private String[] _class;
-
     private DatabaseChecklist properties;
     private Entity[] entities;
     private Action[] actions;

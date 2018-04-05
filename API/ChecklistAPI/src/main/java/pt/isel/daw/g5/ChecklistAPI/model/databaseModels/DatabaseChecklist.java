@@ -4,18 +4,21 @@ import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import pt.isel.daw.g5.ChecklistAPI.model.inputModel.Checklist;
-
 import java.time.LocalDateTime;
 
 public class DatabaseChecklist {
     @JsonAlias("checklistId")
     private int checklistId;
+
     private String name;
+
     @JsonSerialize(using = ToStringSerializer.class)
     @JsonAlias("completion_date")
     private LocalDateTime completionDate;
+
     @JsonAlias("username")
     private String username;
+
     @JsonAlias("checklistTemplateId")
     private int checklistTemplateId;
 
