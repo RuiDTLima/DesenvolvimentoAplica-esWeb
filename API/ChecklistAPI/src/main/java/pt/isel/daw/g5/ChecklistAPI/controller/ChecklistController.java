@@ -55,7 +55,7 @@ public class ChecklistController {
                                        HttpServletRequest request){
         String username = (String) request.getAttribute("Username");
         User user = userRepository.findById(username).get();
-        Page<Checklist> checklistPage = checklistRepository.findAllByUsername(user, PageRequest.of(page, 1));
+        Page<Checklist> checklistPage = checklistRepository.findAllByUsername(user, PageRequest.of(page, PAGE_SIZE));
         return new OutChecklists(checklistPage);
     }
 
@@ -69,13 +69,12 @@ public class ChecklistController {
      * @return
      */
     @PostMapping
+    @Transactional
     public ResponseEntity postChecklist(@RequestBody DatabaseChecklist databaseChecklist,
                                 HttpServletRequest request) {
 
         String username = (String) request.getAttribute("Username");
         log.info(String.format("Creating a new checklist for the user %s", username));
-
-        Checklist checklist = new Checklist(databaseChecklist.getName(), databaseChecklist.getCompletionDate());
 
         if (databaseChecklist.getChecklistTemplateId() != 0){ // Significa que o checklist é gerado através de um checklisttemplate
             log.info("The checklist is being created with the help of a ChecklistTemplate");
@@ -100,21 +99,30 @@ public class ChecklistController {
                 throw new ForbiddenException(problemJSON);
             }
 
+            Checklist checklist = new Checklist(checklistTemplate.getName(), databaseChecklist.getCompletionDate());
+
             checklist.setChecklistTemplate(checklistTemplate);
+            checklist.setUsername(userRepository.findById(username).get());
+            Checklist createdChecklist = checklistRepository.save(checklist);
+
+            log.info("The checklist was added to the database, now to insert the items");
 
             List<TemplateItem> templateItems = checklistTemplate.getTemplateItems();
-            List<ChecklistItem> checklistItems = new ArrayList<>(templateItems.size());
 
-            checklistTemplate
-                    .getTemplateItems()
-                    .forEach(templateItem ->
-                        checklistItems.add(new ChecklistItem(templateItem.getName(), templateItem.getDescription())));
+            templateItems.forEach(templateItem -> {
+                ChecklistItem checklistItem = new ChecklistItem(templateItem.getName(), templateItem.getDescription());
+                checklistItem.setChecklist(createdChecklist);
+                checklistItemRepository.save(checklistItem);
+            });
 
-            checklist.setInChecklistItems(checklistItems);
+            log.info("The items were added to the database");
+        } else{
+            log.info("The checklist is create without the help of a checklistTemplate");
+
+            Checklist checklist = new Checklist(databaseChecklist.getName(), databaseChecklist.getCompletionDate());
+            checklist.setUsername(userRepository.findById(username).get());
+            checklistRepository.save(checklist);
         }
-
-        checklist.setUsername(userRepository.findById(username).get());
-        checklistRepository.save(checklist);
 
         log.info("Checklist successfully created.");
         return new ResponseEntity(HttpStatus.NO_CONTENT);
@@ -292,7 +300,7 @@ public class ChecklistController {
      * @param request
      * @return
      */
-    private Checklist validateOperation(@PathVariable("checklist_id") int checklist_id, HttpServletRequest request) {
+    private Checklist validateOperation(int checklist_id, HttpServletRequest request) {
         log.info("Validating the operation");
         String username = (String) request.getAttribute("Username");
         Optional<Checklist> optionalChecklist = checklistRepository.findById(checklist_id);

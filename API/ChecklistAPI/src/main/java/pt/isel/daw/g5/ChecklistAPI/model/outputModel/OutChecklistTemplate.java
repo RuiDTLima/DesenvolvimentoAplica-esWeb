@@ -117,9 +117,8 @@ public class OutChecklistTemplate {
 
     private Field[] producePostChecklistFields(ChecklistTemplate checklistTemplate) {
         Field checklisttemplate_id = new Field("checklisttemplate_id", "hidden", Integer.toString(checklistTemplate.getId()), "OutChecklist Id");
-        Field name = new Field("name", "text", "Name");
         Field completion_date = new Field("completion_date", "text", "Completion Date");
-        return new Field[]{checklisttemplate_id, name, completion_date};
+        return new Field[]{checklisttemplate_id, completion_date};
     }
 
     private SirenLink[] produceLinks(ChecklistTemplate checklistTemplate) {
