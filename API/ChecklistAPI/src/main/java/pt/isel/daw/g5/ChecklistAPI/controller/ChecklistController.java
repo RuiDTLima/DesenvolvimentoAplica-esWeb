@@ -11,7 +11,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import pt.isel.daw.g5.ChecklistAPI.RequiresAuthentication;
 import pt.isel.daw.g5.ChecklistAPI.exceptions.ForbiddenException;
-import pt.isel.daw.g5.ChecklistAPI.exceptions.InvalidStateException;
 import pt.isel.daw.g5.ChecklistAPI.exceptions.NotFoundException;
 import pt.isel.daw.g5.ChecklistAPI.model.databaseModels.DatabaseChecklist;
 import pt.isel.daw.g5.ChecklistAPI.model.databaseModels.DatabaseChecklistItem;
@@ -27,7 +26,6 @@ import pt.isel.daw.g5.ChecklistAPI.repository.ChecklistRepository;
 import pt.isel.daw.g5.ChecklistAPI.repository.ChecklistTemplateRepository;
 import pt.isel.daw.g5.ChecklistAPI.repository.UserRepository;
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -53,6 +51,7 @@ public class ChecklistController {
     @GetMapping(produces = "application/vnd.collection+json")
     public OutChecklists getChecklists(@RequestParam(value = "page", defaultValue = "0") int page,
                                        HttpServletRequest request){
+
         String username = (String) request.getAttribute("Username");
         User user = userRepository.findById(username).get();
         Page<Checklist> checklistPage = checklistRepository.findAllByUsername(user, PageRequest.of(page, PAGE_SIZE));
@@ -71,18 +70,20 @@ public class ChecklistController {
     @PostMapping
     @Transactional
     public ResponseEntity postChecklist(@RequestBody DatabaseChecklist databaseChecklist,
-                                HttpServletRequest request) {
+                                        HttpServletRequest request) {
 
         String username = (String) request.getAttribute("Username");
         log.info(String.format("Creating a new checklist for the user %s", username));
 
-        if (databaseChecklist.getChecklistTemplateId() != 0){ // Significa que o checklist é gerado através de um checklisttemplate
+        int checklistTemplateId = databaseChecklist.getChecklistTemplateId();
+
+        if (checklistTemplateId != 0){ // Significa que o checklist é gerado através de um checklisttemplate
             log.info("The checklist is being created with the help of a ChecklistTemplate");
 
-            Optional<ChecklistTemplate> optionalChecklistTemplate = checklistTemplateRepository.findById(databaseChecklist.getChecklistTemplateId());
+            Optional<ChecklistTemplate> optionalChecklistTemplate = checklistTemplateRepository.findById(checklistTemplateId);
             if (!optionalChecklistTemplate.isPresent()) {
                 log.warn("The ChecklistTemplate being used does not exist");
-                throw new NotFoundException();
+                throw new NotFoundException(String.format("ChecklistTemplate %s does not exist", checklistTemplateId));
             }
 
             ChecklistTemplate checklistTemplate = optionalChecklistTemplate.get();
@@ -138,12 +139,11 @@ public class ChecklistController {
     }
 
     @PutMapping("/{checklist_id}")
-    public ResponseEntity updateChecklist(
-            @PathVariable("checklist_id") int checklistId,
-            @RequestBody DatabaseChecklist updatedChecklist,
-            HttpServletRequest request){
+    public ResponseEntity updateChecklist(@PathVariable("checklist_id") int checklistId,
+                                          @RequestBody DatabaseChecklist updatedChecklist,
+                                          HttpServletRequest request){
 
-        Checklist checklist = validateOperation(checklistId, request); //todo zonedatetime
+        Checklist checklist = validateOperation(checklistId, request);
         checklist.setName(updatedChecklist.getName());
         checklist.setCompletionDate(updatedChecklist.getCompletionDate());
         checklistRepository.save(checklist);
@@ -165,6 +165,7 @@ public class ChecklistController {
     public OutChecklistItems getChecklistItems(@PathVariable("checklist_id") int checklistId,
                                                @RequestParam(value = "page", defaultValue = "0") int page,
                                                HttpServletRequest request) {
+
         log.info(String.format("Trying to retrive items from the checklist %s", checklistId));
         validateOperation(checklistId, request);
         Page<ChecklistItem> checklistItemPage = checklistItemRepository.findAllByChecklistId(checklistId, PageRequest.of(page, PAGE_SIZE));
@@ -174,15 +175,13 @@ public class ChecklistController {
 
     @PostMapping("/{checklist_id}/checklistitems")
     public ResponseEntity addChecklistItem(@PathVariable("checklist_id") int checklistId,
-                                   @RequestBody DatabaseChecklistItem databaseChecklistItem,
-                                   HttpServletRequest request){
+                                           @RequestBody DatabaseChecklistItem databaseChecklistItem,
+                                           HttpServletRequest request){
 
         log.info(String.format("Trying to add a new item to the checklist %s", checklistId));
         Checklist checklist = validateOperation(checklistId, request);
 
-        ChecklistItem newItem = new ChecklistItem(
-                databaseChecklistItem.getName(),
-                databaseChecklistItem.getDescription());
+        ChecklistItem newItem = new ChecklistItem(databaseChecklistItem.getName(), databaseChecklistItem.getDescription());
         newItem.setChecklist(checklist);
 
         checklistItemRepository.save(newItem);
@@ -210,8 +209,9 @@ public class ChecklistController {
             log.info("Found the item. Returning.");
             return new OutChecklistItem(item.get());
         }
-        log.warn(String.format("The item %s does not belong to the checklist %s, or it does not exist", checklistitem_id, checklist_id));
-        throw new NotFoundException();
+        String message = String.format("The item %s does not belong to the checklist %s, or it does not exist", checklistitem_id, checklist_id);
+        log.warn(message);
+        throw new NotFoundException(message);
     }
 
     /**
@@ -225,36 +225,31 @@ public class ChecklistController {
      */
     @PutMapping("/{checklist_id}/checklistitems/{checklistitem_id}")
     public ResponseEntity putChecklistItem(@PathVariable("checklist_id") int checklist_id,
-                                   @PathVariable("checklistitem_id") int checklistitem_id,
-                                   @RequestBody DatabaseChecklistItem databaseChecklistItem,
-                                   HttpServletRequest request){
+                                           @PathVariable("checklistitem_id") int checklistitem_id,
+                                           @RequestBody DatabaseChecklistItem databaseChecklistItem,
+                                           HttpServletRequest request){
 
         log.info(String.format("Updating the item %s from the checklist %s.", checklistitem_id, checklist_id));
         validateOperation(checklist_id, request);
         Optional<ChecklistItem> optionalChecklistItem = checklistItemRepository.findById(checklistitem_id);
 
         if (!optionalChecklistItem.isPresent() || optionalChecklistItem.get().getChecklist().getId() != checklist_id) {
-            log.warn(String.format("The item %s does not belong to the checklist %s, or it does not exist", checklistitem_id, checklist_id));
-            throw new NotFoundException();
+            String message = String.format("The item %s does not belong to the checklist %s, or it does not exist", checklistitem_id, checklist_id);
+            log.warn(message);
+            throw new NotFoundException(message);
         }
 
         log.info("Verify if state is valid");
+
         String state = databaseChecklistItem.getState();
-        if(!state.equals("completed") && !state.equals("uncompleted")) {
-            InvalidParams invalidState = new InvalidParams(
-                    "state",
-                    "state must be either 'completed' or 'uncompleted'",
-                    state);
-            ProblemJSON problemJSON = new ProblemJSON(
-                    "/validation-error",
-                    "Your request parameters aren't valid.",
-                    400,
-                    "The state value is not valid",
-                    request.getRequestURI(),
-                    new InvalidParams[]{invalidState}
-            );
-            throw new InvalidStateException(problemJSON);
+
+        if (state.equals("completed")){
+            log.warn("Checklist with state completed can't have its items changed");
+            InvalidParams invalidState = new InvalidParams("state","Checklist can't be changed with state completed", "completed");
+            ProblemJSON problemJSON = new ProblemJSON("/invalid-state", "The Checklist state is invalid", 409, "The Checklist is completed and can't be modified", request.getRequestURI(), new InvalidParams[]{invalidState});
+            throw new ForbiddenException(problemJSON);
         }
+
         ChecklistItem checklistItem = optionalChecklistItem.get();
         checklistItem.setName(databaseChecklistItem.getName());
         checklistItem.setDescription(databaseChecklistItem.getDescription());
@@ -284,8 +279,9 @@ public class ChecklistController {
 
         Optional<ChecklistItem> optionalChecklistItem = checklistItemRepository.findById(checklistitem_id);
         if (!optionalChecklistItem.isPresent() || optionalChecklistItem.get().getChecklist().getId() != checklist_id) {
-            log.warn(String.format("The item %s does not belong to the checklist %s, or it does not exist", checklistitem_id, checklist_id));
-            throw new NotFoundException();
+            String message = String.format("The item %s does not belong to the checklist %s, or it does not exist", checklistitem_id, checklist_id);
+            log.warn(message);
+            throw new NotFoundException(message);
         }
 
         checklistItemRepository.deleteById(checklistitem_id);
@@ -306,8 +302,9 @@ public class ChecklistController {
         Optional<Checklist> optionalChecklist = checklistRepository.findById(checklist_id);
 
         if (!optionalChecklist.isPresent()) {
-            log.warn(String.format("The checklist %s does not exist.", checklist_id));
-            throw new NotFoundException();
+            String message = String.format("The checklist %s does not exist.", checklist_id);
+            log.warn(message);
+            throw new NotFoundException(message);
         }
 
         Checklist checklist = optionalChecklist.get();

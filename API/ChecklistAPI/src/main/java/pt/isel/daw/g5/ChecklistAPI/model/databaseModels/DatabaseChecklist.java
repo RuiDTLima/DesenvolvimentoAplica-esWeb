@@ -1,12 +1,12 @@
 package pt.isel.daw.g5.ChecklistAPI.model.databaseModels;
 
-import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
+import org.springframework.format.annotation.DateTimeFormat;
 import pt.isel.daw.g5.ChecklistAPI.model.inputModel.Checklist;
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 
 public class DatabaseChecklist {
     @JsonProperty("checklist_id")
@@ -16,7 +16,8 @@ public class DatabaseChecklist {
 
     @JsonSerialize(using = ToStringSerializer.class)
     @JsonProperty("completion_date")
-    private LocalDateTime completionDate;
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+    private ZonedDateTime completionDate;
 
     @JsonProperty("checklisttemplate_id")
     @JsonInclude(JsonInclude.Include.NON_DEFAULT)
@@ -38,11 +39,11 @@ public class DatabaseChecklist {
         this.name = name;
     }
 
-    public LocalDateTime getCompletionDate() {
+    public ZonedDateTime getCompletionDate() {
         return completionDate;
     }
 
-    public void setCompletionDate(LocalDateTime completionDate) {
+    public void setCompletionDate(ZonedDateTime completionDate) {
         this.completionDate = completionDate;
     }
 

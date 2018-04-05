@@ -1,7 +1,10 @@
 package pt.isel.daw.g5.ChecklistAPI.model.inputModel;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.List;
 
 @Entity
@@ -14,7 +17,8 @@ public class Checklist {
     private String name;
 
     @Column(name = "completiondate")
-    private LocalDateTime completionDate;
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+    private ZonedDateTime completionDate;
 
     @ManyToOne
     @JoinColumn(name = "Username")
@@ -43,11 +47,11 @@ public class Checklist {
         this.name = name;
     }
 
-    public LocalDateTime getCompletionDate() {
+    public ZonedDateTime getCompletionDate() {
         return completionDate;
     }
 
-    public void setCompletionDate(LocalDateTime completionDate) {
+    public void setCompletionDate(ZonedDateTime completionDate) {
         this.completionDate = completionDate;
     }
 
@@ -78,7 +82,7 @@ public class Checklist {
     protected Checklist(){
     }
 
-    public Checklist(String name, LocalDateTime completionDate) {
+    public Checklist(String name, ZonedDateTime completionDate) {
         this.name = name;
         this.completionDate = completionDate;
     }
