@@ -47,6 +47,6 @@ public class Home {
     }
 
     private Hints produceUsersHints() {
-        return new Hints(new String[]{"POST"}, null, new String[]{"application/json"}, null, new Field[] {new Field("username", "text", "Body Format Username"), new Field("password", "text", "Body Format Password")});
+        return new Hints(new String[]{"POST"}, null, new String[]{"application/json"}, null, new Field[] {new Field("username", "text", "Username"), new Field("password", "text", "Password")});
     }
 }
