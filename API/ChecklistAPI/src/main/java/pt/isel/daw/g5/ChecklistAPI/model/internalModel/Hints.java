@@ -17,6 +17,10 @@ public class Hints {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private String[] accept_put;
 
+    @JsonProperty("body-format")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private Field[] body_format;
+
     public String[] getAllow() {
         return allow;
     }
@@ -49,10 +53,19 @@ public class Hints {
         this.accept_put = accept_put;
     }
 
-    public Hints(String[] allow, String[] representations, String[] accept_post, String[] accept_put) {
+    public Field[] getBody_format() {
+        return body_format;
+    }
+
+    public void setBody_format(Field[] body_format) {
+        this.body_format = body_format;
+    }
+
+    public Hints(String[] allow, String[] representations, String[] accept_post, String[] accept_put, Field[] body_format) {
         this.allow = allow;
         this.representations = representations;
         this.accept_post = accept_post;
         this.accept_put = accept_put;
+        this.body_format = body_format;
     }
 }

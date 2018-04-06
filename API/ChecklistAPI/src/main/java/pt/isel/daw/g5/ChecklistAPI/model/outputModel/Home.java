@@ -23,7 +23,7 @@ public class Home {
     }
 
     private Hints produceChecklistsHints() {
-        return new Hints(new String[]{"GET", "POST"}, new String[]{"application/vnd.collection+json"}, new String[]{"application/json"}, null);
+        return new Hints(new String[]{"GET", "POST"}, new String[]{"application/vnd.collection+json"}, new String[]{"application/json"}, null, null);
     }
 
     private HrefVars produceChecklistHrefVars() {
@@ -31,11 +31,11 @@ public class Home {
     }
 
     private Hints produceChecklistHints() {
-        return new Hints(new String[]{"GET", "PUT", "DELETE"}, new String[]{"application/vnd.siren+json"}, null, new String[]{"application/json"});
+        return new Hints(new String[]{"GET", "PUT", "DELETE"}, new String[]{"application/vnd.siren+json"}, null, new String[]{"application/json"}, null);
     }
 
     private Hints produceChecklistTemplatesHints() {
-        return new Hints(new String[]{"GET", "POST"}, new String[]{"application/vnd.collection+json"}, new String[]{"application/json"}, null);
+        return new Hints(new String[]{"GET", "POST"}, new String[]{"application/vnd.collection+json"}, new String[]{"application/json"}, null, null);
     }
 
     private HrefVars produceChecklistTemplateHrefVars() {
@@ -43,10 +43,10 @@ public class Home {
     }
 
     private Hints produceChecklistTemplateHints() {
-        return new Hints(new String[]{"GET", "PUT", "DELETE"}, new String[]{"application/vnd.siren+json"}, null, new String[]{"application/json"});
+        return new Hints(new String[]{"GET", "PUT", "DELETE"}, new String[]{"application/vnd.siren+json"}, null, new String[]{"application/json"}, null);
     }
 
     private Hints produceUsersHints() {
-        return new Hints(new String[]{"POST"}, null, new String[]{"application/json"}, null);
+        return new Hints(new String[]{"POST"}, null, new String[]{"application/json"}, null, new Field[] {new Field("username", "text", "Body Format Username"), new Field("password", "text", "Body Format Password")});
     }
 }
