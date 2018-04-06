@@ -21,6 +21,10 @@ public class DatabaseChecklist {
     @JsonInclude(JsonInclude.Include.NON_DEFAULT)
     private int checklistTemplateId;
 
+    // só para output, indica se todos items dessa checklist estão completed
+    @JsonProperty("completion_state")
+    private String completionState;
+
     public int getChecklistId() {
         return checklistId;
     }
@@ -51,6 +55,14 @@ public class DatabaseChecklist {
 
     public void setChecklistTemplateId(int checklistTemplateId) {
         this.checklistTemplateId = checklistTemplateId;
+    }
+
+    public String getCompletionState() {
+        return completionState;
+    }
+
+    public void setCompletionState(String completionState) {
+        this.completionState = completionState;
     }
 
     public DatabaseChecklist() {}

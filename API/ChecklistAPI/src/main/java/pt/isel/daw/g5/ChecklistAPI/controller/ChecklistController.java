@@ -145,11 +145,15 @@ public class ChecklistController {
     }
 
     @GetMapping(path = "/{checklist_id}", produces = "application/vnd.siren+json")
+    @Transactional
     public OutChecklist getChecklist(@PathVariable("checklist_id") int checklistId,
                                      HttpServletRequest request){
 
         Checklist checklist = validateOperation(checklistId, request);
-        return new OutChecklist(new DatabaseChecklist(checklist));
+        boolean uncompleted = checklist.getInChecklistItems().stream().anyMatch(item -> item.getState().equals("uncompleted"));
+        DatabaseChecklist databaseChecklist = new DatabaseChecklist(checklist);
+        databaseChecklist.setCompletionState(uncompleted ? "uncompleted" : "completed");
+        return new OutChecklist(databaseChecklist);
     }
 
     @PutMapping("/{checklist_id}")
