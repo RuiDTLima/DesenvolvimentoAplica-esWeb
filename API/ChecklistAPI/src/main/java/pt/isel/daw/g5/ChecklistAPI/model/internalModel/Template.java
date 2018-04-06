@@ -1,7 +1,6 @@
 package pt.isel.daw.g5.ChecklistAPI.model.internalModel;
 
 public class Template {
-
     private Data[] data;
 
     public Data[] getData() {

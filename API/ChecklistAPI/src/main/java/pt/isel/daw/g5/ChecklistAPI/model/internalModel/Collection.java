@@ -7,11 +7,12 @@ public class Collection {
     private String version;
     private String href;
     private Item[] items;
+
     @JsonProperty("links")
     private CollectionLink[] links;
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    private  Template template;
 
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private Template template;
 
     public String getVersion() {
         return version;
@@ -53,7 +54,6 @@ public class Collection {
     public void setTemplate(Template template) {
         this.template = template;
     }
-
 
     public Collection(String version, String href, Item[] items, CollectionLink[] collectionLinks, Template template) {
         this.version = version;
