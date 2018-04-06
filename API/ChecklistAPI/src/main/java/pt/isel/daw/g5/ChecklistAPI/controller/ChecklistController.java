@@ -274,7 +274,7 @@ public class ChecklistController {
 
         if (!state.equals("completed") && !state.equals("uncompleted")){
             log.warn("Checklist item's state must be either 'completed' or 'uncompleted'");
-            InvalidParams invalidState = new InvalidParams("state","state must be either 'completed' or 'uncompleted'", "completed");
+            InvalidParams invalidState = new InvalidParams("state","state must be either 'completed' or 'uncompleted'", state);
             ProblemJSON problemJSON = new ProblemJSON("/invalid-state", "The Checklist state is invalid", 400, "The Checklist item can't be changed to the new values", request.getRequestURI(), new InvalidParams[]{invalidState});
             throw new InvalidStateException(problemJSON);
         }
