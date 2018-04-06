@@ -1,14 +1,17 @@
 package pt.isel.daw.g5.ChecklistAPI.model.internalModel;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class Collection {
     private String version;
     private String href;
     private Item[] items;
-
     @JsonProperty("links")
     private CollectionLink[] links;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private  Template template;
+
 
     public String getVersion() {
         return version;
@@ -43,10 +46,20 @@ public class Collection {
         this.links = collectionLinks;
     }
 
-    public Collection(String version, String href, Item[] items, CollectionLink[] collectionLinks) {
+    public Template getTemplate() {
+        return template;
+    }
+
+    public void setTemplate(Template template) {
+        this.template = template;
+    }
+
+
+    public Collection(String version, String href, Item[] items, CollectionLink[] collectionLinks, Template template) {
         this.version = version;
         this.href = href;
         this.items = items;
         this.links = collectionLinks;
+        this.template = template;
     }
 }

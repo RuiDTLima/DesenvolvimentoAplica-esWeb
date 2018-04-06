@@ -34,7 +34,8 @@ public class OutChecklistItems {
                 "1.0",
                 "/checklists/" + checklistId + "/checklistitems?page=" + checklistItems.getNumber(),
                 items.toArray(new Item[items.size()]),
-                CollectionLink.produceLinks(checklistItems, pageHref));
+                CollectionLink.produceLinks(checklistItems, pageHref),
+                null);
     }
 
     private Item itemFromChecklistItem(ChecklistItem checklistItem){

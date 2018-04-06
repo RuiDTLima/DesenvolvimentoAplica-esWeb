@@ -2,10 +2,8 @@ package pt.isel.daw.g5.ChecklistAPI.model.outputModel;
 
 import org.springframework.data.domain.Page;
 import pt.isel.daw.g5.ChecklistAPI.model.inputModel.TemplateItem;
-import pt.isel.daw.g5.ChecklistAPI.model.internalModel.Collection;
-import pt.isel.daw.g5.ChecklistAPI.model.internalModel.CollectionLink;
-import pt.isel.daw.g5.ChecklistAPI.model.internalModel.Data;
-import pt.isel.daw.g5.ChecklistAPI.model.internalModel.Item;
+import pt.isel.daw.g5.ChecklistAPI.model.internalModel.*;
+
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -33,7 +31,8 @@ public class OutTemplateItems {
                 "1.0",
                 "/checklisttemplates/" + checklistTemplateId + "/templateitems?page=" + (templateItems.getNumber()),
                 items.toArray(new Item[items.size()]),
-                CollectionLink.produceLinks(templateItems, pageHref));
+                CollectionLink.produceLinks(templateItems, pageHref),
+                null);
     }
 
     private Item itemFromTemplateItem(TemplateItem templateItem){
