@@ -5,5 +5,5 @@ Content-Type: application/json
 {
     "checklist_id": "1",
     "name": "Test PUT3",
-    "completion_date": "2018-03-17T20:00:00"
+    "completion_date": "2018-03-17T20:00:00+00:00"
 }

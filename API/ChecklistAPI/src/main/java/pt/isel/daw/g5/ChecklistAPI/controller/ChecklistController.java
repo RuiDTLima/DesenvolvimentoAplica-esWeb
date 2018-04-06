@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import pt.isel.daw.g5.ChecklistAPI.RequiresAuthentication;
 import pt.isel.daw.g5.ChecklistAPI.exceptions.ForbiddenException;
+import pt.isel.daw.g5.ChecklistAPI.exceptions.InvalidStateException;
 import pt.isel.daw.g5.ChecklistAPI.exceptions.NotFoundException;
 import pt.isel.daw.g5.ChecklistAPI.model.databaseModels.DatabaseChecklist;
 import pt.isel.daw.g5.ChecklistAPI.model.databaseModels.DatabaseChecklistItem;
@@ -26,6 +27,8 @@ import pt.isel.daw.g5.ChecklistAPI.repository.ChecklistRepository;
 import pt.isel.daw.g5.ChecklistAPI.repository.ChecklistTemplateRepository;
 import pt.isel.daw.g5.ChecklistAPI.repository.UserRepository;
 import javax.servlet.http.HttpServletRequest;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.Optional;
 
@@ -77,6 +80,17 @@ public class ChecklistController {
 
         int checklistTemplateId = databaseChecklist.getChecklistTemplateId();
 
+        String completionDate =  databaseChecklist.getCompletionDate();
+
+        try{
+            ZonedDateTime.parse(completionDate);
+        }catch (DateTimeParseException ex){
+            log.warn(String.format("The completion date %s does not follow the specification ISO 8601", completionDate));
+            InvalidParams invalidDate = new InvalidParams("completion_date", "The completion date does not follow the specification ISO 8601", completionDate);
+            ProblemJSON problemJSON = new ProblemJSON("/invalid-date-format", "Invalid Date Format", 400, String.format("The completion date %s does not follow the specification ISO 8601", completionDate), request.getRequestURI(), new InvalidParams[]{invalidDate});
+            throw new InvalidStateException(problemJSON);
+        }
+
         if (checklistTemplateId != 0){ // Significa que o checklist é gerado através de um checklisttemplate
             log.info("The checklist is being created with the help of a ChecklistTemplate");
 
@@ -101,7 +115,7 @@ public class ChecklistController {
                 throw new ForbiddenException(problemJSON);
             }
 
-            Checklist checklist = new Checklist(checklistTemplate.getName(), databaseChecklist.getCompletionDate());
+            Checklist checklist = new Checklist(checklistTemplate.getName(), completionDate);
 
             checklist.setChecklistTemplate(checklistTemplate);
             checklist.setUsername(userRepository.findById(username).get());
@@ -121,7 +135,7 @@ public class ChecklistController {
         } else{
             log.info("The checklist is create without the help of a checklistTemplate");
 
-            Checklist checklist = new Checklist(databaseChecklist.getName(), databaseChecklist.getCompletionDate());
+            Checklist checklist = new Checklist(databaseChecklist.getName(), completionDate);
             checklist.setUsername(userRepository.findById(username).get());
             checklistRepository.save(checklist);
         }
@@ -144,6 +158,17 @@ public class ChecklistController {
                                           HttpServletRequest request){
 
         Checklist checklist = validateOperation(checklistId, request);
+        String completionDate =  updatedChecklist.getCompletionDate();
+
+        try{
+            ZonedDateTime.parse(completionDate);
+        }catch (DateTimeParseException ex){
+            log.warn(String.format("The completion date %s does not follow the specification ISO 8601", completionDate));
+            InvalidParams invalidDate = new InvalidParams("completion_date", "The completion date does not follow the specification ISO 8601", completionDate);
+            ProblemJSON problemJSON = new ProblemJSON("/invalid-date-format", "Invalid Date Format", 400, String.format("The completion date %s does not follow the specification ISO 8601", completionDate), request.getRequestURI(), new InvalidParams[]{invalidDate});
+            throw new InvalidStateException(problemJSON);
+        }
+
         checklist.setName(updatedChecklist.getName());
         checklist.setCompletionDate(updatedChecklist.getCompletionDate());
         checklistRepository.save(checklist);
@@ -246,8 +271,8 @@ public class ChecklistController {
         if (!state.equals("completed") && !state.equals("uncompleted")){
             log.warn("Checklist item's state must be either 'completed' or 'uncompleted'");
             InvalidParams invalidState = new InvalidParams("state","state must be either 'completed' or 'uncompleted'", "completed");
-            ProblemJSON problemJSON = new ProblemJSON("/invalid-state", "The Checklist state is invalid", 409, "The Checklist item can't be changed to the new values", request.getRequestURI(), new InvalidParams[]{invalidState});
-            throw new ForbiddenException(problemJSON);
+            ProblemJSON problemJSON = new ProblemJSON("/invalid-state", "The Checklist state is invalid", 400, "The Checklist item can't be changed to the new values", request.getRequestURI(), new InvalidParams[]{invalidState});
+            throw new InvalidStateException(problemJSON);
         }
 
         ChecklistItem checklistItem = optionalChecklistItem.get();
