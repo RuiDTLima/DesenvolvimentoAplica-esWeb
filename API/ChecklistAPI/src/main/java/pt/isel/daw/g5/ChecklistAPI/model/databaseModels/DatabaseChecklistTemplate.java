@@ -1,6 +1,5 @@
 package pt.isel.daw.g5.ChecklistAPI.model.databaseModels;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import pt.isel.daw.g5.ChecklistAPI.model.inputModel.ChecklistTemplate;
 

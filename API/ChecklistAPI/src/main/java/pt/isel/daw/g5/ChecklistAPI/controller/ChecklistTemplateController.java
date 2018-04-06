@@ -101,6 +101,7 @@ public class ChecklistTemplateController {
      * @return
      */
     @DeleteMapping("/{checklisttemplate_id}")
+    @Transactional
     public ResponseEntity deleteChecklistTemplate(@PathVariable("checklisttemplate_id") int checklisttemplate_id,
                                                   HttpServletRequest request){
 

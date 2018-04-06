@@ -4,5 +4,5 @@ Content-Type: application/json
 
 {
     "name": "Teste sem template",
-    "completionDate": "2018-03-17T20:00:00"
+    "completion_date": "2018-03-17T20:00:00"
 }

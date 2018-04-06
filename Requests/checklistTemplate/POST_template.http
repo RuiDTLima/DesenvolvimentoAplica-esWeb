@@ -4,5 +4,5 @@ Content-Type: application/json
 
 {
     "name": "TestPost",
-    "completionDate": "2018-03-28T22:55:00"
+    "completion_date": "2018-03-28T22:55:00"
 }

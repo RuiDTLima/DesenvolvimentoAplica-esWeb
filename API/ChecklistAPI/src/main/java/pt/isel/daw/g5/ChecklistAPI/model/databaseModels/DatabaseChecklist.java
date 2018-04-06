@@ -13,6 +13,7 @@ public class DatabaseChecklist {
     private int checklistId;
 
     private String name;
+
     @JsonProperty("completion_date")
     private String completionDate;
 
