@@ -111,7 +111,7 @@ public class ChecklistController {
             if (!checklistTemplate.getUser().getUsername().equals(username)) {
                 log.warn(String.format("The checklistTemplate %s does not belong to the user %s", checklistTemplate.getId(), username));
                 InvalidParams notValidUser = new InvalidParams("username", "username is invalid");
-                ProblemJSON problemJSON = new ProblemJSON("/authentication-error", "Invalid User.", 403, "The user provided does not have access to this template", request.getRequestURI(), new InvalidParams[]{notValidUser});
+                ProblemJSON problemJSON = new ProblemJSON("/forbidden-error", "Invalid User.", 403, "The user provided does not have access to this template", request.getRequestURI(), new InvalidParams[]{notValidUser});
                 throw new ForbiddenException(problemJSON);
             }
 
@@ -341,7 +341,7 @@ public class ChecklistController {
         if (!checklist.getUsername().getUsername().equals(username)){
             log.warn(String.format("The checklist %s does not belong to the user %s", checklist_id, username));
             InvalidParams notIncludedUser = new InvalidParams("username", "username is invalid");
-            ProblemJSON problemJSON = new ProblemJSON("/authentication-error", "Invalid User.", 403, "The user provided does not have access to this checklist", request.getRequestURI(), new InvalidParams[]{notIncludedUser});
+            ProblemJSON problemJSON = new ProblemJSON("/forbidden-error", "Invalid User.", 403, "The user provided does not have access to this checklist", request.getRequestURI(), new InvalidParams[]{notIncludedUser});
             throw new ForbiddenException(problemJSON);
         }
         log.info("Validation was successful.");

@@ -289,7 +289,7 @@ public class ChecklistTemplateController {
         String username = (String) request.getAttribute("Username");
         if (!checklistTemplate.isUsable()){
             log.warn(String.format("ChecklistTemplate %s is no longer valid to use", checklisttemplate_id, username));
-            ProblemJSON problemJSON = new ProblemJSON("/invalid-error", "Invalid ChecklistTemplate.", 403, "This ChecklistTemplate is no longer valid to use.", request.getRequestURI(),null);
+            ProblemJSON problemJSON = new ProblemJSON("/invalid-template", "Invalid ChecklistTemplate.", 403, "This ChecklistTemplate is no longer valid to use.", request.getRequestURI(),null);
             throw new ForbiddenException(problemJSON);
         }
     }
@@ -316,7 +316,7 @@ public class ChecklistTemplateController {
         if (!checklistTemplate.getUser().getUsername().equals(username)){
             log.warn(String.format("ChecklistTemplate %s does not belong to the user %s", checklisttemplate_id, username));
             InvalidParams notIncludedUser = new InvalidParams("username", "username is invalid");
-            ProblemJSON problemJSON = new ProblemJSON("/authentication-error", "Invalid User.", 403, "The user provided does not have access to this resource", request.getRequestURI(), new InvalidParams[]{notIncludedUser});
+            ProblemJSON problemJSON = new ProblemJSON("/forbidden-error", "Invalid User.", 403, "The user provided does not have access to this resource", request.getRequestURI(), new InvalidParams[]{notIncludedUser});
             throw new ForbiddenException(problemJSON);
         }
 
