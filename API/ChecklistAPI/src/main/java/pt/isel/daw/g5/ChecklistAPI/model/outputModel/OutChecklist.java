@@ -127,7 +127,7 @@ public class OutChecklist {
     }
 
     private SirenLink[] produceLinks(DatabaseChecklist checklist) {
-        SirenLink self = new SirenLink(new String[] {"self"}, "/checklists" + checklist.getChecklistId());
+        SirenLink self = new SirenLink(new String[] {"self"}, "/checklists/" + checklist.getChecklistId());
         return new SirenLink[]{self};
     }
 }
