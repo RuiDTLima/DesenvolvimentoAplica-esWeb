@@ -7,6 +7,8 @@ public class Action {
     private String title;
     private String method;
     private String href;
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private String type;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -58,6 +60,13 @@ public class Action {
 
     public void setFields(Field[] fields) {
         this.fields = fields;
+    }
+
+    public Action(String name, String title, String method, String href){
+        this.name = name;
+        this.title = title;
+        this.method = method;
+        this.href = href;
     }
 
     public Action(String name, String title, String method, String href, String type, Field[] fields) {

@@ -69,8 +69,7 @@ public class OutChecklist {
     }
 
     private Entity produceChecklistItemEntity(DatabaseChecklist checklist) {
-        return new Entity(new String[] {"checklistitem"},  new String[] {"/checklists/" + checklist.getChecklistId()}, "/checklists/" + checklist.getChecklistId() + "/checklistitems"
-        );
+        return new Entity(new String[] {"checklistitem"},  new String[] {"/checklists/" + checklist.getChecklistId()}, "/checklists/" + checklist.getChecklistId() + "/checklistitems");
     }
 
     private Entity produceChecklistTemplateEntity(DatabaseChecklist checklist) {
@@ -108,9 +107,7 @@ public class OutChecklist {
                 "delete-checklist",
                 "Delete Checklist",
                 "DELETE",
-                "/checklists/" + checklist.getChecklistId(),
-                "application/x-www-form-urlencoded",
-                null
+                "/checklists/" + checklist.getChecklistId()
         );
     }
 

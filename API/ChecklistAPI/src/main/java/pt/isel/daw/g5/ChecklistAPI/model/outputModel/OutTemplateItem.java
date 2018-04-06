@@ -76,7 +76,7 @@ public class OutTemplateItem {
     }
 
     private Action produceDeleteTemplateItemAction(DatabaseTemplateItem templateItem) {
-        return new Action("delete-templateitem", "Delete Template Item", "DELETE", "/checklisttemplates/" + templateItem.getChecklisttemplate_id() + "/templateitems/" + templateItem.getTemplateitem_id(), "application/x-www-form-urlencoded", null);
+        return new Action("delete-templateitem", "Delete Template Item", "DELETE", "/checklisttemplates/" + templateItem.getChecklisttemplate_id() + "/templateitems/" + templateItem.getTemplateitem_id());
     }
 
     private Action produceUpdateTemplateItemAction(DatabaseTemplateItem templateItem) {

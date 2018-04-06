@@ -82,17 +82,11 @@ public class OutChecklistItem {
     }
 
     private Action produceDelete(ChecklistItem checklistItem) {
-        return new Action("delete-checklistitem", "Delete Checklist Item", "DELETE", String.format("/checklists/%s/checklistitems/%s", checklistItem.getChecklist().getId(), checklistItem.getId()), "application/x-www-form-urlencoded", null);
+        return new Action("delete-checklistitem", "Delete Checklist Item", "DELETE", String.format("/checklists/%s/checklistitems/%s", checklistItem.getChecklist().getId(), checklistItem.getId()));
     }
 
     private Action producePut(ChecklistItem checklistItem) {
         return new Action("update-checklistitem", "Update Checklist Item", "PUT", String.format("/checklists/%s/checklistitems/%s", checklistItem.getChecklist().getId(), checklistItem.getId()), "application/json", producePutFields(checklistItem));
-    }
-
-    private Field[] produceDeleteFields(ChecklistItem checklistItem) {
-        Field checklist_id = new Field("checklist_id", "hidden", Integer.toString(checklistItem.getChecklist().getId()), "Checklist Id");
-        Field checklistitem_id = new Field("checklistitem_id", "hidden", Integer.toString(checklistItem.getId()), "Checklist Item Id");
-        return new Field[]{checklist_id, checklistitem_id};
     }
 
     private Field[] producePutFields(ChecklistItem checklistItem) {

@@ -236,7 +236,7 @@ public class ChecklistTemplateController {
 
         isTemplateUsable(checklisttemplate_id, request, checklistTemplate);
 
-        if(!templateItemRepository.existsById(checklisttemplate_id) ||
+        if(!templateItemRepository.existsById(templateItem_id) ||
            !checklistTemplate.getTemplateItems().stream().anyMatch(item -> item.getId() == checklisttemplate_id)){
             throw new NotFoundException(String.format("The template item %s does not exist or it does not belong to the checklist template %s", checklisttemplate_id, checklisttemplate_id));
         }

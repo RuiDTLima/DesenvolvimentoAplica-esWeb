@@ -243,10 +243,10 @@ public class ChecklistController {
 
         String state = databaseChecklistItem.getState();
 
-        if (state.equals("completed")){
-            log.warn("Checklist with state completed can't have its items changed");
-            InvalidParams invalidState = new InvalidParams("state","Checklist can't be changed with state completed", "completed");
-            ProblemJSON problemJSON = new ProblemJSON("/invalid-state", "The Checklist state is invalid", 409, "The Checklist is completed and can't be modified", request.getRequestURI(), new InvalidParams[]{invalidState});
+        if (!state.equals("completed") && !state.equals("uncompleted")){
+            log.warn("Checklist item's state must be either 'completed' or 'uncompleted'");
+            InvalidParams invalidState = new InvalidParams("state","state must be either 'completed' or 'uncompleted'", "completed");
+            ProblemJSON problemJSON = new ProblemJSON("/invalid-state", "The Checklist state is invalid", 409, "The Checklist item can't be changed to the new values", request.getRequestURI(), new InvalidParams[]{invalidState});
             throw new ForbiddenException(problemJSON);
         }
 

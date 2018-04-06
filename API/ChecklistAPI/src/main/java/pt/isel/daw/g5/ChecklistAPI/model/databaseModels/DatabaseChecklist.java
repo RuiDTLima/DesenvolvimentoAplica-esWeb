@@ -13,11 +13,7 @@ public class DatabaseChecklist {
     private int checklistId;
 
     private String name;
-
-    @JsonSerialize(using = ToStringSerializer.class)
-    @JsonProperty("completion_date")
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-    private ZonedDateTime completionDate;
+    private String completionDate;
 
     @JsonProperty("checklisttemplate_id")
     @JsonInclude(JsonInclude.Include.NON_DEFAULT)
@@ -39,11 +35,11 @@ public class DatabaseChecklist {
         this.name = name;
     }
 
-    public ZonedDateTime getCompletionDate() {
+    public String getCompletionDate() {
         return completionDate;
     }
 
-    public void setCompletionDate(ZonedDateTime completionDate) {
+    public void setCompletionDate(String completionDate) {
         this.completionDate = completionDate;
     }
 

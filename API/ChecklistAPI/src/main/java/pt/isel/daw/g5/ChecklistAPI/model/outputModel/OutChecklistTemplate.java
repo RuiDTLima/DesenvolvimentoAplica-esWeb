@@ -86,7 +86,7 @@ public class OutChecklistTemplate {
     }
 
     private Action produceDelete(ChecklistTemplate checklistTemplate) {
-        return new Action("delete-checklisttemplate", "Delete OutChecklist Template", "DELETE", "/checklisttemplates/" + checklistTemplate.getId(), "application/x-www-form-urlencoded", null);
+        return new Action("delete-checklisttemplate", "Delete OutChecklist Template", "DELETE", "/checklisttemplates/" + checklistTemplate.getId());
     }
 
     private Action producePut(ChecklistTemplate checklistTemplate) {

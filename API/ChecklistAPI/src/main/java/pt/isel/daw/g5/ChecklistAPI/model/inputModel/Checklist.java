@@ -17,8 +17,7 @@ public class Checklist {
     private String name;
 
     @Column(name = "completiondate")
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-    private ZonedDateTime completionDate;
+    private String completionDate;
 
     @ManyToOne
     @JoinColumn(name = "Username")
@@ -47,11 +46,11 @@ public class Checklist {
         this.name = name;
     }
 
-    public ZonedDateTime getCompletionDate() {
+    public String getCompletionDate() {
         return completionDate;
     }
 
-    public void setCompletionDate(ZonedDateTime completionDate) {
+    public void setCompletionDate(String completionDate) {
         this.completionDate = completionDate;
     }
 
@@ -82,7 +81,7 @@ public class Checklist {
     protected Checklist(){
     }
 
-    public Checklist(String name, ZonedDateTime completionDate) {
+    public Checklist(String name, String completionDate) {
         this.name = name;
         this.completionDate = completionDate;
     }
