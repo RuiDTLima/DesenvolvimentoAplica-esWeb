@@ -28,6 +28,8 @@ public class ChecklistApiInterceptor extends HandlerInterceptorAdapter {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         HandlerMethod hm = (HandlerMethod) handler;
         Method methodAnnotation = hm.getMethod();
+        response.addHeader("Access-Control-Allow-Origin", "*");
+
         if(!methodAnnotation.getDeclaringClass().isAnnotationPresent(RequiresAuthentication.class))
             return true;
 

@@ -14,4 +14,6 @@ public class ChecklistApiConfigurer extends WebMvcConfigurationSupport {
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(checklistApiInterceptor);
     }
+
+
 }

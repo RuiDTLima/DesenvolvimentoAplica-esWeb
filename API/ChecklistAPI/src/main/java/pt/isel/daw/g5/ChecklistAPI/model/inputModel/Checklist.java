@@ -1,10 +1,6 @@
 package pt.isel.daw.g5.ChecklistAPI.model.inputModel;
 
-import org.springframework.format.annotation.DateTimeFormat;
-
 import javax.persistence.*;
-import java.time.LocalDateTime;
-import java.time.ZonedDateTime;
 import java.util.List;
 
 @Entity
