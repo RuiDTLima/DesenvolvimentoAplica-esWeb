@@ -6,7 +6,8 @@ import fetch from 'isomorphic-fetch'
 const issuesTempl = new URITemplate('/issues/{url}')
 // const fetch = require('isomorphic-fetch')
 
-const home = new URITemplate(`/`).expand({url: 'http://localhost:8080/'})
+// const home = new URITemplate(`/`).expand({url: 'http://localhost:8080/'})
+const url = 'http://localhost:8080'
 let historyf
 
 export default class extends React.Component {
@@ -14,10 +15,12 @@ export default class extends React.Component {
     super(props)
     this.state = {'credentials': ''}
     this.saveCredentials = this.saveCredentials.bind(this)
+    this.login = this.login.bind(this)
+    this.getChecklists = this.getChecklists.bind(this)
+    this.getChecklistTemplates = this.getChecklistTemplates.bind(this)
   }
 
   login() {
-    console.log('chegou')
     return (
     <div>
         <form onSubmit={this.saveCredentials}>
@@ -38,30 +41,80 @@ export default class extends React.Component {
     )
   }
 
+  logout() {
+    this.setState(old => ({'credentials': ''}))
+    historyf.push('/') // ===========================
+  }
+
   saveCredentials(ev) {
     const username = document.getElementsByName('username')[0].value
     const password = document.getElementsByName('password')[0].value
     ev.preventDefault()    
-    this.setState(old => ({'credentials': btoa(`${username}:${password}`)}))
-    historyf.push('/menu') 
-  }
-
-  menu(){
-    fetch('http://localhost:8080/')
+    fetch(`${url}/users/${username}`)
     .then(resp => {
       if(resp.status == 200) {
-        return resp.json().then(json => {
-          console.log(json)
+        return resp.json().then(user => {
+          console.log(user)
+          if(user.properties.password == password) {
+            this.setState(old => ({'credentials': btoa(`${username}:${password}`)}))
+            historyf.push('/menu') 
+          } else {
+            new Error('Error')
+          }
         })
       }
     })
+  }
+
+  menu(){
+    let h = ''
+    fetch(`${url}/`)
+    .then(resp => {
+      if(resp.status == 200) {
+        return resp.json().then(home => {
+          console.log(home)
+          h = home
+        })
+      }
+    })
+    let authenticated;
+    if(this.state.credentials == '') {
+      authenticated = <div><button onClick={this.login}>log in</button></div>
+    } else authenticated = <div><button onClick={this.logout}>log out</button></div>
+          
     return (
       <div>
-        <div><button>checklists</button></div>
-        <div><button>checklist templates</button></div>
-        <div><button>log out</button></div>
+        <div><button onClick={() => this.getChecklists(h)}>checklists</button></div>
+        <div><button onClick={() => this.getChecklistTemplates(h)}>checklist templates</button></div>
+        {authenticated}
       </div>
     )
+  }
+
+  getChecklists(home) {
+    let path = url + home.resources['/checklists'].href
+    console.log(path)
+    fetch(path, {method: 'GET', headers: {'Authorization': this.state.credentials}})
+    .then(resp => {
+      if(resp.status === 200) {
+        return resp.json().then(checklists => {
+          console.log(checklists)
+        })
+      }
+    })
+  }
+
+  getChecklistTemplates(home) {
+    let path = url + home.resources['/checklisttemplates'].href
+    console.log(path)
+    fetch(path, {headers: {'Authorization': this.state.credentials}})
+    .then(resp => {
+      if(resp.status === 200) {
+        return resp.json().then(checklisttemplates => {
+          console.log(checklisttemplates)
+        })
+      }
+    })
   }
 
   render () {
