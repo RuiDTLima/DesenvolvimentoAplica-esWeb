@@ -3,118 +3,64 @@ import {BrowserRouter, Route, Redirect, Switch} from 'react-router-dom'
 import URI from 'urijs'
 import URITemplate from 'urijs/src/URITemplate'
 import fetch from 'isomorphic-fetch'
+import List from './checklists'
+import Login from './login'
 const issuesTempl = new URITemplate('/issues/{url}')
 // const fetch = require('isomorphic-fetch')
 
 // const home = new URITemplate(`/`).expand({url: 'http://localhost:8080/'})
 const url = 'http://localhost:8080'
-let historyf
+let home
 
 export default class extends React.Component {
-  constructor(props) {
+  constructor (props) {
     super(props)
     this.state = {'credentials': ''}
-    this.saveCredentials = this.saveCredentials.bind(this)
-    this.login = this.login.bind(this)
-    this.getChecklists = this.getChecklists.bind(this)
     this.getChecklistTemplates = this.getChecklistTemplates.bind(this)
+    this.onLoginSuccess = this.onLoginSuccess.bind(this)
+    this.onLoginError = this.onLoginError.bind(this)
   }
 
-  login() {
-    return (
-    <div>
-        <form onSubmit={this.saveCredentials}>
-            <div>
-                <label>Username: </label>
-                <input type='text' name='username' required />
-            </div>
-            <div>
-                <label>Password: </label>
-                <input type='password' name='password' required />                        
-            </div>
-            <div>
-                <button>Submit</button>
-                {/* <input type='submit' value='Submit' onSubmit={this.login} />    */}
-            </div>
-        </form>             
-    </div>
-    )
-  }
-
-  logout() {
+  logout () {
     this.setState(old => ({'credentials': ''}))
-    historyf.push('/') // ===========================
   }
 
-  saveCredentials(ev) {
-    const username = document.getElementsByName('username')[0].value
-    const password = document.getElementsByName('password')[0].value
-    ev.preventDefault()    
-    fetch(`${url}/users/${username}`)
-    .then(resp => {
-      if(resp.status == 200) {
-        return resp.json().then(user => {
-          console.log(user)
-          if(user.properties.password == password) {
-            this.setState(old => ({'credentials': btoa(`${username}:${password}`)}))
-            historyf.push('/menu') 
-          } else {
-            new Error('Error')
-          }
-        })
-      }
-    })
-  }
-
-  menu(){
-    let h = ''
+  menu () {
     fetch(`${url}/`)
-    .then(resp => {
-      if(resp.status == 200) {
-        return resp.json().then(home => {
-          console.log(home)
-          h = home
-        })
-      }
-    })
-    let authenticated;
-    if(this.state.credentials == '') {
+      .then(resp => {
+        if (resp.status === 200) {
+          return resp.json().then(h => {
+            console.log(h)
+            home = h
+          })
+        }
+      })
+    let authenticated
+    if (this.state.credentials === '') {
       authenticated = <div><button onClick={this.login}>log in</button></div>
     } else authenticated = <div><button onClick={this.logout}>log out</button></div>
-          
-    return (
-      <div>
-        <div><button onClick={() => this.getChecklists(h)}>checklists</button></div>
-        <div><button onClick={() => this.getChecklistTemplates(h)}>checklist templates</button></div>
-        {authenticated}
-      </div>
-    )
   }
 
-  getChecklists(home) {
-    let path = url + home.resources['/checklists'].href
-    console.log(path)
-    fetch(path, {method: 'GET', headers: {'Authorization': this.state.credentials}})
-    .then(resp => {
-      if(resp.status === 200) {
-        return resp.json().then(checklists => {
-          console.log(checklists)
-        })
-      }
-    })
-  }
-
-  getChecklistTemplates(home) {
+  getChecklistTemplates (home) {
     let path = url + home.resources['/checklisttemplates'].href
     console.log(path)
     fetch(path, {headers: {'Authorization': this.state.credentials}})
-    .then(resp => {
-      if(resp.status === 200) {
-        return resp.json().then(checklisttemplates => {
-          console.log(checklisttemplates)
-        })
-      }
-    })
+      .then(resp => {
+        if (resp.status === 200) {
+          return resp.json().then(checklisttemplates => {
+            console.log(checklisttemplates)
+          })
+        }
+      })
+  }
+
+  onLoginSuccess (username, password, history) {
+    this.setState(old => ({'credentials': btoa(`${username}:${password}`)}))
+    history.push('/menu')
+  }
+
+  onLoginError () {
+    return new Error('Login failed')
   }
 
   render () {
@@ -122,12 +68,35 @@ export default class extends React.Component {
       <BrowserRouter>
         <div>
           <Switch>
-            <Route exact path='/' render={({history}) => {
-              historyf = history
-              return this.login()
-            }
-              } />
-            <Route exact path='/menu' render={() => this.menu()} />
+            <Route exact path='/' render={({history}) => (
+              <Login
+                url={url}
+                onSuccess={(username, password) => { this.onLoginSuccess(username, password, history) }}
+                onError={this.onLoginError}
+              />
+            )} />
+            <Route exact path='/menu' render={({match, history}) => {
+              this.menu()
+              return (
+                <div>
+                  <div><button onClick={() => history.push('/checklists')}>checklists</button></div>
+                  <div><button onClick={() => history.push('/checklisttemplates')}>checklist templates</button></div>
+                </div>
+              )
+            }}
+            />
+            <Route exact path='/checklists' render={({match, history}) => (
+              <List
+                url={url + home.resources['/checklists'].href}
+                credentials={this.state.credentials}
+              />
+            )} />
+            <Route exact path='/checklisttemplates' render={({match, history}) => (
+              <List
+                url={url + home.resources['/checklisttemplates'].href}
+                credentials={this.state.credentials}
+              />
+            )} />
             <Route path='/' render={({history}) =>
               <div>
                 <h2>Route not found</h2>
