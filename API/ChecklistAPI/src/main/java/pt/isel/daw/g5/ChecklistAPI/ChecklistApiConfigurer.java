@@ -2,6 +2,7 @@ package pt.isel.daw.g5.ChecklistAPI;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
 
@@ -15,5 +16,13 @@ public class ChecklistApiConfigurer extends WebMvcConfigurationSupport {
         registry.addInterceptor(checklistApiInterceptor);
     }
 
-
+    @Override
+    protected void addCorsMappings(CorsRegistry registry) {
+        super.addCorsMappings(registry);
+        registry
+                .addMapping("/**")
+                .allowedOrigins("http://localhost:9000")
+                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+                .allowedHeaders("*");
+    }
 }
