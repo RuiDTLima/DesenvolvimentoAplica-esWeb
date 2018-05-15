@@ -1,22 +1,73 @@
-import React from 'react'
+import React, {Component} from 'react'
 import HttpGet from './http-get'
 import HttpGetSwitch from './http-get-switch'
+import fetch from 'isomorphic-fetch'
 
-export default ({url, credentials}) => (
-  <div>
-    <HttpGet
-      url={url}
-      credentials={credentials}
-      render={(result) => (
+export default class extends Component {
+  constructor (props) {
+    super(props)
+    this.state = {
+      create: false
+    }
+  }
+
+  render () {
+    if (this.state.create) {
+      return this.props.formGenerator(this.state.template, (ev) => {
+        ev.preventDefault()
+        const obj = { }
+        this.state.template.data.forEach(d => { obj[d.name] = (document.getElementsByName(d.name)[0].value) })
+        console.log(obj)
+        fetch(this.props.url, {
+          method: 'POST',
+          headers: {
+            'Authorization': this.props.credentials,
+            'content-type': 'application/json'
+          },
+          body: JSON.stringify(obj)}
+        ).then(resp => {
+          if (resp.status === 204) {
+            this.setState(old => ({create: false}))
+          } else if (resp.status >= 400 && resp.status < 500) {
+            return new Error('error')
+          } else return new Error('server error')
+        })
+      })
+    } else {
+      return (
         <div>
-          <HttpGetSwitch result={result}
-            onJson={json => (
-                <ul>
-                    {json.collection.items.map(item => <li key={item.data[1].value}>{item.data[0].value}</li>)}
-                </ul>
-            )}
-          />
+          <HttpGet
+            url={this.props.url}
+            credentials={this.props.credentials}
+            render={(result) => (
+              <div>
+                <HttpGetSwitch result={result}
+                  onJson={json => {
+                    let btn
+                    const collection = json.collection
+                    if (collection.template !== undefined) {
+                      btn = <button onClick={() => this.setState(old => ({
+                        create: true,
+                        template: collection.template
+                      }))}>Create</button>
+                    }
+                    return (
+                      <div>
+                        {btn}
+                        <ul>
+                          {collection.items.map(item =>
+                            <li key={item.data.find(d => d.name === 'checklist_id').value}>
+                              {item.data.find(d => d.name === 'name').value} - {item.data.find(d => d.name === 'completion_date').value}
+                            </li>)}
+                        </ul>
+                      </div>
+                    )
+                  }}
+                />
+              </div>
+            )} />
         </div>
-      )} />
-  </div>
-)
+      )
+    }
+  }
+}

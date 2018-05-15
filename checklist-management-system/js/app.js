@@ -1,14 +1,10 @@
 import React from 'react'
 import {BrowserRouter, Route, Redirect, Switch} from 'react-router-dom'
-import URI from 'urijs'
-import URITemplate from 'urijs/src/URITemplate'
 import fetch from 'isomorphic-fetch'
 import List from './checklists'
 import Login from './login'
-const issuesTempl = new URITemplate('/issues/{url}')
-// const fetch = require('isomorphic-fetch')
+import Nav from './nav'
 
-// const home = new URITemplate(`/`).expand({url: 'http://localhost:8080/'})
 const url = 'http://localhost:8080'
 let home
 
@@ -16,13 +12,6 @@ export default class extends React.Component {
   constructor (props) {
     super(props)
     this.state = {'credentials': ''}
-    this.getChecklistTemplates = this.getChecklistTemplates.bind(this)
-    this.onLoginSuccess = this.onLoginSuccess.bind(this)
-    this.onLoginError = this.onLoginError.bind(this)
-  }
-
-  logout () {
-    this.setState(old => ({'credentials': ''}))
   }
 
   menu () {
@@ -41,41 +30,53 @@ export default class extends React.Component {
     } else authenticated = <div><button onClick={this.logout}>log out</button></div>
   }
 
-  getChecklistTemplates (home) {
-    let path = url + home.resources['/checklisttemplates'].href
-    console.log(path)
-    fetch(path, {headers: {'Authorization': this.state.credentials}})
-      .then(resp => {
-        if (resp.status === 200) {
-          return resp.json().then(checklisttemplates => {
-            console.log(checklisttemplates)
-          })
-        }
-      })
-  }
-
-  onLoginSuccess (username, password, history) {
-    this.setState(old => ({'credentials': btoa(`${username}:${password}`)}))
-    history.push('/menu')
-  }
-
-  onLoginError () {
-    return new Error('Login failed')
+  formGenerator (template, onCreate) {
+    return (
+      <form action={url} method='POST' onSubmit={(ev) => onCreate(ev)}>
+        {template.data.map(t =>
+          <div key={t.name}>
+            <label>{t.prompt}</label>
+            <input type='text' name={t.name} required />
+          </div>
+        )}
+        <button>Create</button>
+      </form>
+    )
   }
 
   render () {
     return (
       <BrowserRouter>
         <div>
+          <Nav credentials={this.state.credentials} onLogout={() => this.setState(old => ({'credentials': ''}))} />
           <Switch>
-            <Route exact path='/' render={({history}) => (
-              <Login
-                url={url}
-                onSuccess={(username, password) => { this.onLoginSuccess(username, password, history) }}
-                onError={this.onLoginError}
-              />
-            )} />
+            <Route exact path='/' render={() => {
+              if (this.state.credentials !== '') {
+                return <Redirect to='/menu' />
+              }
+              return (
+                <Login
+                  url={url}
+                  onSuccess={(username, password) => { this.setState(old => ({'credentials': btoa(`${username}:${password}`)})) }}
+                  onError={() => new Error('Login failed')}
+                />
+              )
+            }} />
+            {/* <Route path='/' render={() => {
+              if (this.state.credentials === '') {
+                return (
+                  <Login
+                    url={url}
+                    onSuccess={(username, password) => { this.setState(old => ({'credentials': btoa(`${username}:${password}`)})) }}
+                    onError={() => new Error('Login failed')}
+                  />
+                )
+              }
+            }} /> */}
             <Route exact path='/menu' render={({match, history}) => {
+              if (this.state.credentials === '') {
+                return <Redirect to='/' />
+              }
               this.menu()
               return (
                 <div>
@@ -85,18 +86,28 @@ export default class extends React.Component {
               )
             }}
             />
-            <Route exact path='/checklists' render={({match, history}) => (
-              <List
-                url={url + home.resources['/checklists'].href}
-                credentials={this.state.credentials}
-              />
-            )} />
-            <Route exact path='/checklisttemplates' render={({match, history}) => (
-              <List
+            <Route exact path='/checklists' render={({match, history}) => {
+              if (this.state.credentials === '') {
+                return <Redirect to='/' />
+              }
+              return (
+                <List
+                  url={url + home.resources['/checklists'].href}
+                  credentials={this.state.credentials}
+                  formGenerator={this.formGenerator}
+                />
+              )
+            }} />
+            <Route exact path='/checklisttemplates' render={({match, history}) => {
+              // ERROR
+              if (this.state.credentials === '') {
+                return <Redirect to='/' />
+              }
+              return <List
                 url={url + home.resources['/checklisttemplates'].href}
                 credentials={this.state.credentials}
               />
-            )} />
+            }} />
             <Route path='/' render={({history}) =>
               <div>
                 <h2>Route not found</h2>
