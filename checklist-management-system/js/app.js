@@ -2,6 +2,7 @@ import React from 'react'
 import {BrowserRouter, Route, Redirect, Switch} from 'react-router-dom'
 import fetch from 'isomorphic-fetch'
 import List from './checklists'
+import TemplateList from './checklisttemplates'
 import Login from './login'
 import Nav from './nav'
 
@@ -99,13 +100,13 @@ export default class extends React.Component {
               )
             }} />
             <Route exact path='/checklisttemplates' render={({match, history}) => {
-              // ERROR
               if (this.state.credentials === '') {
                 return <Redirect to='/' />
               }
-              return <List
+              return <TemplateList
                 url={url + home.resources['/checklisttemplates'].href}
                 credentials={this.state.credentials}
+                formGenerator={this.formGenerator}
               />
             }} />
             <Route path='/' render={({history}) =>
