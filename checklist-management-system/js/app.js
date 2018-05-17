@@ -139,7 +139,7 @@ export default class extends React.Component {
                     pathname: `/checklists/${match.params.id}/checklistitems/${itemId}`,
                     state: { itemPath: url }
                   })}
-                  onDelete={() => history.goBack()}
+                  onDelete={() => history.push('/checklists')}
                 />)
             }} />
             <Route exact path='/checklists/:listId/checklistitems/:itemId' render={({match, history}) => {
@@ -153,7 +153,7 @@ export default class extends React.Component {
                   partial={history.location.state.itemPath.replace(/:listId/i, `${match.params.listId}`).replace(/:itemId/i, `${match.params.itemId}`)}
                   credentials={this.state.credentials}
                   actionGenerator={this.actionGenerator}
-                  onDelete={() => history.goBack()}
+                  onDelete={() => history.push(`/checklists/${match.params.listId}`)}
                 />)
             }} />
             <Route exact path='/checklisttemplates' render={({match, history}) => {
