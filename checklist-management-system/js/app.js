@@ -26,7 +26,6 @@ export default class extends React.Component {
       .then(resp => {
         if (resp.status === 200) {
           return resp.json().then(h => {
-            console.log(h)
             this.setState(old => ({
               'credentials': Buffer.from(`${username}:${password}`).toString('base64'),
               'home': h
@@ -79,7 +78,7 @@ export default class extends React.Component {
             <input type={field.type} name={field.name} value={field.value} required />
           </div>
         )}
-        <button>Create</button>
+        <button>Save</button>
       </form>
     )
   }
@@ -162,7 +161,6 @@ export default class extends React.Component {
               if (this.state.credentials === '') {
                 return <Redirect to='/' />
               }
-              console.log(history)
               return (
                 <ChecklistItem
                   url={url}

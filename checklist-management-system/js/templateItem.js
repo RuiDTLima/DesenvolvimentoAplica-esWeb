@@ -32,7 +32,6 @@ export default class extends Component {
           this.state.fields.forEach(d => {
             obj[d.name] = (document.getElementsByName(d.name)[0].value)
           })
-          console.log(obj)
 
           fetch(path, {
             method: this.state.method,
@@ -58,7 +57,6 @@ export default class extends Component {
           render={(result => (
             <HttpGetSwitch result={result}
               onJson={json => {
-                console.log('Reach response')
                 let btn = <div>{json.actions.map(actions =>
                   <button key={actions.name}
                     onClick={() => this.setState({method: actions.method, href: actions.href, type: actions.type, fields: actions.fields, template_id: json.properties['checklisttemplate_id']})}>

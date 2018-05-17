@@ -2,6 +2,7 @@ import React, {Component} from 'react'
 import HttpGet from './http-get'
 import HttpGetSwitch from './http-get-switch'
 import fetch from 'isomorphic-fetch'
+import Paginator from './paginator'
 
 export default class extends Component {
   constructor (props) {
@@ -32,7 +33,6 @@ export default class extends Component {
           this.state.fields.forEach(d => {
             obj[d.name] = (document.getElementsByName(d.name)[0].value)
           })
-          console.log(obj)
 
           fetch(path, {
             method: this.state.method,
@@ -96,6 +96,7 @@ function showTemplate (btn, json, props) {
               <div>
                 {items.collection.items.length !== 0 ? (<h3>Template Items</h3>) : ''}
 
+                <Paginator response={items} onChange={nUrl => result.setUrl(this.props.url + nUrl)} />
                 <ul>
                   {items.collection.items.map(item =>
                     <li key={item.data.find(d => d.name === 'name').value}>

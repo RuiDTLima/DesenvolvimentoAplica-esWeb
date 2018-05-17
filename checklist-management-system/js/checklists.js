@@ -18,7 +18,6 @@ export default class extends Component {
         ev.preventDefault()
         const obj = { }
         this.state.template.data.forEach(d => { obj[d.name] = (document.getElementsByName(d.name)[0].value) })
-        console.log(obj)
         fetch(this.props.url + this.props.partial, {
           method: 'POST',
           headers: {

@@ -27,7 +27,6 @@ function saveCredentials (ev, url, onSuccess, onError) {
     .then(resp => {
       if (resp.status === 200) {
         return resp.json().then(user => {
-          console.log(user)
           if (user.properties.password === password) {
             onSuccess(username, password)
           } else {
