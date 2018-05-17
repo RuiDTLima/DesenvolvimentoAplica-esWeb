@@ -1,33 +1,36 @@
 import React from 'react'
 import {BrowserRouter, Route, Redirect, Switch} from 'react-router-dom'
 import fetch from 'isomorphic-fetch'
-import List from './checklists'
+import Checklists from './checklists'
+import Checklist from './checklist'
+import ChecklistItem from './checklistitem'
 import Login from './login'
 import Nav from './nav'
 
 const url = 'http://localhost:8080'
-let home
 
 export default class extends React.Component {
   constructor (props) {
     super(props)
-    this.state = {'credentials': ''}
+    this.state = {
+      'credentials': '',
+      'home': { }
+    }
   }
 
-  menu () {
+  menu (username, password) {
     fetch(`${url}/`)
       .then(resp => {
         if (resp.status === 200) {
           return resp.json().then(h => {
             console.log(h)
-            home = h
+            this.setState(old => ({
+              'credentials': btoa(`${username}:${password}`),
+              'home': h
+            }))
           })
         }
       })
-    let authenticated
-    if (this.state.credentials === '') {
-      authenticated = <div><button onClick={this.login}>log in</button></div>
-    } else authenticated = <div><button onClick={this.logout}>log out</button></div>
   }
 
   formGenerator (template, onCreate) {
@@ -44,6 +47,26 @@ export default class extends React.Component {
     )
   }
 
+  actionGenerator (action, onClick, onReturn) {
+    if (!action.fields) action.fields = []
+    return (
+      <div>
+        <h1>{action.title}</h1>
+        {action.fields.map(f =>
+          <div key={f.name}>
+            {
+              f.type !== 'hidden' &&
+              <label>{f.name}</label>
+            }
+            <input type={f.type} name={f.name} value={f.value} id={f.name} required />
+          </div>
+        )}
+        <button onClick={() => onClick()}>Save</button>
+        <button onClick={() => onReturn()}>Back</button>
+      </div>
+    )
+  }
+
   render () {
     return (
       <BrowserRouter>
@@ -57,7 +80,7 @@ export default class extends React.Component {
               return (
                 <Login
                   url={url}
-                  onSuccess={(username, password) => { this.setState(old => ({'credentials': btoa(`${username}:${password}`)})) }}
+                  onSuccess={(username, password) => { this.menu(username, password) }}
                   onError={() => new Error('Login failed')}
                 />
               )
@@ -77,7 +100,6 @@ export default class extends React.Component {
               if (this.state.credentials === '') {
                 return <Redirect to='/' />
               }
-              this.menu()
               return (
                 <div>
                   <div><button onClick={() => history.push('/checklists')}>checklists</button></div>
@@ -91,20 +113,54 @@ export default class extends React.Component {
                 return <Redirect to='/' />
               }
               return (
-                <List
-                  url={url + home.resources['/checklists'].href}
+                <Checklists
+                  url={url + this.state.home.resources['/checklists'].href}
                   credentials={this.state.credentials}
                   formGenerator={this.formGenerator}
+                  onSelectChecklist={(id) => history.push(`/checklists/${id}`)}
                 />
               )
+            }} />
+            <Route exact path='/checklists/:id' render={({match, history}) => {
+              if (this.state.credentials === '') {
+                return <Redirect to='/' />
+              }
+              const template = this.state.home.resources['/checklist']
+              return (
+                <Checklist
+                  url={url}
+                  partial={template['href-template'].replace(/{checklist_id}/i, `${match.params.id}`)}
+                  credentials={this.state.credentials}
+                  actionGenerator={this.actionGenerator}
+                  onSelectTemplate={(templateId) => history.push(`checklisttemplates/${templateId}`)}
+                  onSelectItem={(itemId, url) => history.push({
+                    pathname: `/checklists/${match.params.id}/checklistitems/${itemId}`,
+                    state: { itemPath: url }
+                  })}
+                  onDelete={() => history.goBack()}
+                />)
+            }} />
+            <Route exact path='/checklists/:listId/checklistitems/:itemId' render={({match, history}) => {
+              if (this.state.credentials === '') {
+                return <Redirect to='/' />
+              }
+              console.log(history)
+              return (
+                <ChecklistItem
+                  url={url}
+                  partial={history.location.state.itemPath.replace(/:listId/i, `${match.params.listId}`).replace(/:itemId/i, `${match.params.itemId}`)}
+                  credentials={this.state.credentials}
+                  actionGenerator={this.actionGenerator}
+                  onDelete={() => history.goBack()}
+                />)
             }} />
             <Route exact path='/checklisttemplates' render={({match, history}) => {
               // ERROR
               if (this.state.credentials === '') {
                 return <Redirect to='/' />
               }
-              return <List
-                url={url + home.resources['/checklisttemplates'].href}
+              return <Checklists
+                url={url + this.state.home.resources['/checklisttemplates'].href}
                 credentials={this.state.credentials}
               />
             }} />

@@ -83,6 +83,7 @@ export default class extends React.Component {
           error: undefined
         })
         this.promise = undefined
+        return json
       })
       .catch(error => {
         this.setState({

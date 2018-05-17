@@ -57,7 +57,7 @@ export default class extends Component {
                         <ul>
                           {collection.items.map(item =>
                             <li key={item.data.find(d => d.name === 'checklist_id').value}>
-                              {item.data.find(d => d.name === 'name').value} - {item.data.find(d => d.name === 'completion_date').value}
+                              <button onClick={() => this.props.onSelectChecklist(item.data.find(d => d.name === 'checklist_id').value)}> {item.data.find(d => d.name === 'name').value}</button> - {item.data.find(d => d.name === 'completion_date').value}
                             </li>)}
                         </ul>
                       </div>
