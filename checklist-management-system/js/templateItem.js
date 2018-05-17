@@ -22,7 +22,7 @@ export default class extends Component {
           }
         }).then(resp => {
           if (resp.status === 204) {
-            this.props.history.push(this.state.returnPath)
+            this.props.history.push(`/checklisttemplates/${this.state.template_id}`)
           }
         })
       } else {
@@ -61,7 +61,7 @@ export default class extends Component {
                 console.log('Reach response')
                 let btn = <div>{json.actions.map(actions =>
                   <button key={actions.name}
-                    onClick={() => this.setState({method: actions.method, href: actions.href, type: actions.type, fields: actions.fields, returnPath: json.entities.find(entity => entity.class.includes('checklisttemplate')).href})}>
+                    onClick={() => this.setState({method: actions.method, href: actions.href, type: actions.type, fields: actions.fields, template_id: json.properties['checklisttemplate_id']})}>
                     {actions.title}
                   </button>
                 )}
