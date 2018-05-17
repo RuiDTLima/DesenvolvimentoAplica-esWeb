@@ -4,6 +4,7 @@ import fetch from 'isomorphic-fetch'
 import Checklists from './checklists'
 import Checklist from './checklist'
 import ChecklistItem from './checklistitem'
+import ChecklistTemplates from './checklisttemplates'
 import Login from './login'
 import Nav from './nav'
 
@@ -155,13 +156,13 @@ export default class extends React.Component {
                 />)
             }} />
             <Route exact path='/checklisttemplates' render={({match, history}) => {
-              // ERROR
               if (this.state.credentials === '') {
                 return <Redirect to='/' />
               }
-              return <Checklists
+              return <ChecklistTemplates
                 url={url + this.state.home.resources['/checklisttemplates'].href}
                 credentials={this.state.credentials}
+                formGenerator={this.formGenerator}
               />
             }} />
             <Route path='/' render={({history}) =>
