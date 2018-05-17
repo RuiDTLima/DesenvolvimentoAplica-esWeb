@@ -29,7 +29,7 @@ public class OutChecklistItems {
                         .map(this::itemFromChecklistItem)
                         .collect(Collectors.toList());
 
-        String pageHref = "/checklists";
+        String pageHref = "/checklists/" + checklistId + "/checklistitems";
         collection = new Collection(
                 "1.0",
                 "/checklists/" + checklistId + "/checklistitems?page=" + checklistItems.getNumber(),
