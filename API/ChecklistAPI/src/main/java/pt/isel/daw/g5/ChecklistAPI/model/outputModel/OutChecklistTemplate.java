@@ -72,8 +72,8 @@ public class OutChecklistTemplate {
     private Entity[] produceEntity(ChecklistTemplate checklistTemplate) {
         int checklistTemplateId = checklistTemplate.getId();
         String[] _class = new String[]{"templateItem"};
-        String[] rel = new String[]{"/checklisttemplate/" + checklistTemplateId};
-        String href = String.format("/checklisttemplate/%s/templateitems", checklistTemplateId);
+        String[] rel = new String[]{"/checklisttemplates/" + checklistTemplateId};
+        String href = String.format("/checklisttemplates/%s/templateitems", checklistTemplateId);
         return new Entity[]{new Entity(_class, rel, href)};
     }
 
@@ -86,15 +86,15 @@ public class OutChecklistTemplate {
     }
 
     private Action produceDelete(ChecklistTemplate checklistTemplate) {
-        return new Action("delete-checklisttemplate", "Delete OutChecklist Template", "DELETE", "/checklisttemplates/" + checklistTemplate.getId());
+        return new Action("delete-checklisttemplate", "Delete Checklist Template", "DELETE", "/checklisttemplates/" + checklistTemplate.getId());
     }
 
     private Action producePut(ChecklistTemplate checklistTemplate) {
-        return new Action("update-checklisttemplate", "Update OutChecklist Template", "PUT", "/checklisttemplates/" + checklistTemplate.getId(), "application/json", producePutFields(checklistTemplate));
+        return new Action("update-checklisttemplate", "Update Checklist Template", "PUT", "/checklisttemplates/" + checklistTemplate.getId(), "application/json", producePutFields(checklistTemplate));
     }
 
     private Action producePostChecklist(ChecklistTemplate checklistTemplate) {
-        return new Action("create-checklist", "Create OutChecklist", "POST", "/checklists", "application/json", producePostChecklistFields(checklistTemplate));
+        return new Action("create-checklist", "Create Checklist", "POST", "/checklists", "application/json", producePostChecklistFields(checklistTemplate));
     }
 
     private Field[] producePostTemplateItemFields(ChecklistTemplate checklistTemplate) {

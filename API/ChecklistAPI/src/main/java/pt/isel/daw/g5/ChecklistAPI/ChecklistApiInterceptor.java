@@ -26,7 +26,7 @@ public class ChecklistApiInterceptor extends HandlerInterceptorAdapter {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        if (!(handler instanceof HandlerMethod))return true;
+        if (!(handler instanceof HandlerMethod)) return true;
         HandlerMethod hm = (HandlerMethod) handler;
         Method methodAnnotation = hm.getMethod();
         if(!methodAnnotation.getDeclaringClass().isAnnotationPresent(RequiresAuthentication.class))

@@ -5,6 +5,8 @@ import Checklists from './checklists'
 import Checklist from './checklist'
 import ChecklistItem from './checklistitem'
 import ChecklistTemplates from './checklisttemplates'
+import Template from './checklistTemplate'
+import TemplateItem from './templateItem'
 import Login from './login'
 import Nav from './nav'
 
@@ -36,7 +38,7 @@ export default class extends React.Component {
 
   formGenerator (template, onCreate) {
     return (
-      <form action={url} method='POST' onSubmit={(ev) => onCreate(ev)}>
+      <form onSubmit={(ev) => onCreate(ev)}>
         {template.data.map(t =>
           <div key={t.name}>
             <label>{t.prompt}</label>
@@ -65,6 +67,20 @@ export default class extends React.Component {
         <button onClick={() => onClick()}>Save</button>
         <button onClick={() => onReturn()}>Back</button>
       </div>
+    )
+  }
+
+  actionsForm (path, method, fields, onSuccess) {
+    return (
+      <form onSubmit={(ev) => onSuccess(ev)}>
+        {fields.map(field =>
+          <div key={field.name}>
+            {field.type !== 'hidden' ? <label type={field.type}>{field.title}</label> : ''}
+            <input type={field.type} name={field.name} value={field.value} required />
+          </div>
+        )}
+        <button>Create</button>
+      </form>
     )
   }
 
@@ -134,7 +150,7 @@ export default class extends React.Component {
                   partial={template['href-template'].replace(/{checklist_id}/i, `${match.params.id}`)}
                   credentials={this.state.credentials}
                   actionGenerator={this.actionGenerator}
-                  onSelectTemplate={(templateId) => history.push(`checklisttemplates/${templateId}`)}
+                  onSelectTemplate={(templateId) => history.push(`/checklisttemplates/${templateId}`)}
                   onSelectItem={(itemId, url) => history.push({
                     pathname: `/checklists/${match.params.id}/checklistitems/${itemId}`,
                     state: { itemPath: url }
@@ -164,9 +180,36 @@ export default class extends React.Component {
                 url={url}
                 partial={this.state.home.resources['/checklisttemplates'].href}
                 credentials={this.state.credentials}
+                history={history}
                 formGenerator={this.formGenerator}
               />
             }} />
+            <Route exact path='/checklisttemplates/:checklisttemplate_id' render={({match, history}) => {
+              // ERROR
+              if (this.state.credentials === '') {
+                return <Redirect to='/' />
+              }
+              return <Template
+                baseUrl={url}
+                specificUrl={'/checklisttemplates/' + match.params.checklisttemplate_id}
+                credentials={this.state.credentials}
+                history={history}
+                actionsForm={this.actionsForm}
+              />
+            }} />
+            <Route exact path='/checklisttemplates/:checklisttemplate_id/templateitems/:templateitem_id' render={({match, history}) => {
+              if (this.state.credentials === '') {
+                return <Redirect to='/' />
+              }
+              return <TemplateItem
+                baseUrl={url}
+                specificUrl={`/checklisttemplates/${match.params.checklisttemplate_id}/templateitems/${match.params.templateitem_id}`}
+                credentials={this.state.credentials}
+                history={history}
+                actionsForm={this.actionsForm}
+              />
+            }}
+            />
             <Route path='/' render={({history}) =>
               <div>
                 <h2>Route not found</h2>

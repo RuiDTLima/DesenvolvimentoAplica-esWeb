@@ -84,8 +84,8 @@ export default class extends Component {
                         </tbody>
                       </table>
                       {
-                        json.entities.find(e => e.class[0] === 'checklisttemplates') &&
-                        <button onClick={() => this.props.onSelectTemplate(json.entities.find(e => e.class[0] === 'checklisttemplates').links.href)}>{json.entities.find(e => e.class[0] === 'checklisttemplates').class[0]}</button>
+                        json.entities.find(e => e.class.includes('checklisttemplates')) &&
+                        <button onClick={() => this.props.onSelectTemplate(json.properties.checklisttemplate_id)}>{json.entities.find(e => e.class.includes('checklisttemplates')).class[0]}</button>
                       }
                       <ChecklistItems
                         url={this.props.url}
