@@ -2,6 +2,7 @@ import React, {Component} from 'react'
 import HttpGet from './http-get'
 import HttpGetSwitch from './http-get-switch'
 import fetch from 'isomorphic-fetch'
+import Paginator from './paginator'
 
 export default class extends Component {
   constructor (props) {
@@ -18,7 +19,7 @@ export default class extends Component {
         const obj = { }
         this.state.template.data.forEach(d => { obj[d.name] = (document.getElementsByName(d.name)[0].value) })
         console.log(obj)
-        fetch(this.props.url, {
+        fetch(this.props.url + this.props.partial, {
           method: 'POST',
           headers: {
             'Authorization': this.props.credentials,
@@ -37,7 +38,7 @@ export default class extends Component {
       return (
         <div>
           <HttpGet
-            url={this.props.url}
+            url={this.props.url + this.props.partial}
             credentials={this.props.credentials}
             render={(result) => (
               <div>
@@ -54,6 +55,7 @@ export default class extends Component {
                     return (
                       <div>
                         {btn}
+                        <Paginator response={json} onChange={nUrl => result.setUrl(this.props.url + nUrl)} />
                         <ul>
                           {collection.items.map(item =>
                             <li key={item.data.find(d => d.name === 'checklist_id').value}>

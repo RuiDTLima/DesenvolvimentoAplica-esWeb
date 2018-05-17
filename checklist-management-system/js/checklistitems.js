@@ -1,6 +1,7 @@
 import React from 'react'
 import HttpGet from './http-get'
 import HttpGetSwitch from './http-get-switch'
+import Paginator from './paginator'
 
 export default ({url, partial, credentials, onSelectItem}) => (
   <div>
@@ -13,6 +14,7 @@ export default ({url, partial, credentials, onSelectItem}) => (
             onJson={json => {
               return (
                 <div>
+                  <Paginator response={json} onChange={nUrl => result.setUrl(url + nUrl)} />
                   <ul>
                     {json.collection.items.length !== 0 &&
                       <h3>Checklist Items</h3>

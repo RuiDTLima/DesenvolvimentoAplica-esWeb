@@ -26,7 +26,7 @@ export default class extends React.Component {
           return resp.json().then(h => {
             console.log(h)
             this.setState(old => ({
-              'credentials': btoa(`${username}:${password}`),
+              'credentials': Buffer.from(`${username}:${password}`).toString('base64'),
               'home': h
             }))
           })
@@ -115,7 +115,8 @@ export default class extends React.Component {
               }
               return (
                 <Checklists
-                  url={url + this.state.home.resources['/checklists'].href}
+                  url={url}
+                  partial={this.state.home.resources['/checklists'].href}
                   credentials={this.state.credentials}
                   formGenerator={this.formGenerator}
                   onSelectChecklist={(id) => history.push(`/checklists/${id}`)}
@@ -160,7 +161,8 @@ export default class extends React.Component {
                 return <Redirect to='/' />
               }
               return <ChecklistTemplates
-                url={url + this.state.home.resources['/checklisttemplates'].href}
+                url={url}
+                partial={this.state.home.resources['/checklisttemplates'].href}
                 credentials={this.state.credentials}
                 formGenerator={this.formGenerator}
               />
