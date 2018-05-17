@@ -195,7 +195,7 @@ public class ChecklistController {
                                                @RequestParam(value = "page", defaultValue = "0") int page,
                                                HttpServletRequest request) {
 
-        log.info(String.format("Trying to retrive items from the checklist %s", checklistId));
+        log.info(String.format("Trying to retrieve items from the checklist %s", checklistId));
         validateOperation(checklistId, request);
         Page<ChecklistItem> checklistItemPage = checklistItemRepository.findAllByChecklistId(checklistId, PageRequest.of(page, PAGE_SIZE));
         log.info("Checklist items found and being returned");

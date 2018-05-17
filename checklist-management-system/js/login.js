@@ -14,7 +14,6 @@ export default ({url, onSuccess, onError}) => (
       </div>
       <div>
         <button>Submit</button>
-        {/* <input type='submit' value='Submit' onSubmit={this.login} />    */}
       </div>
     </form>
   </div>

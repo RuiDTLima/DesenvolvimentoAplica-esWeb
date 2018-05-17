@@ -3,7 +3,7 @@ Authorization: UnVpOnJ1aQ==
 Content-Type: application/json
 
 {
-    "checklisttemplate_id": "1",
+    "checklisttemplate_id": "6",
     "name": "teste",
     "description": "template item de teste"
 }

@@ -72,8 +72,8 @@ public class OutChecklistItem {
     private Entity[] produceEntity(ChecklistItem checklistItem) {
         int checklistId = checklistItem.getChecklist().getId();
         String[] _class = new String[]{"checklist"};
-        String[] rel = new String[]{"/checklists/" + checklistId};
-        String href = String.format("/checklists/%s/checklistitems", checklistId);
+        String href = String.format("/checklists/%s", checklistId);
+        String[] rel = new String[]{href};
         return new Entity[]{new Entity(_class, rel, href)};
     }
 
