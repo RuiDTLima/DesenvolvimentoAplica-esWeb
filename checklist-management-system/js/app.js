@@ -10,6 +10,7 @@ import TemplateItem from './templateItem'
 import Login from './login'
 import Nav from './nav'
 import PrivateRoute from './privateRoute'
+import ErrorHandling from './errorHandling'
 
 const url = 'http://localhost:8080'
 
@@ -69,6 +70,11 @@ export default class extends React.Component {
     )
   }
 
+  componentDidCatch (error, info) {
+    console.log('error ' + error)
+    console.log('info ' + info)
+  }
+
   render () {
     return (
       <BrowserRouter>
@@ -84,13 +90,15 @@ export default class extends React.Component {
                 return <Redirect to='/menu' />
               }
               return (
-                <Login
-                  url={url}
-                  onSuccess={(username, password) => {
-                    this.menu(username, password)
-                  }}
-                  onError={() => new Error('Login failed')}
-                />
+                <ErrorHandling>
+                  <Login
+                    url={url}
+                    onSuccess={(username, password) => {
+                      this.menu(username, password)
+                    }}
+                    onError={(err) => console.log(err)}
+                  />
+                </ErrorHandling>
               )
             }} />
             <PrivateRoute credentials={this.state.credentials} exact path='/menu' render={({match, history}) => {

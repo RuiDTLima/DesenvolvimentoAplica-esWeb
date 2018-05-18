@@ -20,19 +20,23 @@ export default ({url, onSuccess, onError}) => (
 )
 
 function saveCredentials (ev, url, onSuccess, onError) {
-  const username = document.getElementsByName('username')[0].value
-  const password = document.getElementsByName('password')[0].value
+  const username = document.getElementsByName('username')[0]
+  const password = document.getElementsByName('password')[0]
   ev.preventDefault()
-  fetch(`${url}/users/${username}`)
+  fetch(`${url}/users/${username.value}`)
     .then(resp => {
       if (resp.status === 200) {
         return resp.json().then(user => {
-          if (user.properties.password === password) {
-            onSuccess(username, password)
+          if (user.properties.password === password.value) {
+            onSuccess(username.value, password.value)
           } else {
-            onError()
+            throw new Error('The user info is not correct.')
           }
         })
+      } else if (resp.status >= 500) {
+        throw new Error(resp.message)
+      } else if (resp.status >= 400) {
+        throw new Error(resp.message)
       }
     })
 }
