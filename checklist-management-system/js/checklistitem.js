@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
 import HttpGet from './http-get'
 import HttpGetSwitch from './http-get-switch'
-import fetch from 'isomorphic-fetch'
+import {request} from './request'
 
 export default class extends Component {
   constructor (props) {
@@ -24,29 +24,20 @@ export default class extends Component {
         params[f.name] = document.getElementById(f.name).value
       })
 
-      // TODO SEPARATE
-      if (action.type === 'application/x-www-form-urlencoded') {
-        const formData = new FormData()
-        params.keys.forEach(k => formData.append(k, params[k]))
-        params = formData
-      } else params = JSON.stringify(params)
-
-      fetch(this.props.url + action.href, {
-        method: action.method,
-        headers: {
-          'Authorization': this.props.credentials,
-          'content-type': action.type
+      request(
+        this.props.url + action.href,
+        action.method,
+        this.props.credentials,
+        action.type,
+        JSON.stringify(params),
+        (resp) => {
+          this.setState(old => ({display: true}))
+          if (action.method === 'DELETE') this.props.onDelete()
         },
-        body: params
-      })
-        .then(resp => {
-          if (resp.status === 204) {
-            this.setState(old => ({display: true}))
-            if (action.method === 'DELETE') this.props.onDelete()
-          } else if (resp.status >= 400 && resp.status < 500) {
-            return new Error('error')
-          } else return new Error('server error')
-        })
+        (err) => {
+          console.log(err)
+        }
+      )
     }, () => this.setState(old => ({display: true})))
   }
 

@@ -1,51 +1,54 @@
 import React, {Component} from 'react'
 import HttpGet from './http-get'
 import HttpGetSwitch from './http-get-switch'
-import fetch from 'isomorphic-fetch'
 import Paginator from './paginator'
+import {request} from './request'
 
 export default class extends Component {
   constructor (props) {
     super(props)
     this.state = {
-      method: ''
+      action: undefined
     }
   }
 
   render () {
-    const path = this.props.baseUrl + this.state.href
-    if (this.state.method !== '') {
-      if (this.state.fields === undefined) {
-        fetch(path, {
-          method: this.state.method,
-          headers: {
-            'Authorization': this.props.credentials
-          }
-        }).then(resp => {
-          if (resp.status === 204) {
+    if (this.state.action) {
+      const path = this.props.baseUrl + this.state.action.href
+      if (this.state.action.fields === undefined) {
+        request(
+          path,
+          this.state.action.method,
+          this.props.credentials,
+          'application/json',
+          null,
+          (resp) => {
             this.props.history.push('/checklisttemplates')
+          },
+          (err) => {
+            console.log(err)
           }
-        })
+        )
       } else {
-        return this.props.actionsForm(path, this.state.method, this.state.fields, (ev) => {
-          ev.preventDefault()
+        return this.props.actionGenerator(this.state.action, () => {
           const obj = { }
-          this.state.fields.forEach(d => {
+          this.state.action.fields.forEach(d => {
             obj[d.name] = (document.getElementsByName(d.name)[0].value)
           })
 
-          fetch(path, {
-            method: this.state.method,
-            headers: {
-              'Authorization': this.props.credentials,
-              'content-type': this.state.type
+          request(
+            path,
+            this.state.action.method,
+            this.props.credentials,
+            this.state.action.type,
+            JSON.stringify(obj),
+            (resp) => {
+              this.setState(() => ({action: undefined}))
             },
-            body: JSON.stringify(obj)
-          }).then(resp => {
-            if (resp.status === 204) {
-              this.setState(() => ({method: ''}))
+            (err) => {
+              console.log(err)
             }
-          })
+          )
         })
       }
     }
@@ -61,7 +64,7 @@ export default class extends Component {
                 if (json.class[0] === 'checklisttemplate') { // Error
                   let btn = <div>{json.actions.map(actions =>
                     <button key={actions.name}
-                      onClick={() => this.setState({method: actions.method, href: actions.href, type: actions.type, fields: actions.fields})}>
+                      onClick={() => this.setState({action: actions})}>
                       {actions.title}
                     </button>
                   )}
@@ -99,7 +102,7 @@ function showTemplate (btn, json, props) {
                 <Paginator response={items} onChange={nUrl => result.setUrl(this.props.url + nUrl)} />
                 <ul>
                   {items.collection.items.map(item =>
-                    <li key={item.data.find(d => d.name === 'name').value}>
+                    <li key={item.data.find(d => d.name === 'templateitem_id').value}>
                       <button onClick={() => {
                         props.history.push(item.href)
                       }}>

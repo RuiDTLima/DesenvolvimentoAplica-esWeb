@@ -2,16 +2,32 @@ import React, {Component} from 'react'
 import HttpGet from './http-get'
 import HttpGetSwitch from './http-get-switch'
 import ChecklistItems from './checklistitems'
-import fetch from 'isomorphic-fetch'
+import {request} from './request'
 
 export default class extends Component {
   constructor (props) {
     super(props)
-    this.state = {
-      display: true
-    }
+    this.state = { }
     this.display = this.display.bind(this)
     this.viewFromAction = this.viewFromAction.bind(this)
+    this.actionRequest = this.actionRequest.bind(this)
+  }
+
+  actionRequest (action, body) {
+    return request(
+      this.props.url + action.href,
+      action.method,
+      this.props.credentials,
+      action.type,
+      JSON.stringify(body),
+      (resp) => {
+        if (action.method === 'DELETE') this.props.onDelete()
+        else this.setState(old => ({action: undefined}))
+      },
+      (err) => {
+        console.log(err)
+      }
+    )
   }
 
   /**
@@ -24,31 +40,8 @@ export default class extends Component {
       action.fields.forEach(f => {
         params[f.name] = document.getElementById(f.name).value
       })
-
-      // TODO SEPARATE
-      if (action.type === 'application/x-www-form-urlencoded') {
-        const formData = new FormData()
-        params.keys.forEach(k => formData.append(k, params[k]))
-        params = formData
-      } else params = JSON.stringify(params)
-
-      fetch(this.props.url + action.href, {
-        method: action.method,
-        headers: {
-          'Authorization': this.props.credentials,
-          'content-type': action.type
-        },
-        body: params
-      })
-        .then(resp => {
-          if (resp.status === 204) {
-            this.setState(old => ({display: true}))
-            if (action.method === 'DELETE') this.props.onDelete()
-          } else if (resp.status >= 400 && resp.status < 500) {
-            return new Error('error')
-          } else return new Error('server error')
-        })
-    }, () => this.setState(old => ({display: true})))
+      this.actionRequest(action, params)
+    }, () => this.setState(old => ({action: undefined})))
   }
 
   display () {
@@ -66,7 +59,6 @@ export default class extends Component {
                       {
                         json.actions.map((action, index) =>
                           <button key={action.name} onClick={() => this.setState(old => ({
-                            'display': false,
                             'action': action
                           }))}>
                             {action.title}
@@ -104,10 +96,15 @@ export default class extends Component {
   }
 
   render () {
-    if (this.state.display) {
-      return this.display()
+    const action = this.state.action
+    if (action) {
+      if (!action.fields) {
+        this.actionRequest(action)
+        return this.display()
+      }
+      return this.viewFromAction()
     }
 
-    return this.viewFromAction()
+    return this.display()
   }
 }

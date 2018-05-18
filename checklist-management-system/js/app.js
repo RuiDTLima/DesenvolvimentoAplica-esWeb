@@ -50,36 +50,21 @@ export default class extends React.Component {
   }
 
   actionGenerator (action, onClick, onReturn) {
-    if (!action.fields) action.fields = []
     return (
       <div>
-        <h1>{action.title}</h1>
-        {action.fields.map(f =>
-          <div key={f.name}>
+        <h3>{action.title}</h3>
+        {action.fields.map(field =>
+          <div key={field.name}>
             {
-              f.type !== 'hidden' &&
-              <label>{f.name}</label>
+              field.type !== 'hidden' &&
+              <label>{field.name}</label>
             }
-            <input type={f.type} name={f.name} value={f.value} id={f.name} required />
+            <input type={field.type} name={field.name} value={field.value} id={field.name} required />
           </div>
         )}
         <button onClick={() => onClick()}>Save</button>
         <button onClick={() => onReturn()}>Back</button>
       </div>
-    )
-  }
-
-  actionsForm (path, method, fields, onSuccess) {
-    return (
-      <form onSubmit={(ev) => onSuccess(ev)}>
-        {fields.map(field =>
-          <div key={field.name}>
-            {field.type !== 'hidden' ? <label type={field.type}>{field.title}</label> : ''}
-            <input type={field.type} name={field.name} value={field.value} required />
-          </div>
-        )}
-        <button>Save</button>
-      </form>
     )
   }
 
@@ -192,7 +177,7 @@ export default class extends React.Component {
                 specificUrl={'/checklisttemplates/' + match.params.checklisttemplate_id}
                 credentials={this.state.credentials}
                 history={history}
-                actionsForm={this.actionsForm}
+                actionGenerator={this.actionGenerator}
               />
             }} />
             <Route exact path='/checklisttemplates/:checklisttemplate_id/templateitems/:templateitem_id' render={({match, history}) => {
@@ -204,7 +189,7 @@ export default class extends React.Component {
                 specificUrl={`/checklisttemplates/${match.params.checklisttemplate_id}/templateitems/${match.params.templateitem_id}`}
                 credentials={this.state.credentials}
                 history={history}
-                actionsForm={this.actionsForm}
+                actionGenerator={this.actionGenerator}
               />
             }}
             />

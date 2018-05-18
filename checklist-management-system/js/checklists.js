@@ -1,8 +1,8 @@
 import React, {Component} from 'react'
 import HttpGet from './http-get'
 import HttpGetSwitch from './http-get-switch'
-import fetch from 'isomorphic-fetch'
 import Paginator from './paginator'
+import {request} from './request'
 
 export default class extends Component {
   constructor (props) {
@@ -18,20 +18,19 @@ export default class extends Component {
         ev.preventDefault()
         const obj = { }
         this.state.template.data.forEach(d => { obj[d.name] = (document.getElementsByName(d.name)[0].value) })
-        fetch(this.props.url + this.props.partial, {
-          method: 'POST',
-          headers: {
-            'Authorization': this.props.credentials,
-            'content-type': 'application/json'
-          },
-          body: JSON.stringify(obj)}
-        ).then(resp => {
-          if (resp.status === 204) {
+        request(
+          this.props.url + this.props.partial,
+          'POST',
+          this.props.credentials,
+          'application/json',
+          JSON.stringify(obj),
+          (resp) => {
             this.setState(old => ({create: false}))
-          } else if (resp.status >= 400 && resp.status < 500) {
-            return new Error('error')
-          } else return new Error('server error')
-        })
+          },
+          (err) => {
+            console.log(err)
+          }
+        )
       })
     } else {
       return (
