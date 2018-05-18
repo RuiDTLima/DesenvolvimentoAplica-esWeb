@@ -56,7 +56,7 @@ public class ChecklistTemplateController {
 
         String username = (String) request.getAttribute("Username");
         User user = userRepository.findById(username).get();
-        Page<ChecklistTemplate> checklistTemplatePage = checklistTemplateRepository.findAllByUser(user, PageRequest.of(page, PAGE_SIZE));
+        Page<ChecklistTemplate> checklistTemplatePage = checklistTemplateRepository.findAllByUserAndUsable(user, true, PageRequest.of(page, PAGE_SIZE));
         return new OutChecklistTemplates(checklistTemplatePage);
     }
 
@@ -114,8 +114,10 @@ public class ChecklistTemplateController {
             checklistTemplate.setUsable(false);
             checklistTemplateRepository.save(checklistTemplate);
         }
-        else
+        else {
+            templateItemRepository.deleteAllByChecklistTemplateId(checklisttemplate_id  );
             checklistTemplateRepository.deleteById(checklisttemplate_id);
+        }
 
         log.info("ChecklistTemplate successfully deleted");
         return new ResponseEntity(HttpStatus.NO_CONTENT);
@@ -238,11 +240,11 @@ public class ChecklistTemplateController {
         isTemplateUsable(checklisttemplate_id, request, checklistTemplate);
 
         if(!templateItemRepository.existsById(templateItem_id) ||
-           !checklistTemplate.getTemplateItems().stream().anyMatch(item -> item.getId() == checklisttemplate_id)){
-            throw new NotFoundException(String.format("The template item %s does not exist or it does not belong to the checklist template %s", checklisttemplate_id, checklisttemplate_id));
+           !checklistTemplate.getTemplateItems().stream().anyMatch(item -> item.getId() == templateItem_id)){
+            throw new NotFoundException(String.format("The template item %s does not exist or it does not belong to the checklist template %s", templateItem_id, checklisttemplate_id));
         }
 
-        TemplateItem updatedItem = templateItemRepository.findById(checklisttemplate_id).get();
+        TemplateItem updatedItem = templateItemRepository.findById(templateItem_id).get();
         updatedItem.setName(templateItem.getName());
         updatedItem.setDescription(templateItem.getDescription());
         templateItemRepository.save(updatedItem);

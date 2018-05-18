@@ -8,5 +8,5 @@ import pt.isel.daw.g5.ChecklistAPI.model.inputModel.User;
 
 public interface ChecklistTemplateRepository extends PagingAndSortingRepository<ChecklistTemplate, Integer> {
 
-    Page<ChecklistTemplate> findAllByUser(User user, Pageable pageable);
+    Page<ChecklistTemplate> findAllByUserAndUsable(User user, boolean usable, Pageable pageable);
 }
