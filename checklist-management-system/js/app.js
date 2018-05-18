@@ -9,6 +9,7 @@ import Template from './checklistTemplate'
 import TemplateItem from './templateItem'
 import Login from './login'
 import Nav from './nav'
+import PrivateRoute from './privateRoute'
 
 const url = 'http://localhost:8080'
 
@@ -74,33 +75,25 @@ export default class extends React.Component {
         <div>
           <Nav credentials={this.state.credentials} onLogout={() => this.setState(old => ({'credentials': ''}))} />
           <Switch>
-            <Route exact path='/' render={() => {
+            <Route exact path='/' render={({history}) => {
+              console.log(history.location)
               if (this.state.credentials !== '') {
+                if (history.location.state) {
+                  return <Redirect to={history.location.state.return} />
+                }
                 return <Redirect to='/menu' />
               }
               return (
                 <Login
                   url={url}
-                  onSuccess={(username, password) => { this.menu(username, password) }}
+                  onSuccess={(username, password) => {
+                    this.menu(username, password)
+                  }}
                   onError={() => new Error('Login failed')}
                 />
               )
             }} />
-            {/* <Route path='/' render={() => {
-              if (this.state.credentials === '') {
-                return (
-                  <Login
-                    url={url}
-                    onSuccess={(username, password) => { this.setState(old => ({'credentials': btoa(`${username}:${password}`)})) }}
-                    onError={() => new Error('Login failed')}
-                  />
-                )
-              }
-            }} /> */}
-            <Route exact path='/menu' render={({match, history}) => {
-              if (this.state.credentials === '') {
-                return <Redirect to='/' />
-              }
+            <PrivateRoute credentials={this.state.credentials} exact path='/menu' render={({match, history}) => {
               return (
                 <div>
                   <div><button onClick={() => history.push('/checklists')}>checklists</button></div>
@@ -109,10 +102,7 @@ export default class extends React.Component {
               )
             }}
             />
-            <Route exact path='/checklists' render={({match, history}) => {
-              if (this.state.credentials === '') {
-                return <Redirect to='/' />
-              }
+            <PrivateRoute credentials={this.state.credentials} exact path='/checklists' render={({match, history}) => {
               return (
                 <Checklists
                   url={url}
@@ -123,10 +113,7 @@ export default class extends React.Component {
                 />
               )
             }} />
-            <Route exact path='/checklists/:id' render={({match, history}) => {
-              if (this.state.credentials === '') {
-                return <Redirect to='/' />
-              }
+            <PrivateRoute credentials={this.state.credentials} exact path='/checklists/:id' render={({match, history}) => {
               const template = this.state.home.resources['/checklist']
               return (
                 <Checklist
@@ -142,53 +129,45 @@ export default class extends React.Component {
                   onDelete={() => history.push('/checklists')}
                 />)
             }} />
-            <Route exact path='/checklists/:listId/checklistitems/:itemId' render={({match, history}) => {
-              if (this.state.credentials === '') {
-                return <Redirect to='/' />
-              }
+            <PrivateRoute credentials={this.state.credentials} exact path='/checklists/:listId/checklistitems/:itemId' render={({match, history}) => {
+              const template = this.state.home.resources['/checklist']
               return (
                 <ChecklistItem
                   url={url}
-                  partial={history.location.state.itemPath.replace(/:listId/i, `${match.params.listId}`).replace(/:itemId/i, `${match.params.itemId}`)}
+                  partial={template['href-template'].replace(/{checklist_id}/i, `${match.params.listId}`)}
+                  itemId={match.params.itemId}
                   credentials={this.state.credentials}
                   actionGenerator={this.actionGenerator}
                   onDelete={() => history.push(`/checklists/${match.params.listId}`)}
                 />)
             }} />
-            <Route exact path='/checklisttemplates' render={({match, history}) => {
-              if (this.state.credentials === '') {
-                return <Redirect to='/' />
-              }
+            <PrivateRoute credentials={this.state.credentials} exact path='/checklisttemplates' render={({match, history}) => {
               return <ChecklistTemplates
                 url={url}
                 partial={this.state.home.resources['/checklisttemplates'].href}
                 credentials={this.state.credentials}
-                history={history}
+                onSelect={(id) => history.push(`/checklisttemplates/${id}`)}
                 formGenerator={this.formGenerator}
               />
             }} />
-            <Route exact path='/checklisttemplates/:checklisttemplate_id' render={({match, history}) => {
-              // ERROR
-              if (this.state.credentials === '') {
-                return <Redirect to='/' />
-              }
+            <PrivateRoute credentials={this.state.credentials} exact path='/checklisttemplates/:checklisttemplate_id' render={({match, history}) => {
+              const template = this.state.home.resources['/checklisttemplate']
               return <Template
                 baseUrl={url}
-                specificUrl={'/checklisttemplates/' + match.params.checklisttemplate_id}
+                specificUrl={template['href-template'].replace(/{checklisttemplate_id}/i, `${match.params.checklisttemplate_id}`)}
                 credentials={this.state.credentials}
-                history={history}
+                onClick={(url) => history.push(url)}
                 actionGenerator={this.actionGenerator}
               />
             }} />
-            <Route exact path='/checklisttemplates/:checklisttemplate_id/templateitems/:templateitem_id' render={({match, history}) => {
-              if (this.state.credentials === '') {
-                return <Redirect to='/' />
-              }
+            <PrivateRoute credentials={this.state.credentials} exact path='/checklisttemplates/:checklisttemplate_id/templateitems/:templateitem_id' render={({match, history}) => {
+              const template = this.state.home.resources['/checklisttemplate']
               return <TemplateItem
                 baseUrl={url}
-                specificUrl={`/checklisttemplates/${match.params.checklisttemplate_id}/templateitems/${match.params.templateitem_id}`}
+                specificUrl={template['href-template'].replace(/{checklisttemplate_id}/i, `${match.params.checklisttemplate_id}`)}
+                itemId={match.params.templateitem_id}
                 credentials={this.state.credentials}
-                history={history}
+                onClick={(url) => history.push(url)}
                 actionGenerator={this.actionGenerator}
               />
             }}
