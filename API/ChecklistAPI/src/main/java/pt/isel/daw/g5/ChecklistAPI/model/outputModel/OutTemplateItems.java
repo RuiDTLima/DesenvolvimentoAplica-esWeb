@@ -26,7 +26,7 @@ public class OutTemplateItems {
                         .map(this::itemFromTemplateItem)
                         .collect(Collectors.toList());
 
-        String pageHref = "/checklisttemplates";
+        String pageHref = "/checklisttemplates/" + checklistTemplateId + "/templateitems";
         collection = new Collection(
                 "1.0",
                 "/checklisttemplates/" + checklistTemplateId + "/templateitems?page=" + (templateItems.getNumber()),

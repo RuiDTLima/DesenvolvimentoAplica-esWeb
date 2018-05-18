@@ -6,10 +6,14 @@ export default ({response, onChange}) => {
   const hasPrev = linkHeader.find(l => l.rel === 'previous')
   return (
     <div>
-      <button disabled={!hasPrev}
-        onClick={() => onChange(hasPrev.href)} >previous</button>
-      <button disabled={!hasNext}
-        onClick={() => onChange(hasNext.href)} >next</button>
+      {
+        hasPrev &&
+        <button onClick={() => onChange(hasPrev.href)} >previous</button>
+      }
+      {
+        hasNext &&
+        <button onClick={() => onChange(hasNext.href)} >next</button>
+      }
     </div>
   )
 }

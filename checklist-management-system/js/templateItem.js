@@ -48,7 +48,7 @@ export default class extends Component {
               console.log(err)
             }
           )
-        })
+        }, () => this.setState(old => ({action: undefined})))
       }
     }
 

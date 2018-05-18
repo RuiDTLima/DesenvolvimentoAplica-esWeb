@@ -49,7 +49,7 @@ export default class extends Component {
               console.log(err)
             }
           )
-        })
+        }, () => this.setState(old => ({action: undefined})))
       }
     }
 
@@ -99,7 +99,7 @@ function showTemplate (btn, json, props) {
               <div>
                 {items.collection.items.length !== 0 ? (<h3>Template Items</h3>) : ''}
 
-                <Paginator response={items} onChange={nUrl => result.setUrl(this.props.url + nUrl)} />
+                <Paginator response={items} onChange={nUrl => result.setUrl(props.baseUrl + nUrl)} />
                 <ul>
                   {items.collection.items.map(item =>
                     <li key={item.data.find(d => d.name === 'templateitem_id').value}>
