@@ -22,7 +22,7 @@ export default class extends Component {
           'application/json',
           null,
           (resp) => {
-            this.props.history.push(`/checklisttemplates/${this.state.template_id}`)
+            this.props.onClick(`/checklisttemplates/${this.state.template_id}`)
           },
           (err) => {
             console.log(err)
@@ -54,32 +54,69 @@ export default class extends Component {
 
     return (
       <div>
-        <HttpGet
+        <HttpGet // /checklisttemplate/{id}
           url={this.props.baseUrl + this.props.specificUrl}
           credentials={this.props.credentials}
-          render={(result => (
-            <HttpGetSwitch result={result}
-              onJson={json => {
-                let btn = <div>{json.actions.map(actions =>
-                  <button key={actions.name}
-                    onClick={() => this.setState({action: actions, template_id: json.properties['checklisttemplate_id']})}>
-                    {actions.title}
-                  </button>
-                )}
-                </div>
+          render={(templateResult => (
+            <HttpGetSwitch result={templateResult}
+              onJson={template => {
+                console.log('TEMPLAAAATE')
+                console.log(template)
                 return (
-                  <div>
-                    {btn}
-                    <ul>
-                      <li>{json.properties['templateitem_id']}</li>
-                      <li>{json.properties['name']}</li>
-                      <li>{json.properties['description']}</li>
-                      <li>{json.properties['checklisttemplate_id']}</li>
-                    </ul>
-                  </div>
+                  <HttpGet // /checklisttemplate/{id}/templateitems
+                    url={this.props.baseUrl + template.entities.find(e => e.class.includes('templateItem')).href}
+                    credentials={this.props.credentials}
+                    render={templateItemsResult => (
+                      <HttpGetSwitch result={templateItemsResult}
+                        onJson={templateItems => {
+                          console.log('ITEEEEEMS')
+                          console.log(templateItems)
+                          const firstElement = templateItems.collection.items[0]
+                          if (!firstElement) return new Error('') // ERROR
+                          const lastIndex = firstElement.href.lastIndexOf('/')
+                          return (
+                            <HttpGet // /checklisttemplate/{id}/templateitems/{itemId}
+                              url={`${this.props.baseUrl + firstElement.href.substring(0, lastIndex)}/${this.props.itemId}`}
+                              credentials={this.props.credentials}
+                              render={
+                                templateItemResult => (
+                                  <HttpGetSwitch result={templateItemResult}
+                                    onJson={templateItem => {
+                                      let btn
+                                      console.log('IIIITEEEEM')
+                                      console.log(templateItem)
+                                      if (template.properties['usable']) {
+                                        btn = <div>{templateItem.actions.map(actions =>
+                                          <button key={actions.name}
+                                            onClick={() => this.setState({action: actions, template_id: templateItem.properties['checklisttemplate_id']})}>
+                                            {actions.title}
+                                          </button>
+                                        )}
+                                        </div>
+                                      }
+
+                                      return (
+                                        <div>
+                                          {btn}
+                                          <ul>
+                                            <li><b>Item Id:</b> {templateItem.properties['templateitem_id']}</li>
+                                            <li><b>Name:</b> {templateItem.properties['name']}</li>
+                                            <li><b>Description:</b> {templateItem.properties['description']}</li>
+                                            <li><b>Template Id:</b> {templateItem.properties['checklisttemplate_id']}</li>
+                                          </ul>
+                                        </div>
+                                      )
+                                    }}
+                                  />
+                                )
+                              }
+                            />
+                          )
+                        }} />
+                    )}
+                  />
                 )
-              }}
-            />
+              }} />
           ))}
         />
       </div>

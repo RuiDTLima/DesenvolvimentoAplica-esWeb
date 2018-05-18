@@ -65,16 +65,12 @@ export default class extends Component {
                           </button>
                         )
                       }
-                      <table>
-                        <tbody>
-                          {Object.keys(json.properties).map(item =>
-                            <tr key={item}>
-                              <th>{item}</th>
-                              <td>{json.properties[item]}</td>
-                            </tr>
-                          )}
-                        </tbody>
-                      </table>
+                      <ul>
+                        <li><b>Name:</b> {json.properties['name']}</li>
+                        <li><b>Checklist Id:</b> {json.properties['checklist_id']}</li>
+                        <li><b>Completion Date:</b> {json.properties['completion_date']}</li>
+                        <li><b>Completion State:</b> {json.properties['completion_state']}</li>
+                      </ul>
                       {
                         json.entities.find(e => e.class.includes('checklisttemplates')) &&
                         <button onClick={() => this.props.onSelectTemplate(json.properties.checklisttemplate_id)}>{json.entities.find(e => e.class.includes('checklisttemplates')).class[0]}</button>

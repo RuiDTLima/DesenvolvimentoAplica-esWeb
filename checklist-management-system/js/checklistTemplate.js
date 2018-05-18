@@ -23,7 +23,7 @@ export default class extends Component {
           'application/json',
           null,
           (resp) => {
-            this.props.history.push('/checklisttemplates')
+            this.props.onClick('/checklisttemplates')
           },
           (err) => {
             console.log(err)
@@ -62,13 +62,16 @@ export default class extends Component {
             <HttpGetSwitch result={result} // onError handler
               onJson={json => {
                 if (json.class[0] === 'checklisttemplate') { // Error
-                  let btn = <div>{json.actions.map(actions =>
-                    <button key={actions.name}
-                      onClick={() => this.setState({action: actions})}>
-                      {actions.title}
-                    </button>
-                  )}
-                  </div>
+                  let btn
+                  if (json.properties['usable']) {
+                    btn = <div>{json.actions.map(actions =>
+                      <button key={actions.name}
+                        onClick={() => this.setState({action: actions})}>
+                        {actions.title}
+                      </button>
+                    )}
+                    </div>
+                  }
                   return showTemplate(btn, json, this.props)
                 }
               }}
@@ -84,9 +87,9 @@ function showTemplate (btn, json, props) {
   return <div>
     {btn}
     <ul>
-      <li>{json.properties['checklisttemplate_id']}</li>
-      <li>{json.properties['name']}</li>
-      <li>{json.properties['usable'].toString()}</li>
+      <li><b>Id:</b> {json.properties['checklisttemplate_id']}</li>
+      <li><b>Name:</b> {json.properties['name']}</li>
+      <li><b>Usable:</b> {json.properties['usable'].toString()}</li>
     </ul>
     <HttpGet
       url={props.baseUrl + json.entities[0].href}
@@ -104,7 +107,7 @@ function showTemplate (btn, json, props) {
                   {items.collection.items.map(item =>
                     <li key={item.data.find(d => d.name === 'templateitem_id').value}>
                       <button onClick={() => {
-                        props.history.push(item.href)
+                        props.onClick(`/checklisttemplates/${json.properties['checklisttemplate_id']}/templateitems/${item.data.find(d => d.name === 'templateitem_id').value}`)
                       }}>
                         {item.data.find(d => d.name === 'name').value}
                       </button>
