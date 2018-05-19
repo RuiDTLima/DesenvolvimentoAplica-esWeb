@@ -10,9 +10,14 @@ export default class extends Component {
     this.state = {
       action: undefined
     }
+    this.showTemplate = this.showTemplate.bind(this)
+    this.presentError = this.presentError.bind(this)
   }
 
   render () {
+    if (this.state.error) {
+      return this.presentError(this.state.error)
+    }
     if (this.state.action) {
       const path = this.props.baseUrl + this.state.action.href
       if (this.state.action.fields === undefined) {
@@ -26,7 +31,7 @@ export default class extends Component {
             this.props.onClick('/checklisttemplates')
           },
           (err) => {
-            console.log(err)
+            this.setState({error: err})
           }
         )
       } else {
@@ -46,7 +51,7 @@ export default class extends Component {
               this.setState(() => ({action: undefined}))
             },
             (err) => {
-              console.log(err)
+              this.setState({error: err})
             }
           )
         }, () => this.setState(old => ({action: undefined})))
@@ -72,7 +77,7 @@ export default class extends Component {
                     )}
                     </div>
                   }
-                  return showTemplate(btn, json, this.props)
+                  return this.showTemplate(btn, json, this.props)
                 }
               }}
             />
@@ -81,45 +86,56 @@ export default class extends Component {
       </div>
     )
   }
-}
 
-function showTemplate (btn, json, props) {
-  return <div>
-    {btn}
-    <ul>
-      <li><b>Id:</b> {json.properties['checklisttemplate_id']}</li>
-      <li><b>Name:</b> {json.properties['name']}</li>
-      <li><b>Usable:</b> {json.properties['usable'].toString()}</li>
-    </ul>
-    <HttpGet
-      url={props.baseUrl + json.entities[0].href}
-      credentials={props.credentials}
-      template={json}
-      render={(result => (
-        <HttpGetSwitch result={result}
-          onJson={items => {
-            return (
-              <div>
-                {items.collection.items.length !== 0 ? (<h3>Template Items</h3>) : ''}
+  showTemplate (btn, json, props) {
+    return <div>
+      {btn}
+      <ul>
+        <li><b>Id:</b> {json.properties['checklisttemplate_id']}</li>
+        <li><b>Name:</b> {json.properties['name']}</li>
+        <li><b>Usable:</b> {json.properties['usable'].toString()}</li>
+      </ul>
+      <HttpGet
+        url={props.baseUrl + json.entities[0].href}
+        credentials={props.credentials}
+        template={json}
+        render={(result => (
+          <HttpGetSwitch result={result}
+            onJson={items => {
+              return (
+                <div>
+                  {items.collection.items.length !== 0 ? (<h3>Template Items</h3>) : ''}
 
-                <Paginator response={items} onChange={nUrl => result.setUrl(props.baseUrl + nUrl)} />
-                <ul>
-                  {items.collection.items.map(item =>
-                    <li key={item.data.find(d => d.name === 'templateitem_id').value}>
-                      <button onClick={() => {
-                        props.onClick(`/checklisttemplates/${json.properties['checklisttemplate_id']}/templateitems/${item.data.find(d => d.name === 'templateitem_id').value}`)
-                      }}>
-                        {item.data.find(d => d.name === 'name').value}
-                      </button>
-                    </li>
-                  )}
-                </ul>
-              </div>
-            )
-          }}
-        />
-      ))
-      }
-    />
-  </div>
+                  <Paginator response={items} onChange={nUrl => result.setUrl(props.baseUrl + nUrl)} />
+                  <ul>
+                    {items.collection.items.map(item =>
+                      <li key={item.data.find(d => d.name === 'templateitem_id').value}>
+                        <button onClick={() => {
+                          props.onClick(`/checklisttemplates/${json.properties['checklisttemplate_id']}/templateitems/${item.data.find(d => d.name === 'templateitem_id').value}`)
+                        }}>
+                          {item.data.find(d => d.name === 'name').value}
+                        </button>
+                      </li>
+                    )}
+                  </ul>
+                </div>
+              )
+            }}
+          />
+        ))
+        }
+      />
+    </div>
+  }
+
+  presentError (error) {
+    return <div>
+      <h2>An error occurred</h2>
+      <h3>{error.message}</h3>
+      <button type='submit' onClick={() => {
+        console.log('Button Click')
+        this.setState({error: undefined})
+      }}>Retry</button>
+    </div>
+  }
 }

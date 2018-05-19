@@ -30,13 +30,11 @@ function saveCredentials (ev, url, onSuccess, onError) {
           if (user.properties.password === password.value) {
             onSuccess(username.value, password.value)
           } else {
-            throw new Error('The user info is not correct.')
+            onError(new Error('The user info is not correct.'))
           }
         })
       } else if (resp.status >= 500) {
-        throw new Error(resp.message)
-      } else if (resp.status >= 400) {
-        throw new Error(resp.message)
+        resp.json().then((problemJson) => onError(new Error(problemJson.detail)))
       }
     })
 }

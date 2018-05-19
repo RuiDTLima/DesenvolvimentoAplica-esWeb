@@ -20,6 +20,7 @@ export default class extends React.Component {
       'credentials': '',
       'home': { }
     }
+    this.presentError = this.presentError.bind(this)
   }
 
   menu (username, password) {
@@ -32,7 +33,12 @@ export default class extends React.Component {
               'home': h
             }))
           })
+        } else {
+          resp.json().then((problemJson) => this.setState({error: new Error(problemJson.detail)}))
         }
+      })
+      .catch(err => {
+        this.setState({error: err})
       })
   }
 
@@ -69,19 +75,27 @@ export default class extends React.Component {
     )
   }
 
-  componentDidCatch (error, info) {
-    console.log('error ' + error)
-    console.log('info ' + info)
+  presentError (error) {
+    return <div>
+      <h2>An error occurred</h2>
+      <h3>{error.message}</h3>
+      <button type='submit' onClick={() => {
+        console.log('Button Click')
+        this.setState({error: undefined})
+      }}>Retry</button>
+    </div>
   }
 
   render () {
+    if (this.state.error) {
+      return this.presentError(this.state.error)
+    }
     return (
       <BrowserRouter>
         <div>
           <Nav credentials={this.state.credentials} onLogout={() => this.setState(old => ({'credentials': ''}))} />
           <Switch>
             <Route exact path='/' render={({history}) => {
-              console.log(history.location)
               if (this.state.credentials !== '') {
                 if (history.location.state) {
                   return <Redirect to={history.location.state.return} />
@@ -94,7 +108,7 @@ export default class extends React.Component {
                   onSuccess={(username, password) => {
                     this.menu(username, password)
                   }}
-                  onError={(err) => console.log(err)}
+                  onError={(err) => this.setState({error: err})}
                 />
               )
             }} />

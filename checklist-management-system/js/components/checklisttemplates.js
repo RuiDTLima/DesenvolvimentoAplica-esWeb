@@ -10,9 +10,13 @@ export default class extends Component {
     this.state = {
       create: false
     }
+    this.presentError = this.presentError.bind(this)
   }
 
   render () {
+    if (this.state.error) {
+      return this.presentError(this.state.error)
+    }
     if (this.state.create) {
       return this.props.formGenerator(this.state.template, (ev) => {
         ev.preventDefault()
@@ -28,7 +32,7 @@ export default class extends Component {
             this.setState(old => ({create: false}))
           },
           (err) => {
-            console.log(err)
+            this.setState({error: err})
           }
         )
       })
@@ -73,5 +77,16 @@ export default class extends Component {
         </div>
       )
     }
+  }
+
+  presentError (error) {
+    return <div>
+      <h2>An error occurred</h2>
+      <h3>{error.message}</h3>
+      <button type='submit' onClick={() => {
+        console.log('Button Click')
+        this.setState({error: undefined})
+      }}>Retry</button>
+    </div>
   }
 }

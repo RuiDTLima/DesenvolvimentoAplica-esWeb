@@ -9,9 +9,13 @@ export default class extends Component {
     this.state = {
       action: undefined
     }
+    this.presentError = this.presentError.bind(this)
   }
 
   render () {
+    if (this.state.error) {
+      return this.presentError(this.state.error)
+    }
     if (this.state.action) {
       const path = this.props.baseUrl + this.state.action.href
       if (this.state.action.fields === undefined) {
@@ -25,7 +29,7 @@ export default class extends Component {
             this.props.onClick(`/checklisttemplates/${this.state.template_id}`)
           },
           (err) => {
-            console.log(err)
+            this.setState({error: err})
           }
         )
       } else {
@@ -45,7 +49,7 @@ export default class extends Component {
               this.setState(() => ({action: undefined}))
             },
             (err) => {
-              console.log(err)
+              this.setState({error: err})
             }
           )
         }, () => this.setState(old => ({action: undefined})))
@@ -60,8 +64,6 @@ export default class extends Component {
           render={(templateResult => (
             <HttpGetSwitch result={templateResult}
               onJson={template => {
-                console.log('TEMPLAAAATE')
-                console.log(template)
                 return (
                   <HttpGet // /checklisttemplate/{id}/templateitems
                     url={this.props.baseUrl + template.entities.find(e => e.class.includes('templateItem')).href}
@@ -69,8 +71,6 @@ export default class extends Component {
                     render={templateItemsResult => (
                       <HttpGetSwitch result={templateItemsResult}
                         onJson={templateItems => {
-                          console.log('ITEEEEEMS')
-                          console.log(templateItems)
                           const firstElement = templateItems.collection.items[0]
                           if (!firstElement) return new Error('') // ERROR
                           const lastIndex = firstElement.href.lastIndexOf('/')
@@ -83,8 +83,6 @@ export default class extends Component {
                                   <HttpGetSwitch result={templateItemResult}
                                     onJson={templateItem => {
                                       let btn
-                                      console.log('IIIITEEEEM')
-                                      console.log(templateItem)
                                       if (template.properties['usable']) {
                                         btn = <div>{templateItem.actions.map(actions =>
                                           <button key={actions.name}
@@ -121,5 +119,16 @@ export default class extends Component {
         />
       </div>
     )
+  }
+
+  presentError (error) {
+    return <div>
+      <h2>An error occurred</h2>
+      <h3>{error.message}</h3>
+      <button type='submit' onClick={() => {
+        console.log('Button Click')
+        this.setState({error: undefined})
+      }}>Retry</button>
+    </div>
   }
 }

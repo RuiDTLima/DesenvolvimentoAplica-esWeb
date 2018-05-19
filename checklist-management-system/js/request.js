@@ -13,7 +13,7 @@ export function request (url, method, credentials, contentType, body, onSuccess,
       if (resp.status === 204) {
         onSuccess(resp)
       } else if (resp.status >= 400 && resp.status < 500) {
-        return onError(new Error(resp.message))
+        resp.json().then((problemJson) => onError(new Error(problemJson.detail)))
       } else return onError(new Error('server error'))
     })
     .catch(err => {

@@ -8,53 +8,25 @@ export default class extends Component {
     super(props)
     this.state = { }
     this.display = this.display.bind(this)
+    this.presentError = this.presentError.bind(this)
     this.viewFromAction = this.viewFromAction.bind(this)
     this.actionRequest = this.actionRequest.bind(this)
   }
 
-  actionRequest (action, body) {
-    return request(
-      this.props.url + action.href,
-      action.method,
-      this.props.credentials,
-      action.type,
-      JSON.stringify(body),
-      (resp) => {
-        if (action.method === 'DELETE') this.props.onDelete()
-        else this.setState(old => ({action: undefined}))
-      },
-      (err) => {
-        console.log(err)
-      }
-    )
-  }
-
-  /**
-   * Generates a view based on a siren action
-   */
-  viewFromAction () {
+  render () {
+    if (this.state.error) {
+      return this.presentError(this.state.error)
+    }
     const action = this.state.action
-    return this.props.actionGenerator(action, () => {
-      let params = { }
-      action.fields.forEach(f => {
-        params[f.name] = document.getElementById(f.name).value
-      })
+    if (action) {
+      if (!action.fields) {
+        this.actionRequest(action)
+        return this.display()
+      }
+      return this.viewFromAction()
+    }
 
-      request(
-        this.props.url + action.href,
-        action.method,
-        this.props.credentials,
-        action.type,
-        JSON.stringify(params),
-        (resp) => {
-          if (action.method === 'DELETE') this.props.onDelete()
-          else this.setState(old => ({action: undefined}))
-        },
-        (err) => {
-          console.log(err)
-        }
-      )
-    }, () => this.setState(old => ({action: undefined})))
+    return this.display()
   }
 
   display () {
@@ -121,16 +93,60 @@ export default class extends Component {
     )
   }
 
-  render () {
-    const action = this.state.action
-    if (action) {
-      if (!action.fields) {
-        this.actionRequest(action)
-        return this.display()
-      }
-      return this.viewFromAction()
-    }
+  presentError (error) {
+    return <div>
+      <h2>An error occurred</h2>
+      <h3>{error.message}</h3>
+      <button type='submit' onClick={() => {
+        console.log('Button Click')
+        this.setState({error: undefined})
+      }}>Retry</button>
+    </div>
+  }
 
-    return this.display()
+  /**
+   * Generates a view based on a siren action
+   */
+  viewFromAction () {
+    const action = this.state.action
+    return this.props.actionGenerator(action, () => {
+      let params = { }
+      action.fields.forEach(f => {
+        params[f.name] = document.getElementById(f.name).value
+      })
+
+      this.actionRequest(action, params)
+      /* request(
+        this.props.url + action.href,
+        action.method,
+        this.props.credentials,
+        action.type,
+        JSON.stringify(params),
+        (resp) => {
+          if (action.method === 'DELETE') this.props.onDelete()
+          else this.setState(old => ({action: undefined}))
+        },
+        (err) => {
+          this.setState({error: err})
+        }
+      ) */
+    }, () => this.setState(old => ({action: undefined})))
+  }
+
+  actionRequest (action, body) {
+    return request(
+      this.props.url + action.href,
+      action.method,
+      this.props.credentials,
+      action.type,
+      JSON.stringify(body),
+      (resp) => {
+        if (action.method === 'DELETE') this.props.onDelete()
+        else this.setState(old => ({action: undefined}))
+      },
+      (err) => {
+        this.setState({error: err})
+      }
+    )
   }
 }
