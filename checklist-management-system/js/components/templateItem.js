@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
-import HttpGet from './http-get'
-import HttpGetSwitch from './http-get-switch'
-import {request} from './request'
+import HttpGet from '../http-get'
+import HttpGetSwitch from '../http-get-switch'
+import {request} from '../request'
 
 export default class extends Component {
   constructor (props) {

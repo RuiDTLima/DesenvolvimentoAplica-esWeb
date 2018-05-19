@@ -1,8 +1,8 @@
 import React, {Component} from 'react'
-import HttpGet from './http-get'
-import HttpGetSwitch from './http-get-switch'
+import HttpGet from '../http-get'
+import HttpGetSwitch from '../http-get-switch'
 import ChecklistItems from './checklistitems'
-import {request} from './request'
+import {request} from '../request'
 
 export default class extends Component {
   constructor (props) {
@@ -25,7 +25,7 @@ export default class extends Component {
         else this.setState(old => ({action: undefined}))
       },
       (err) => {
-        console.log(err)
+        this.setState({error: err})
       }
     )
   }

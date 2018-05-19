@@ -1,16 +1,15 @@
 import React from 'react'
 import {BrowserRouter, Route, Redirect, Switch} from 'react-router-dom'
 import fetch from 'isomorphic-fetch'
-import Checklists from './checklists'
-import Checklist from './checklist'
-import ChecklistItem from './checklistitem'
-import ChecklistTemplates from './checklisttemplates'
-import Template from './checklistTemplate'
-import TemplateItem from './templateItem'
-import Login from './login'
+import Checklists from './components/checklists'
+import Checklist from './components/checklist'
+import ChecklistItem from './components/checklistitem'
+import ChecklistTemplates from './components/checklisttemplates'
+import Template from './components/checklistTemplate'
+import TemplateItem from './components/templateItem'
+import Login from './components/login'
 import Nav from './nav'
 import PrivateRoute from './privateRoute'
-import ErrorHandling from './errorHandling'
 
 const url = 'http://localhost:8080'
 
@@ -90,15 +89,13 @@ export default class extends React.Component {
                 return <Redirect to='/menu' />
               }
               return (
-                <ErrorHandling>
-                  <Login
-                    url={url}
-                    onSuccess={(username, password) => {
-                      this.menu(username, password)
-                    }}
-                    onError={(err) => console.log(err)}
-                  />
-                </ErrorHandling>
+                <Login
+                  url={url}
+                  onSuccess={(username, password) => {
+                    this.menu(username, password)
+                  }}
+                  onError={(err) => console.log(err)}
+                />
               )
             }} />
             <PrivateRoute credentials={this.state.credentials} exact path='/menu' render={({match, history}) => {

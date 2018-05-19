@@ -16,4 +16,7 @@ export function request (url, method, credentials, contentType, body, onSuccess,
         return onError(new Error(resp.message))
       } else return onError(new Error('server error'))
     })
+    .catch(err => {
+      return onError(err)
+    })
 }

@@ -1,8 +1,8 @@
 import React, {Component} from 'react'
-import HttpGet from './http-get'
-import HttpGetSwitch from './http-get-switch'
-import Paginator from './paginator'
-import {request} from './request'
+import HttpGet from '../http-get'
+import HttpGetSwitch from '../http-get-switch'
+import Paginator from '../paginator'
+import {request} from '../request'
 
 export default class extends Component {
   constructor (props) {

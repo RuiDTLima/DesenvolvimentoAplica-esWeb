@@ -1,8 +1,8 @@
 import React, {Component} from 'react'
-import HttpGet from './http-get'
-import HttpGetSwitch from './http-get-switch'
-import Paginator from './paginator'
-import {request} from './request'
+import HttpGet from '../http-get'
+import HttpGetSwitch from '../http-get-switch'
+import Paginator from '../paginator'
+import {request} from '../request'
 
 export default class extends Component {
   constructor (props) {
@@ -56,8 +56,12 @@ export default class extends Component {
                         <Paginator response={json} onChange={nUrl => result.setUrl(this.props.url + nUrl)} />
                         <ul>
                           {collection.items.map(item =>
-                            <li key={item.data.find(d => d.name === 'checklist_id').value}>
-                              <button onClick={() => this.props.onSelectChecklist(item.data.find(d => d.name === 'checklist_id').value)}> {item.data.find(d => d.name === 'name').value}</button> - {item.data.find(d => d.name === 'completion_date').value}
+                            <li key={item.data.find(d => d.name === 'checklisttemplate_id').value}>
+                              <button onClick={() => {
+                                this.props.onSelect(item.data.find(d => d.name === 'checklisttemplate_id').value)
+                              }}>
+                                {item.data.find(d => d.name === 'name').value}
+                              </button>
                             </li>)}
                         </ul>
                       </div>

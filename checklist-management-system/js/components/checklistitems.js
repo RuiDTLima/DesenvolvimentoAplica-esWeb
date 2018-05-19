@@ -1,7 +1,7 @@
 import React from 'react'
-import HttpGet from './http-get'
-import HttpGetSwitch from './http-get-switch'
-import Paginator from './paginator'
+import HttpGet from '../http-get'
+import HttpGetSwitch from '../http-get-switch'
+import Paginator from '../paginator'
 
 export default ({url, partial, credentials, onSelectItem}) => (
   <div>
