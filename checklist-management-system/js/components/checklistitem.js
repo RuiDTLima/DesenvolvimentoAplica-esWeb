@@ -30,78 +30,92 @@ export default class extends Component {
     return this.display()
   }
 
-  display () {
-    return (
-      <div>
-        <HttpGet // /checklist/{id}
-          url={this.props.url + this.props.partial}
-          credentials={this.props.credentials}
-          render={(checklistResult => (
-            <HttpGetSwitch result={checklistResult}
+  getChecklist (onSuccess) {
+    return <div>
+      <HttpGet // /checklist/{id}
+        url={this.props.url + this.props.partial}
+        credentials={this.props.credentials}
+        render={(checklistResult => (
+          <HttpGetSwitch result={checklistResult}
+            onError={err => {
+              return errorHandler(err, 'Checklist not found.', () => this.setState({error: undefined}))
+            }}
+            onJson={checklist => {
+              return onSuccess(checklist)
+            }}
+          />
+        ))} />
+    </div>
+  }
+
+  getChecklistItems (checklist, onSuccess) {
+    return <div>
+      <HttpGet // /checklist/{id}/checklistitems
+        url={this.props.url + checklist.entities.find(e => e.class.includes('checklistitem')).href}
+        credentials={this.props.credentials}
+        render={checklistItemsResult => (
+          <HttpGetSwitch result={checklistItemsResult}
+            onError={err => {
+              return errorHandler(err, 'Checklist Items not found.', () => this.setState({error: undefined}))
+            }}
+            onJson={checklistItems => {
+              return onSuccess(checklistItems)
+            }}
+          />
+        )} />
+    </div>
+  }
+
+  getChecklistItem (checklistItems, onSuccess) {
+    const firstElement = checklistItems.collection.items[0]
+    if (!firstElement) return new Error('') // ERROR
+    const lastIndex = firstElement.href.lastIndexOf('/')
+
+    return <div>
+      <HttpGet // /checklist/{id}/checklistitems/{itemId}
+        url={`${this.props.url + firstElement.href.substring(0, lastIndex)}/${this.props.itemId}`}
+        credentials={this.props.credentials}
+        render={
+          checklistItemResult => (
+            <HttpGetSwitch result={checklistItemResult}
               onError={err => {
-                return errorHandler(err, 'Checklist not found.', () => this.setState({error: undefined}))
+                return errorHandler(err, 'Checklist Item not found.')
               }}
-              onJson={checklist => {
-                return (
-                  <HttpGet // /checklist/{id}/checklistitems
-                    url={this.props.url + checklist.entities.find(e => e.class.includes('checklistitem')).href}
-                    credentials={this.props.credentials}
-                    render={checklistItemsResult => (
-                      <HttpGetSwitch result={checklistItemsResult}
-                        onError={err => {
-                          return errorHandler(err, 'Checklist Items not found.', () => this.setState({error: undefined}))
-                        }}
-                        onJson={checklistItems => {
-                          const firstElement = checklistItems.collection.items[0]
-                          if (!firstElement) return new Error('') // ERROR
-                          const lastIndex = firstElement.href.lastIndexOf('/')
-                          return (
-                            <HttpGet // /checklist/{id}/checklistitems/{itemId}
-                              url={`${this.props.url + firstElement.href.substring(0, lastIndex)}/${this.props.itemId}`}
-                              credentials={this.props.credentials}
-                              render={
-                                checklistItemResult => (
-                                  <HttpGetSwitch result={checklistItemResult}
-                                    onError={err => {
-                                      return errorHandler(err, 'Checklist Item not found.')
-                                    }}
-                                    onJson={checklistItem => {
-                                      return (
-                                        <div>
-                                          {
-                                            checklistItem.actions.map((action, index) =>
-                                              <button key={action.name} onClick={() => this.setState(old => ({
-                                                'action': action
-                                              }))}>
-                                                {action.title}
-                                              </button>
-                                            )
-                                          }
-                                          <button key='back' onClick={() => this.props.onReturn()}>Back</button>
-                                          <ul>
-                                            <li><b>Checklist Id:</b> {checklistItem.properties['id']}</li>
-                                            <li><b>Name:</b> {checklistItem.properties['name']}</li>
-                                            <li><b>Description:</b> {checklistItem.properties['description']}</li>
-                                            <li><b>State:</b> {checklistItem.properties['state']}</li>
-                                            <li><b>Checklist Id:</b> {checklistItem.properties['checklist_id']}</li>
-                                          </ul>
-                                        </div>
-                                      )
-                                    }}
-                                  />
-                                )
-                              }
-                            />
-                          )
-                        }} />
-                    )}
-                  />
-                )
-              }} />
-          ))}
-        />
-      </div>
-    )
+              onJson={checklistItem => {
+                return onSuccess(checklistItem)
+              }}
+            />
+          )}
+      />
+    </div>
+  }
+
+  display () {
+    return this.getChecklist(checklist => {
+      return this.getChecklistItems(checklist, (checklistItems) => {
+        return this.getChecklistItem(checklistItems, (checklistItem) => {
+          return <div>
+            {
+              checklistItem.actions.map((action, index) =>
+                <button key={action.name} onClick={() => this.setState(old => ({
+                  'action': action
+                }))}>
+                  {action.title}
+                </button>
+              )
+            }
+            <button key='back' onClick={() => this.props.onReturn()}>Back</button>
+            <ul>
+              <li><b>Checklist Id:</b> {checklistItem.properties['id']}</li>
+              <li><b>Name:</b> {checklistItem.properties['name']}</li>
+              <li><b>Description:</b> {checklistItem.properties['description']}</li>
+              <li><b>State:</b> {checklistItem.properties['state']}</li>
+              <li><b>Checklist Id:</b> {checklistItem.properties['checklist_id']}</li>
+            </ul>
+          </div>
+        })
+      })
+    })
   }
 
   /**

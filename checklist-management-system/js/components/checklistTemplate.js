@@ -12,127 +12,124 @@ export default class extends Component {
     this.state = {
       action: undefined
     }
-    this.showTemplate = this.showTemplate.bind(this)
+    this.display = this.display.bind(this)
+    this.viewFromAction = this.viewFromAction.bind(this)
+    this.actionRequest = this.actionRequest.bind(this)
   }
 
   render () {
     if (this.state.error) {
       return presentError(this.state.error, () => this.setState({error: undefined}))
     }
-    if (this.state.action) {
-      const path = this.props.baseUrl + this.state.action.href
-      if (this.state.action.fields === undefined) {
-        request(
-          path,
-          this.state.action.method,
-          this.props.credentials,
-          'application/json',
-          null,
-          (resp) => {
-            this.props.onClick('/checklisttemplates')
-          },
-          (err) => {
-            this.setState({error: err})
-          }
-        )
-      } else {
-        return this.props.actionGenerator(this.state.action, () => {
-          const obj = { }
-          this.state.action.fields.forEach(d => {
-            obj[d.name] = (document.getElementsByName(d.name)[0].value)
-          })
 
-          request(
-            path,
-            this.state.action.method,
-            this.props.credentials,
-            this.state.action.type,
-            JSON.stringify(obj),
-            (resp) => {
-              this.setState(() => ({action: undefined}))
-            },
-            (err) => {
-              this.setState({error: err})
-            }
-          )
-        }, () => this.setState(old => ({action: undefined})))
+    const action = this.state.action
+    if (action) {
+      if (action.fields === undefined) {
+        this.actionRequest(action, null)
+        return this.display()
       }
+      return this.viewFromAction()
     }
-
-    return (
-      <div>
-        <HttpGet
-          url={this.props.baseUrl + this.props.specificUrl}
-          credentials={this.props.credentials}
-          render={(result => (
-            <HttpGetSwitch result={result} // onError handler
-              onError={err => {
-                return errorHandler(err, 'Checklist Template not found.', () => this.setState({error: undefined}))
-              }}
-              onJson={json => {
-                if (json.class[0] === 'checklisttemplate') { // Error
-                  let btn
-                  if (json.properties['usable']) {
-                    btn = <div>{json.actions.map(actions =>
-                      <button key={actions.name}
-                        onClick={() => this.setState({action: actions})}>
-                        {actions.title}
-                      </button>
-                    )}
-                    </div>
-                  }
-                  return this.showTemplate(btn, json, this.props)
-                }
-              }}
-            />
-          ))}
-        />
-      </div>
-    )
+    return this.display()
   }
 
-  showTemplate (btn, json, props) {
+  display () {
     return <div>
-      {btn}
-      <button key='back' onClick={() => this.props.onReturn()}>Back</button>
-      <ul>
-        <li><b>Id:</b> {json.properties['checklisttemplate_id']}</li>
-        <li><b>Name:</b> {json.properties['name']}</li>
-        <li><b>Usable:</b> {json.properties['usable'].toString()}</li>
-      </ul>
       <HttpGet
-        url={props.baseUrl + json.entities[0].href}
-        credentials={props.credentials}
-        template={json}
+        url={this.props.baseUrl + this.props.specificUrl}
+        credentials={this.props.credentials}
         render={(result => (
-          <HttpGetSwitch result={result}
+          <HttpGetSwitch result={result} // onError handler
             onError={err => {
-              errorHandler(err, 'Checklist Template Items not found.', () => this.setState({error: undefined}))
+              return errorHandler(err, 'Checklist Template not found.', () => this.setState({error: undefined}))
             }}
-            onJson={items => {
-              return (
-                <div>
-                  {items.collection.items.length !== 0 ? (<h3>Template Items</h3>) : ''}
-
-                  <Paginator response={items} onChange={nUrl => result.setUrl(props.baseUrl + nUrl)} />
+            onJson={json => {
+              if (json.class[0] === 'checklisttemplate') { // Error
+                let btn
+                if (json.properties['usable']) {
+                  btn = <div>{json.actions.map(actions =>
+                    <button key={actions.name}
+                      onClick={() => this.setState({action: actions})}>
+                      {actions.title}
+                    </button>
+                  )}
+                  </div>
+                }
+                return <div>
+                  {btn}
+                  <button key='back' onClick={() => this.props.onReturn()}>Back</button>
                   <ul>
-                    {items.collection.items.map(item =>
-                      <li key={item.data.find(d => d.name === 'templateitem_id').value}>
-                        <button onClick={() => {
-                          props.onClick(`/checklisttemplates/${json.properties['checklisttemplate_id']}/templateitems/${item.data.find(d => d.name === 'templateitem_id').value}`)
-                        }}>
-                          {item.data.find(d => d.name === 'name').value}
-                        </button>
-                      </li>
-                    )}
+                    <li><b>Id:</b> {json.properties['checklisttemplate_id']}</li>
+                    <li><b>Name:</b> {json.properties['name']}</li>
+                    <li><b>Usable:</b> {json.properties['usable'].toString()}</li>
                   </ul>
+                  <HttpGet
+                    url={this.props.baseUrl + json.entities[0].href}
+                    credentials={this.props.credentials}
+                    template={json}
+                    render={(result => (
+                      <HttpGetSwitch result={result}
+                        onError={err => {
+                          errorHandler(err, 'Checklist Template Items not found.', () => this.setState({error: undefined}))
+                        }}
+                        onJson={items => {
+                          return (
+                            <div>
+                              {items.collection.items.length !== 0 ? (<h3>Template Items</h3>) : ''}
+                              <Paginator response={items} onChange={nUrl => result.setUrl(props.baseUrl + nUrl)} />
+                              <ul>
+                                {items.collection.items.map(item =>
+                                  <li key={item.data.find(d => d.name === 'templateitem_id').value}>
+                                    <button onClick={() => {
+                                      this.props.onClick(`/checklisttemplates/${json.properties['checklisttemplate_id']}/templateitems/${item.data.find(d => d.name === 'templateitem_id').value}`)
+                                    }}>
+                                      {item.data.find(d => d.name === 'name').value}
+                                    </button>
+                                  </li>
+                                )}
+                              </ul>
+                            </div>
+                          )
+                        }}
+                      />
+                    ))
+                    }
+                  />
                 </div>
-              )
+              }
             }}
           />
-        ))
-        }
+        ))}
       />
     </div>
+  }
+
+  viewFromAction () {
+    const action = this.state.action
+    return this.props.actionGenerator(action, () => {
+      const obj = { }
+      action.fields.forEach(d => {
+        obj[d.name] = (document.getElementsByName(d.name)[0].value)
+      })
+
+      this.actionRequest(action, obj)
+    }, () => this.setState(old => ({action: undefined})))
+  }
+
+  actionRequest (action, body) {
+    return request(
+      this.props.baseUrl + this.state.action.href,
+      this.state.action.method,
+      this.props.credentials,
+      this.state.action.type,
+      JSON.stringify(body),
+      (resp) => {
+        if (action.method === 'DELETE') return this.props.onClick('/checklisttemplates')
+        this.setState(() => ({action: undefined}))
+      },
+      (err) => {
+        this.setState({error: err})
+      }
+    )
   }
 }
