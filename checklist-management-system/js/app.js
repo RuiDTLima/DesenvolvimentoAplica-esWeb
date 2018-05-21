@@ -10,6 +10,7 @@ import TemplateItem from './components/templateItem'
 import Login from './components/login'
 import Nav from './nav'
 import PrivateRoute from './privateRoute'
+import presentError from './presentError'
 
 const url = 'http://localhost:8080'
 
@@ -20,7 +21,6 @@ export default class extends React.Component {
       'credentials': '',
       'home': { }
     }
-    this.presentError = this.presentError.bind(this)
   }
 
   menu (username, password) {
@@ -75,20 +75,9 @@ export default class extends React.Component {
     )
   }
 
-  presentError (error) {
-    return <div>
-      <h2>An error occurred</h2>
-      <h3>{error.message}</h3>
-      <button type='submit' onClick={() => {
-        console.log('Button Click')
-        this.setState({error: undefined})
-      }}>Retry</button>
-    </div>
-  }
-
   render () {
     if (this.state.error) {
-      return this.presentError(this.state.error)
+      return presentError(this.state.error, () => this.setState({error: undefined}))
     }
     return (
       <BrowserRouter>
@@ -141,11 +130,8 @@ export default class extends React.Component {
                   credentials={this.state.credentials}
                   actionGenerator={this.actionGenerator}
                   onSelectTemplate={(templateId) => history.push(`/checklisttemplates/${templateId}`)}
-                  onSelectItem={(itemId, url) => history.push({
-                    pathname: `/checklists/${match.params.id}/checklistitems/${itemId}`,
-                    state: { itemPath: url }
-                  })}
-                  onDelete={() => history.push('/checklists')}
+                  onSelectItem={(itemId) => history.push(`/checklists/${match.params.id}/checklistitems/${itemId}`)}
+                  onReturn={() => history.push('/checklists')}
                 />)
             }} />
             <PrivateRoute credentials={this.state.credentials} exact path='/checklists/:listId/checklistitems/:itemId' render={({match, history}) => {
@@ -157,7 +143,7 @@ export default class extends React.Component {
                   itemId={match.params.itemId}
                   credentials={this.state.credentials}
                   actionGenerator={this.actionGenerator}
-                  onDelete={() => history.push(`/checklists/${match.params.listId}`)}
+                  onReturn={() => history.push(`/checklists/${match.params.listId}`)}
                 />)
             }} />
             <PrivateRoute credentials={this.state.credentials} exact path='/checklisttemplates' render={({match, history}) => {
@@ -176,6 +162,7 @@ export default class extends React.Component {
                 specificUrl={template['href-template'].replace(/{checklisttemplate_id}/i, `${match.params.checklisttemplate_id}`)}
                 credentials={this.state.credentials}
                 onClick={(url) => history.push(url)}
+                onReturn={() => history.push('/checklisttemplates')}
                 actionGenerator={this.actionGenerator}
               />
             }} />
@@ -187,6 +174,7 @@ export default class extends React.Component {
                 itemId={match.params.templateitem_id}
                 credentials={this.state.credentials}
                 onClick={(url) => history.push(url)}
+                onReturn={() => history.push(`/checklisttemplates/${match.params.checklisttemplate_id}`)}
                 actionGenerator={this.actionGenerator}
               />
             }}

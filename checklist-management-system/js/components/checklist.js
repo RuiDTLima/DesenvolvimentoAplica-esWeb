@@ -3,20 +3,21 @@ import HttpGet from '../http-get'
 import HttpGetSwitch from '../http-get-switch'
 import ChecklistItems from './checklistitems'
 import {request} from '../request'
+import errorHandler from '../errorHandler'
+import presentError from '../presentError'
 
 export default class extends Component {
   constructor (props) {
     super(props)
     this.state = { }
     this.display = this.display.bind(this)
-    this.presentError = this.presentError.bind(this)
     this.viewFromAction = this.viewFromAction.bind(this)
     this.actionRequest = this.actionRequest.bind(this)
   }
 
   render () {
     if (this.state.error) {
-      return this.presentError(this.state.error)
+      return presentError(this.state.error, () => this.setState({error: undefined}))
     }
     const action = this.state.action
     if (action) {
@@ -36,55 +37,51 @@ export default class extends Component {
         <HttpGet
           url={this.props.url + this.props.partial}
           credentials={this.props.credentials}
-          render={(result) => (
-            <div>
-              <HttpGetSwitch result={result}
-                onJson={json => {
-                  return (
-                    <div>
-                      {
-                        json.actions.map((action, index) =>
-                          <button key={action.name} onClick={() => this.setState(old => ({
-                            'action': action
-                          }))}>
-                            {action.title}
-                          </button>
-                        )
-                      }
-                      <ul>
-                        <li><b>Name:</b> {json.properties['name']}</li>
-                        <li><b>Checklist Id:</b> {json.properties['checklist_id']}</li>
-                        <li><b>Completion Date:</b> {json.properties['completion_date']}</li>
-                        <li><b>Completion State:</b> {json.properties['completion_state']}</li>
-                      </ul>
-                      {
-                        json.entities.find(e => e.class.includes('checklisttemplates')) &&
-                        <button onClick={() => this.props.onSelectTemplate(json.properties.checklisttemplate_id)}>{json.entities.find(e => e.class.includes('checklisttemplates')).class[0]}</button>
-                      }
-                      <ChecklistItems
-                        url={this.props.url}
-                        partial={json.entities.find(e => e.class[0] === 'checklistitem').href}
-                        credentials={this.props.credentials}
-                        onSelectItem={this.props.onSelectItem}
-                      />
-                    </div>
-                  )
-                }}
-              />
-            </div>
-          )} />
+          render={(result) => {
+            return (
+              <div>
+                <HttpGetSwitch result={result}
+                  onError={err => {
+                    return errorHandler(err, 'Checklist not found.', () => this.setState({error: undefined}))
+                  }}
+                  onJson={json => {
+                    return (
+                      <div>
+                        {
+                          json.actions.map((action, index) =>
+                            <button key={action.name} onClick={() => this.setState(old => ({
+                              'action': action
+                            }))}>
+                              {action.title}
+                            </button>
+                          )
+                        }
+                        <button key='back' onClick={() => this.props.onReturn()}>Back</button>
+                        <ul>
+                          <li><b>Name:</b> {json.properties['name']}</li>
+                          <li><b>Checklist Id:</b> {json.properties['checklist_id']}</li>
+                          <li><b>Completion Date:</b> {json.properties['completion_date']}</li>
+                          <li><b>Completion State:</b> {json.properties['completion_state']}</li>
+                        </ul>
+                        {
+                          json.entities.find(e => e.class.includes('checklisttemplates')) &&
+                          <button onClick={() => this.props.onSelectTemplate(json.properties.checklisttemplate_id)}>{json.entities.find(e => e.class.includes('checklisttemplates')).class[0]}</button>
+                        }
+                        <ChecklistItems
+                          url={this.props.url}
+                          partial={json.entities.find(e => e.class[0] === 'checklistitem').href}
+                          credentials={this.props.credentials}
+                          onSelectItem={this.props.onSelectItem}
+                        />
+                      </div>
+                    )
+                  }}
+                />
+              </div>
+            )
+          }} />
       </div>
     )
-  }
-
-  presentError (error) {
-    return <div>
-      <h2>An error occurred</h2>
-      <h3>{error.message}</h3>
-      <button type='submit' onClick={() => {
-        this.setState({error: undefined})
-      }}>Retry</button>
-    </div>
   }
 
   /**
@@ -109,7 +106,7 @@ export default class extends Component {
       action.type,
       JSON.stringify(body),
       (resp) => {
-        if (action.method === 'DELETE') this.props.onDelete()
+        if (action.method === 'DELETE') this.props.onReturn()
         else this.setState(old => ({action: undefined}))
       },
       (err) => {

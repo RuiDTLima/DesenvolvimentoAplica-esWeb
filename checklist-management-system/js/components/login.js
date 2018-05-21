@@ -1,5 +1,6 @@
 import React from 'react'
 import fetch from 'isomorphic-fetch'
+import {request} from '../request'
 
 export default ({url, onSuccess, onError}) => (
   <div>
@@ -30,11 +31,20 @@ function saveCredentials (ev, url, onSuccess, onError) {
           if (user.properties.password === password.value) {
             onSuccess(username.value, password.value)
           } else {
-            onError(new Error('The user info is not correct.'))
+            throw new Error('The user info is not correct.')
           }
         })
+      } else if (resp.status === 404) {
+        throw new Error('The user does not exist.')
       } else if (resp.status >= 500) {
-        resp.json().then((problemJson) => onError(new Error(problemJson.detail)))
+        throw new Error('Server error.')
+      } else if (resp.status >= 400) {
+        return resp.json().then((problemJson) => {
+          throw new Error(problemJson.detail)
+        })
       }
+    })
+    .catch(err => {
+      return onError(err)
     })
 }

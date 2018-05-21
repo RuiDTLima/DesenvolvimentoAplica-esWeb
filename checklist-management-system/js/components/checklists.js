@@ -3,6 +3,8 @@ import HttpGet from '../http-get'
 import HttpGetSwitch from '../http-get-switch'
 import Paginator from '../paginator'
 import {request} from '../request'
+import errorHandler from '../errorHandler'
+import presentError from '../presentError'
 
 export default class extends Component {
   constructor (props) {
@@ -10,12 +12,11 @@ export default class extends Component {
     this.state = {
       create: false
     }
-    this.presentError = this.presentError.bind(this)
   }
 
   render () {
     if (this.state.error) {
-      return this.presentError(this.state.error)
+      return presentError(this.state.error, () => this.setState({error: undefined}))
     }
     if (this.state.create) {
       return this.props.formGenerator(this.state.template, (ev) => {
@@ -45,6 +46,9 @@ export default class extends Component {
             render={(result) => (
               <div>
                 <HttpGetSwitch result={result}
+                  onError={err => {
+                    return errorHandler(err, 'Checklists not found.', () => this.setState({error: undefined}))
+                  }}
                   onJson={json => {
                     let btn
                     const collection = json.collection
@@ -73,16 +77,5 @@ export default class extends Component {
         </div>
       )
     }
-  }
-
-  presentError (error) {
-    return <div>
-      <h2>An error occurred</h2>
-      <h3>{error.message}</h3>
-      <button type='submit' onClick={() => {
-        console.log('Button Click')
-        this.setState({error: undefined})
-      }}>Retry</button>
-    </div>
   }
 }

@@ -3,6 +3,8 @@ import HttpGet from '../http-get'
 import HttpGetSwitch from '../http-get-switch'
 import Paginator from '../paginator'
 import {request} from '../request'
+import errorHandler from '../errorHandler'
+import presentError from '../presentError'
 
 export default class extends Component {
   constructor (props) {
@@ -11,12 +13,11 @@ export default class extends Component {
       action: undefined
     }
     this.showTemplate = this.showTemplate.bind(this)
-    this.presentError = this.presentError.bind(this)
   }
 
   render () {
     if (this.state.error) {
-      return this.presentError(this.state.error)
+      return presentError(this.state.error, () => this.setState({error: undefined}))
     }
     if (this.state.action) {
       const path = this.props.baseUrl + this.state.action.href
@@ -65,6 +66,9 @@ export default class extends Component {
           credentials={this.props.credentials}
           render={(result => (
             <HttpGetSwitch result={result} // onError handler
+              onError={err => {
+                return errorHandler(err, 'Checklist Template not found.', () => this.setState({error: undefined}))
+              }}
               onJson={json => {
                 if (json.class[0] === 'checklisttemplate') { // Error
                   let btn
@@ -90,6 +94,7 @@ export default class extends Component {
   showTemplate (btn, json, props) {
     return <div>
       {btn}
+      <button key='back' onClick={() => this.props.onReturn()}>Back</button>
       <ul>
         <li><b>Id:</b> {json.properties['checklisttemplate_id']}</li>
         <li><b>Name:</b> {json.properties['name']}</li>
@@ -101,6 +106,9 @@ export default class extends Component {
         template={json}
         render={(result => (
           <HttpGetSwitch result={result}
+            onError={err => {
+              errorHandler(err, 'Checklist Template Items not found.', () => this.setState({error: undefined}))
+            }}
             onJson={items => {
               return (
                 <div>
@@ -125,17 +133,6 @@ export default class extends Component {
         ))
         }
       />
-    </div>
-  }
-
-  presentError (error) {
-    return <div>
-      <h2>An error occurred</h2>
-      <h3>{error.message}</h3>
-      <button type='submit' onClick={() => {
-        console.log('Button Click')
-        this.setState({error: undefined})
-      }}>Retry</button>
     </div>
   }
 }

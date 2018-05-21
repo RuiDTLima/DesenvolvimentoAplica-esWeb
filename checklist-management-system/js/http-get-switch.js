@@ -9,7 +9,7 @@ export default ({result, onJson, onLoading, onError}) => {
     }
   } else if (result.error) {
     if (onError) {
-      return onError(result)
+      return onError(result.error)
     } else {
       return <div> ERROR: {result.error.message}</div>
     }

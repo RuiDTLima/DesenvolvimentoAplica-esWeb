@@ -4,7 +4,7 @@ export function request (url, method, credentials, contentType, body, onSuccess,
   fetch(url, {
     method: method,
     headers: {
-      'Authorization': credentials,
+      'Authorization': `Basic ${credentials}`,
       'content-type': contentType
     },
     body: body
@@ -12,9 +12,13 @@ export function request (url, method, credentials, contentType, body, onSuccess,
     .then(resp => {
       if (resp.status === 204) {
         onSuccess(resp)
+      } else if (resp.status === 404) {
+        throw new Error('Resource does not exist.')
       } else if (resp.status >= 400 && resp.status < 500) {
-        resp.json().then((problemJson) => onError(new Error(problemJson.detail)))
-      } else return onError(new Error('server error'))
+        return resp.json().then((problemJson) => {
+          throw new Error(problemJson.detail)
+        })
+      } else throw new Error('Server error')
     })
     .catch(err => {
       return onError(err)

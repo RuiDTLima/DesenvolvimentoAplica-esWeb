@@ -64,16 +64,16 @@ export default class extends React.Component {
     if (this.promise) {
       this.promise.cancel()
     }
-    this.promise = makeCancellable(fetch(url, {headers: {'Authorization': this.state.credentials}}))
+    this.promise = makeCancellable(fetch(url, {headers: {'Authorization': `Basic ${this.state.credentials}`}}))
       .then(resp => {
         if (resp.status >= 400) {
-          throw new Error('Unable to access content')
+          throw new Error(`${resp.status} Unable to access content`)
         }
         const ct = resp.headers.get('content-type') || ''
         if (ct.startsWith('application/vnd.collection+json') || ct.startsWith('application/vnd.siren+json')) {
           return resp.json().then(json => [resp, json])
         }
-        throw new Error(`unexpected content type ${ct}`)
+        throw new Error(`${resp.status} unexpected content type ${ct}`)
       })
       .then(([resp, json]) => {
         this.setState({
