@@ -42,17 +42,20 @@ export default class extends React.Component {
       })
   }
 
-  formGenerator (template, onCreate) {
+  formGenerator (template, onCreate, onReturn) {
     return (
-      <form onSubmit={(ev) => onCreate(ev)}>
-        {template.data.map(t =>
-          <div key={t.name}>
-            <label>{t.prompt}</label>
-            <input type='text' name={t.name} required />
-          </div>
-        )}
-        <button>Create</button>
-      </form>
+      <div>
+        <form onSubmit={(ev) => onCreate(ev)}>
+          {template.data.map(t =>
+            <div key={t.name}>
+              <label>{t.prompt}</label>
+              <input type='text' name={t.name} required />
+            </div>
+          )}
+          <button>Create</button>
+        </form>
+        <button onClick={() => onReturn()}>Back</button>
+      </div>
     )
   }
 
@@ -82,10 +85,14 @@ export default class extends React.Component {
     return (
       <BrowserRouter>
         <div>
-          <Nav credentials={this.state.credentials} onLogout={() => this.setState(old => ({'credentials': ''}))} />
+          <Nav credentials={this.state.credentials} onLogout={(history) => {
+            history.replace('/')
+            this.setState({credentials: '', home: undefined})
+          }} />
           <Switch>
             <Route exact path='/' render={({history}) => {
               if (this.state.credentials !== '') {
+                console.log(history.location.state)
                 if (history.location.state) {
                   return <Redirect to={history.location.state.return} />
                 }
