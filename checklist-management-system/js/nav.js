@@ -8,7 +8,7 @@ export default withRouter(({credentials, onLogout, history}) => {
   return (
     <nav>
       <button onClick={() => history.push('/menu')}>Menu</button>
-      <button onClick={() => onLogout()}>Log Out</button>
+      <button onClick={() => onLogout(history)}>Log Out</button>
     </nav>
   )
 })

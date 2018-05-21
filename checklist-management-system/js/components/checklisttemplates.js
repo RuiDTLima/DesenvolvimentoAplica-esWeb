@@ -44,7 +44,7 @@ export default class extends Component {
           this.setState({error: err})
         }
       )
-    })
+    }, () => this.setState({create: false}))
   }
 
   display () {
