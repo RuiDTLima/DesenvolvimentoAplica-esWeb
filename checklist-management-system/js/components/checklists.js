@@ -16,6 +16,12 @@ export default class extends Component {
     this.display = this.display.bind(this)
   }
 
+  componentWillUnmount () {
+    if (this.promise) {
+      this.promise.cancel()
+    }
+  }
+
   render () {
     if (this.state.error) {
       return presentError(this.state.error, () => this.setState({error: undefined}))
@@ -26,27 +32,35 @@ export default class extends Component {
     return this.display()
   }
 
+  /**
+   * Creates the requests to be executed for the action of the form.
+   */
   formView () {
     return this.props.formGenerator(this.state.template, (ev) => {
       ev.preventDefault()
       const obj = { }
       this.state.template.data.forEach(d => { obj[d.name] = (document.getElementsByName(d.name)[0].value) })
-      request(
+      this.promise = request(
         this.props.url + this.props.partial,
         'POST',
         this.props.credentials,
         'application/json',
         JSON.stringify(obj),
         (resp) => {
+          this.promise = undefined
           this.setState(old => ({create: false}))
         },
         (err) => {
+          this.promise = undefined
           this.setState({error: err})
         }
       )
     }, () => this.setState({create: false}))
   }
 
+  /**
+   * Central view of every information regarding the list of checklists.
+   */
   display () {
     return (
       <div>

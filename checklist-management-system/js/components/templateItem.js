@@ -1,9 +1,10 @@
 import React, {Component} from 'react'
 import HttpGet from '../http-get'
 import HttpGetSwitch from '../http-get-switch'
-import {request} from '../request'
 import errorHandler from '../errorHandler'
 import presentError from '../presentError'
+import actionRequest from '../actionRequest'
+import viewFromAction from '../viewFromAction'
 
 export default class extends Component {
   constructor (props) {
@@ -12,8 +13,12 @@ export default class extends Component {
       action: undefined
     }
     this.display = this.display.bind(this)
-    this.viewFromAction = this.viewFromAction.bind(this)
-    this.actionRequest = this.actionRequest.bind(this)
+  }
+
+  componentWillUnmount () {
+    if (this.promise) {
+      this.promise.cancel()
+    }
   }
 
   render () {
@@ -23,14 +28,54 @@ export default class extends Component {
     const action = this.state.action
     if (action) {
       if (!action.fields) {
-        this.actionRequest(action)
+        actionRequest(
+          this.props.baseUrl + action.href,
+          action,
+          this.props.credentials,
+          null,
+          (resp) => {
+            this.promise = undefined
+            if (action.method === 'DELETE') this.props.onReturn()
+            else this.setState(old => ({action: undefined}))
+            return resp
+          },
+          (err) => {
+            this.promise = undefined
+            this.setState({error: err})
+          }
+        )
         return this.display()
       }
-      return this.viewFromAction()
+      return viewFromAction(
+        action,
+        this.props.actionGenerator,
+        (name) => document.getElementById(name).value,
+        (body) => actionRequest(
+          this.props.baseUrl + action.href,
+          action,
+          this.props.credentials,
+          body,
+          (resp) => {
+            this.promise = undefined
+            if (action.method === 'DELETE') this.props.onReturn()
+            else this.setState(old => ({action: undefined}))
+            return resp
+          },
+          (err) => {
+            this.promise = undefined
+            this.setState({error: err})
+          }
+        ),
+        () => this.setState(old => ({action: undefined}))
+      )
     }
     return this.display()
   }
 
+  /**
+   * Requests and calls onSuccess over the checklist template obtained.
+   * @param {function} onSuccess
+   */
   getChecklistTemplate (onSuccess) {
     return <div>
       <HttpGet // /checklisttemplate/{id}
@@ -49,6 +94,12 @@ export default class extends Component {
     </div>
   }
 
+  /**
+   * Requests and calls onSuccess over the list of checklist template items corresponding
+   * to the given checklist template.
+   * @param {object} template
+   * @param {function} onSuccess
+   */
   getTemplateItems (template, onSuccess) {
     return <div>
       <HttpGet // /checklisttemplate/{id}/templateitems
@@ -67,6 +118,11 @@ export default class extends Component {
     </div>
   }
 
+  /**
+   * Requests and calls onSuccess over the specific checklist template item obtained.
+   * @param {object} templateItems
+   * @param {function} onSuccess
+   */
   getTemplateItem (templateItems, onSuccess) {
     const firstElement = templateItems.collection.items[0]
     if (!firstElement) return new Error('') // ERROR
@@ -90,6 +146,9 @@ export default class extends Component {
     </div>
   }
 
+  /**
+   * Central view of every information regarding a specific checklist template item.
+   */
   display () {
     return this.getChecklistTemplate(template => {
       return this.getTemplateItems(template, (templateItems) => {
@@ -119,34 +178,5 @@ export default class extends Component {
         })
       })
     })
-  }
-
-  viewFromAction () {
-    const action = this.state.action
-    return this.props.actionGenerator(action, () => {
-      const obj = { }
-      action.fields.forEach(d => {
-        obj[d.name] = (document.getElementsByName(d.name)[0].value)
-      })
-
-      this.actionRequest(action, obj)
-    }, () => this.setState(old => ({action: undefined})))
-  }
-
-  actionRequest (action, body) {
-    return request(
-      this.props.baseUrl + this.state.action.href,
-      this.state.action.method,
-      this.props.credentials,
-      this.state.action.type,
-      JSON.stringify(body),
-      (resp) => {
-        if (action.method === 'DELETE') return this.props.onClick(`/checklisttemplates/${this.state.template_id}`)
-        this.setState(() => ({action: undefined}))
-      },
-      (err) => {
-        this.setState({error: err})
-      }
-    )
   }
 }

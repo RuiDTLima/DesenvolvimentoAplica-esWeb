@@ -1,6 +1,5 @@
 import React from 'react'
 import fetch from 'isomorphic-fetch'
-import {request} from '../request'
 
 export default ({url, onSuccess, onError}) => (
   <div>
@@ -20,6 +19,13 @@ export default ({url, onSuccess, onError}) => (
   </div>
 )
 
+/**
+ * Requests the API for user information to authenticate.
+ * @param {object} ev
+ * @param {string} url
+ * @param {function} onSuccess
+ * @param {function} onError
+ */
 function saveCredentials (ev, url, onSuccess, onError) {
   const username = document.getElementsByName('username')[0]
   const password = document.getElementsByName('password')[0]

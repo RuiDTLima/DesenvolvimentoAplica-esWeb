@@ -23,6 +23,11 @@ export default class extends React.Component {
     }
   }
 
+  /**
+   * Requests to the API the home resource.
+   * @param {string} username
+   * @param {string} password
+   */
   menu (username, password) {
     fetch(`${url}/`)
       .then(resp => {
@@ -42,6 +47,13 @@ export default class extends React.Component {
       })
   }
 
+  /**
+   * Shows the form containing all the inputs needed for the operation.
+   * This is used for actions described in collection+json.
+   * @param {object} template
+   * @param {function} onCreate
+   * @param {function} onReturn
+   */
   formGenerator (template, onCreate, onReturn) {
     return (
       <div>
@@ -59,6 +71,13 @@ export default class extends React.Component {
     )
   }
 
+  /**
+   * Shows the form containing all the inputs needed for the operation.
+   * This is used for actions described in siren+json.
+   * @param {object} action
+   * @param {function} onClick
+   * @param {function} onReturn
+   */
   actionGenerator (action, onClick, onReturn) {
     return (
       <div>
@@ -92,7 +111,6 @@ export default class extends React.Component {
           <Switch>
             <Route exact path='/' render={({history}) => {
               if (this.state.credentials !== '') {
-                console.log(history.location.state)
                 if (history.location.state) {
                   return <Redirect to={history.location.state.return} />
                 }
