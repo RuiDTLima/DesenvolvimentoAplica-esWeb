@@ -42,7 +42,7 @@ public class ChecklistApiInterceptor extends HandlerInterceptorAdapter {
             throw new UnauthorizedException(problemJSON);
         }
 
-        String auth = new String(Base64.getDecoder().decode(authentication.replace("Basic ", "")));
+        String auth = new String(Base64.getDecoder().decode(authentication.replace("Bearer ", "")));
         String[] params = auth.split(":");
 
         Optional<User> user = userRepository.findById(params[0]);

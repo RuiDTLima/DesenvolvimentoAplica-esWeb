@@ -64,7 +64,7 @@ export default class extends React.Component {
     if (this.promise) {
       this.promise.cancel()
     }
-    this.promise = makeCancellable(fetch(url, {headers: {'Authorization': `Basic ${this.state.credentials}`}}))
+    this.promise = makeCancellable(fetch(url, {headers: {'Authorization': `Bearer ${this.state.credentials.access_token}`}}))
       .then(resp => {
         if (resp.status >= 400) {
           throw new Error(`${resp.status} Unable to access content`)

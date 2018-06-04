@@ -7,12 +7,12 @@ import ChecklistItem from './components/checklistitem'
 import ChecklistTemplates from './components/checklisttemplates'
 import Template from './components/checklistTemplate'
 import TemplateItem from './components/templateItem'
-import Login from './components/login'
+import Login, {Redirect as LoginRedirect} from './login'
 import Nav from './nav'
 import PrivateRoute from './privateRoute'
 import presentError from './presentError'
 
-const url = 'http://35.197.204.49'
+const url = 'http://localhost:8090'
 
 export default class extends React.Component {
   constructor (props) {
@@ -25,16 +25,15 @@ export default class extends React.Component {
 
   /**
    * Requests to the API the home resource.
-   * @param {string} username
-   * @param {string} password
+   * @param {string} user
    */
-  menu (username, password) {
+  menu (user) {
     fetch(`${url}/`)
       .then(resp => {
         if (resp.status === 200) {
           return resp.json().then(h => {
             this.setState(old => ({
-              'credentials': Buffer.from(`${username}:${password}`).toString('base64'),
+              'credentials': user,
               'home': h
             }))
           })
@@ -116,16 +115,9 @@ export default class extends React.Component {
                 }
                 return <Redirect to='/menu' />
               }
-              return (
-                <Login
-                  url={url}
-                  onSuccess={(username, password) => {
-                    this.menu(username, password)
-                  }}
-                  onError={(err) => this.setState({error: err})}
-                />
-              )
+              return <Login onSuccess={(user) => this.menu(user)} />
             }} />
+            <Route exact path='/redirect2' component={LoginRedirect} />
             <PrivateRoute credentials={this.state.credentials} exact path='/menu' render={({match, history}) => {
               return (
                 <div>

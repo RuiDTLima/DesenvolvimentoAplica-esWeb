@@ -16,7 +16,7 @@ export function request (url, method, credentials, contentType, body, onSuccess,
   return makeCancellable(fetch(url, {
     method: method,
     headers: {
-      'Authorization': `Basic ${credentials}`,
+      'Authorization': `Bearer ${credentials.access_token}`,
       'content-type': contentType
     },
     body: body
