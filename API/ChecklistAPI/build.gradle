@@ -33,6 +33,7 @@ dependencies {
 	compile('org.springframework.boot:spring-boot-starter-web')
 	compile('org.springframework.boot:spring-boot-starter-data-jpa')
 	compile('org.springframework.boot:spring-boot-starter-data-rest')
+	compile('com.google.code.gson:gson')
 	runtime('org.postgresql:postgresql')
 	runtime('com.google.cloud:google-cloud-logging-logback:0.46.0-alpha')
 	testCompile('org.springframework.boot:spring-boot-starter-test')
