@@ -3,16 +3,13 @@ package pt.isel.daw.g5.ChecklistAPI;
 import com.google.gson.Gson;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import pt.isel.daw.g5.ChecklistAPI.exceptions.UnauthorizedException;
 import pt.isel.daw.g5.ChecklistAPI.model.Token;
 import pt.isel.daw.g5.ChecklistAPI.model.errorModel.ProblemJSON;
-import pt.isel.daw.g5.ChecklistAPI.model.inputModel.User;
 import pt.isel.daw.g5.ChecklistAPI.model.internalModel.InvalidParams;
-import pt.isel.daw.g5.ChecklistAPI.repository.UserRepository;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.BufferedReader;
@@ -23,14 +20,13 @@ import java.lang.reflect.Method;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Base64;
-import java.util.Optional;
 
 @Component
 public class ChecklistApiInterceptor extends HandlerInterceptorAdapter {
     private static final Logger log = LoggerFactory.getLogger(ChecklistApiInterceptor.class);
     private static final String INTROSPECT_URL = "http://35.189.110.248/openid-connect-server-webapp/introspect";
     private static final String CLIENT_ID = "api-client";
-    private static final String CLIENT_SECRET = "AKPZFUmLM22DW_pOfRn8-MPergpMQBkYeLV6B2XL4FpUBeR841C40gEQdYp3i_mGWIi-0K0cY4fgkN_v44Wp3Ns";
+    private static final String CLIENT_SECRET = "checklist-api";
     private final Gson gson = new Gson();
 
     @Override

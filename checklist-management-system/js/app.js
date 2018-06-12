@@ -12,7 +12,7 @@ import Nav from './nav'
 import PrivateRoute from './privateRoute'
 import presentError from './presentError'
 
-const url = 'http://localhost:8090'
+const url = 'http://35.234.132.39/api'
 
 export default class extends React.Component {
   constructor (props) {

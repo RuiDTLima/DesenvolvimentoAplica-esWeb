@@ -32,6 +32,6 @@
     "isomorphic-fetch": "^2.2.1",
     "left-pad": "^1.2.0",
     "npm": "^6.1.0",
-    "oidc-client": "^1.5.1-beta.1"
+    "oidc-client": "1.5.0"
   }
 }
