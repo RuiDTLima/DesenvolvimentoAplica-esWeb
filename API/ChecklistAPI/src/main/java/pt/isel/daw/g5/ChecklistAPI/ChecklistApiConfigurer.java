@@ -21,7 +21,7 @@ public class ChecklistApiConfigurer extends WebMvcConfigurationSupport {
         super.addCorsMappings(registry);
         registry
                 .addMapping("/**")
-                .allowedOrigins("http://35.189.117.189")
+                .allowedOrigins("http://35.234.132.39")
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                 .allowedHeaders("*");
     }
