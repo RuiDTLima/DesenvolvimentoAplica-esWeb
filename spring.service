@@ -7,6 +7,7 @@ User=spring
 Type=idle
 ExecStart=/usr/bin/java -jar /var/spring/ChecklistAPI-0.0.1-SNAPSHOT.jar --server.port=8080 --spring.profiles.active=gcp
 SuccessExitStatus=143
+Restart=always
 
 [Install]
 WantedBy=multi-user.target
