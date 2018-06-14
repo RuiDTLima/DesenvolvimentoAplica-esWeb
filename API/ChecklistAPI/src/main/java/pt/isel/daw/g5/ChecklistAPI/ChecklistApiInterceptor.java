@@ -12,10 +12,7 @@ import pt.isel.daw.g5.ChecklistAPI.model.errorModel.ProblemJSON;
 import pt.isel.daw.g5.ChecklistAPI.model.internalModel.InvalidParams;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
+import java.io.*;
 import java.lang.reflect.Method;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -25,9 +22,21 @@ import java.util.Base64;
 public class ChecklistApiInterceptor extends HandlerInterceptorAdapter {
     private static final Logger log = LoggerFactory.getLogger(ChecklistApiInterceptor.class);
     private static final String INTROSPECT_URL = "http://35.189.110.248/openid-connect-server-webapp/introspect";
-    private static final String CLIENT_ID = "api-client";
-    private static final String CLIENT_SECRET = "checklist-api";
+    private static String CLIENT_ID;
+    private static String CLIENT_SECRET;
     private final Gson gson = new Gson();
+
+    {
+        InputStream resource = ClassLoader.getSystemResourceAsStream("credentials");
+        try(BufferedReader br = new BufferedReader(new InputStreamReader(resource))){
+            String line = br.readLine();
+            String[] part = line.split(":");
+            CLIENT_ID = part[0];
+            CLIENT_SECRET = part[1];
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
