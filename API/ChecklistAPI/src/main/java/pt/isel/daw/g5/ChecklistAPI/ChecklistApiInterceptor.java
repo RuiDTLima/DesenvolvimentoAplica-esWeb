@@ -27,7 +27,7 @@ public class ChecklistApiInterceptor extends HandlerInterceptorAdapter {
     private final Gson gson = new Gson();
 
     {
-        InputStream resource = ClassLoader.getSystemResourceAsStream("credentials.txt");
+        InputStream resource = this.getClass().getResourceAsStream("/credentials.txt");
         try(BufferedReader br = new BufferedReader(new InputStreamReader(resource))){
             String line = br.readLine();
             String[] part = line.split(":");

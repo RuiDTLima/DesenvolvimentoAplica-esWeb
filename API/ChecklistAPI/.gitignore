@@ -18,6 +18,8 @@
 *.iml
 *.ipr
 **/out
+*/resources/**
+
 
 ### NetBeans ###
 nbproject/private/
